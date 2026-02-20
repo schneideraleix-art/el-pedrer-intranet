@@ -7,128 +7,103 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        :root { --rojo-dir: #b30000; --oro: #d4af37; }
-        body { background-color: #212529; font-family: 'Segoe UI', sans-serif; transition: 0.5s; }
+        :root { --rojo-dir: #b30000; --gris-bg: #f4f7f6; }
+        body { background-color: #212529; font-family: 'Segoe UI', sans-serif; transition: 0.3s; }
         
-        /* Login Style */
-        .login-card { background: white; color: #333; padding: 40px; border-radius: 2px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); width: 100%; max-width: 450px; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        /* Login */
+        #login-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; max-width: 400px; background: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         
-        /* Dashboard Style */
-        #contenido-privado { display: none; background-color: #f4f7f6; min-height: 100vh; }
-        .sidebar-dir { background: #1a1a1a; color: white; min-height: 100vh; padding: 20px; }
-        .nav-link { color: #ccc; margin-bottom: 10px; border-radius: 5px; }
+        /* Layout */
+        #contenido-privado { display: none; min-height: 100vh; background-color: var(--gris-bg); }
+        .sidebar { background: #1a1a1a; min-height: 100vh; color: white; padding: 20px; }
+        .nav-link { color: #aaa; margin-bottom: 10px; border-radius: 5px; }
         .nav-link:hover, .nav-link.active { background: var(--rojo-dir); color: white; }
         
+        /* Cards */
         .stat-card { border: none; border-left: 5px solid var(--rojo-dir); border-radius: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .btn-dir { background-color: var(--rojo-dir); color: white; border: none; border-radius: 0; }
-        .btn-dir:hover { background-color: #800000; color: white; }
-        
-        .table-custom thead { background-color: var(--rojo-dir); color: white; }
+        .alarma-activa { animation: parpadeo-rojo 1s infinite; }
+        @keyframes parpadeo-rojo { 0%, 100% { background-color: var(--gris-bg); } 50% { background-color: #ffcccc; } }
+
+        /* Overlay Alerta */
+        #overlay-alerta { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,0,0,0.9); color: white; z-index: 9999; text-align: center; padding-top: 10%; }
     </style>
 </head>
-<body>
+<body id="cuerpo">
 
-    <div id="login-screen" class="login-card">
-        <i class="bi bi-shield-lock-fill text-danger" style="font-size: 3rem;"></i>
-        <h3 class="mt-3 fw-bold">EL PEDRER | DIRECCIÓN</h3>
-        <p class="text-muted">Introduzca credenciales autorizadas</p>
-        <div class="mt-4">
-            <input type="password" id="pass-input" class="form-control form-control-lg mb-3 text-center" placeholder="••••••••">
-            <button onclick="verificar()" class="btn btn-danger btn-lg w-100 shadow-sm">DESBLOQUEAR ACCESO</button>
-            <div id="error-msg" class="text-danger mt-3 small fw-bold" style="display:none;">⚠️ CLAVE INCORRECTA</div>
-        </div>
-        <a href="index.html" class="d-block mt-4 text-secondary text-decoration-none small">← Volver al Portal General</a>
+    <div id="login-screen">
+        <i class="bi bi-shield-lock-fill text-danger fs-1"></i>
+        <h4 class="fw-bold mt-2">EL PEDRER | DIRECCIÓN</h4>
+        <input type="password" id="pass-input" class="form-control my-3 text-center" placeholder="Contraseña">
+        <button onclick="verificar()" class="btn btn-danger w-100">ACCEDER</button>
+        <div id="error-msg" class="text-danger mt-2 small" style="display:none;">Clave incorrecta</div>
+        <a href="index.html" class="d-block mt-3 small text-secondary">Volver al inicio</a>
+    </div>
+
+    <div id="overlay-alerta">
+        <i class="bi bi-exclamation-triangle-fill" style="font-size: 8rem;"></i>
+        <h1 class="display-1 fw-bold">¡ALERTA GENERAL!</h1>
+        <button onclick="desactivarAlerta()" class="btn btn-light btn-lg mt-5">DESACTIVAR PROTOCOLO</button>
     </div>
 
     <div id="contenido-privado">
         <div class="container-fluid">
             <div class="row">
-                <nav class="col-md-2 d-none d-md-block sidebar-dir shadow">
+                <nav class="col-md-2 sidebar d-none d-md-block shadow">
                     <div class="text-center mb-4">
-                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="80" class="rounded-circle border border-danger p-1">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="70" class="rounded-circle border border-danger p-1">
                         <h6 class="mt-2">Admin Dirección</h6>
                     </div>
                     <hr>
                     <a href="#" class="nav-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                    <a href="#" class="nav-link"><i class="bi bi-file-earmark-pdf me-2"></i> Actas Oficiales</a>
-                    <a href="#" class="nav-link"><i class="bi bi-wallet2 me-2"></i> Presupuestos</a>
-                    <a href="#" class="nav-link"><i class="bi bi-person-video3 me-2"></i> Claustro</a>
-                    <a href="#" class="nav-link"><i class="bi bi-gear me-2"></i> Configuración</a>
+                    <a href="#" class="nav-link"><i class="bi bi-file-earmark-pdf me-2"></i> Actas</a>
+                    <a href="#" class="nav-link text-warning" onclick="lanzarAlerta()"><i class="bi bi-broadcast me-2"></i> EMERGENCIA</a>
                     <hr>
-                    <a href="index.html" class="nav-link text-danger"><i class="bi bi-box-arrow-left me-2"></i> Cerrar Sesión</a>
+                    <a href="index.html" class="nav-link text-white"><i class="bi bi-box-arrow-left me-2"></i> Salir</a>
                 </nav>
 
-                <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2 text-dark">Panel de Control Directivo</h1>
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <button type="button" class="btn btn-sm btn-outline-secondary me-2">Exportar Informe</button>
-                            <button type="button" class="btn btn-sm btn-dir">Nueva Acta +</button>
-                        </div>
+                <main class="col-md-10 p-4">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                        <h2 class="fw-bold text-dark">Panel de Control Directivo</h2>
+                        <button class="btn btn-danger btn-sm" onclick="lanzarAlerta()">NUEVA ALERTA +</button>
                     </div>
 
-                    <div class="row mb-4">
+                    <div class="row mb-4 g-3">
                         <div class="col-md-3">
                             <div class="card stat-card p-3">
-                                <small class="text-muted">MATRÍCULA TOTAL</small>
+                                <small class="text-muted">MATRÍCULA</small>
                                 <h3 class="fw-bold">842</h3>
-                                <div class="text-success small"><i class="bi bi-arrow-up"></i> 2.4% vs curso anterior</div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card stat-card p-3" style="border-left-color: #ffc107;">
-                                <small class="text-muted">ABSENTISMO HOY</small>
+                                <small class="text-muted">ABSENTISMO</small>
                                 <h3 class="fw-bold">12</h3>
-                                <div class="text-danger small"><i class="bi bi-exclamation-triangle"></i> Revisar protocolo</div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card stat-card p-3" style="border-left-color: #0d6efd;">
-                                <small class="text-muted">DOCENTES ACTIVOS</small>
+                                <small class="text-muted">DOCENTES</small>
                                 <h3 class="fw-bold">64</h3>
-                                <div class="text-muted small">3 sustituciones en curso</div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card stat-card p-3" style="border-left-color: #198754;">
-                                <small class="text-muted">PRESUPUESTO EJECUTADO</small>
+                                <small class="text-muted">PRESUPUESTO</small>
                                 <h3 class="fw-bold">68%</h3>
-                                <div class="progress mt-2" style="height: 5px;">
-                                    <div class="progress-bar bg-success" style="width: 68%"></div>
-                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-7">
-                            <div class="card shadow-sm border-0 mb-4">
-                                <div class="card-header bg-white fw-bold">📅 CALENDARIO DE GESTIÓN PRÓXIMA</div>
+                            <div class="card border-0 shadow-sm rounded-0">
+                                <div class="card-header bg-white fw-bold"><i class="bi bi-calendar3"></i> GESTIÓN PRÓXIMA</div>
                                 <div class="card-body p-0">
-                                    <table class="table table-hover mb-0 table-custom">
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha</th>
-                                                <th>Evento / Trámite</th>
-                                                <th>Prioridad</th>
-                                            </tr>
-                                        </thead>
+                                    <table class="table mb-0">
+                                        <thead><tr><th>Fecha</th><th>Evento</th><th>Prioridad</th></tr></thead>
                                         <tbody>
-                                            <tr>
-                                                <td>25 Feb</td>
-                                                <td>Reunión con Inspección Educativa</td>
-                                                <td><span class="badge bg-danger">ALTA</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>02 Mar</td>
-                                                <td>Cierre Presupuesto Trimestral</td>
-                                                <td><span class="badge bg-warning text-dark">MEDIA</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>15 Mar</td>
-                                                <td>Publicación Vacantes Curso 26/27</td>
-                                                <td><span class="badge bg-info">BAJA</span></td>
-                                            </tr>
+                                            <tr><td>25 Feb</td><td>Inspección</td><td><span class="badge bg-danger">ALTA</span></td></tr>
+                                            <tr><td>02 Mar</td><td>Cierre Trimestre</td><td><span class="badge bg-warning text-dark">MEDIA</span></td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -136,20 +111,18 @@
                         </div>
 
                         <div class="col-md-5">
-                            <div class="card shadow-sm border-0">
-                                <div class="card-header bg-white fw-bold">📂 ACCESOS RESTRINGIDOS</div>
-                                <div class="card-body">
-                                    <div class="d-grid gap-2">
-                                        <a href="#" class="btn btn-outline-dark text-start p-3">
-                                            <i class="bi bi-file-earmark-lock-fill me-2 text-danger"></i> Expedientes Confidenciales
-                                        </a>
-                                        <a href="#" class="btn btn-outline-dark text-start p-3">
-                                            <i class="bi bi-calculator me-2 text-primary"></i> Software de Contabilidad Centro
-                                        </a>
-    <button type="button" class="btn btn-outline-dark text-start p-3 w-100" data-bs-toggle="modal" data-bs-target="#modalCamaras">
-    <i class="bi bi-camera-video me-2 text-success"></i> Cámaras de Seguridad (CCTV)
-</button>
-                                    </div>
+                            <div class="card border-0 shadow-sm rounded-0">
+                                <div class="card-header bg-white fw-bold"><i class="bi bi-folder-fill"></i> ACCESOS RESTRINGIDOS</div>
+                                <div class="card-body d-grid gap-2">
+                                    <button class="btn btn-outline-dark text-start p-3"><i class="bi bi-file-earmark-lock text-danger me-2"></i> Expedientes Confidenciales</button>
+                                    
+                                    <button class="btn btn-outline-dark text-start p-3" data-bs-toggle="modal" data-bs-target="#modalContabilidad">
+                                        <i class="bi bi-calculator text-primary me-2"></i> Software de Contabilidad Centro
+                                    </button>
+                                    
+                                    <button class="btn btn-outline-dark text-start p-3" data-bs-toggle="modal" data-bs-target="#modalCamaras">
+                                        <i class="bi bi-camera-video text-success me-2"></i> Cámaras de Seguridad (CCTV)
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -159,47 +132,29 @@
         </div>
     </div>
 
-    <script>
-        function verificar() {
-            const claveCorrecta = "pedrer2026"; 
-            const entrada = document.getElementById('pass-input').value;
-            
-            if (entrada === claveCorrecta) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('contenido-privado').style.display = 'block';
-                document.body.style.backgroundColor = "#f4f7f6";
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-                document.getElementById('pass-input').value = "";
-            }
-        }
-        
-        // Permitir entrar pulsando "Enter"
-        document.getElementById("pass-input").addEventListener("keyup", function(event) {
-            if (event.key === "Enter") {
-                verificar();
-            }
-        });
-    </script>
-
     <div class="modal fade" id="modalCamaras" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content bg-dark border-danger">
-            <div class="modal-header border-secondary text-white">
-                <h5 class="modal-title"><i class="bi bi-eye-fill text-danger"></i> Monitor de Seguridad El Pedrer</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-0">
-                <div class="ratio ratio-16x9">
-                    <iframe src="https://www.youtube.com/embed/D4c0UTnNXDM?autoplay=1&mute=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                </div>
-            </div>
-            <div class="modal-footer border-secondary py-1 text-center">
-                <small class="text-muted">Señal en directo - Área de Seguridad</small>
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark border-danger text-white">
+                <div class="modal-header border-secondary"><h5 class="modal-title">Monitor CCTV</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body p-0"><div class="ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/D4c0UTnNXDM?autoplay=1&mute=1" allowfullscreen></iframe></div></div>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="modal fade" id="modalContabilidad" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-primary">
+                <div class="modal-header bg-primary text-white"><h5 class="modal-title">Gestión Financiera</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body p-0" style="height: 70vh;"><iframe src="https://docs.google.com/spreadsheets/d/1uC8XwV6LId9p_W_f0p_Xn6vN2yY6_xM6Z5pL7K8_U8/preview" width="100%" height="100%"></iframe></div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <script>
+        function verificar() {
+            if (document.getElementById('pass-input').value === "pedrer2026") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('contenido-privado').style.display = 'block';
+                document.body.style.backgroundColor = "#f4f7f6";
+            } else { document.getElementById('error-msg').style.display = 'block'; }
