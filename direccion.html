@@ -3,51 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Pedrer - Portal Dirección</title>
+    <title>Acceso Restringido - Dirección</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        :root { --rojo-dir: #b30000; --gris: #343a40; }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        .header-dir { background: var(--rojo-dir); color: white; padding: 20px 0; border-bottom: 5px solid #800000; }
-        .card-modulo { border-radius: 0; border-top: 4px solid var(--rojo-dir); transition: 0.2s; }
-        .link-item { display: block; padding: 8px 0; color: #d32f2f; text-decoration: none; font-weight: 500; }
-        .link-item:hover { text-decoration: underline; }
-        .btn-volver { background: var(--gris); color: white; text-decoration: none; padding: 5px 15px; border-radius: 3px; }
+        body { background-color: #212529; display: flex; align-items: center; justify-content: center; height: 100vh; color: white; }
+        .login-card { background: white; color: #333; padding: 30px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; }
+        #contenido-privado { display: none; } /* Oculto por defecto */
     </style>
 </head>
 <body>
 
-<div class="header-dir shadow-sm">
-    <div class="container d-flex justify-content-between align-items-center">
-        <h2 class="mb-0"><i class="bi bi-shield-lock"></i> PORTAL DE DIRECCIÓN</h2>
-        <a href="index.html" class="btn-volver"><i class="bi bi-arrow-left"></i> Volver al General</a>
+    <div id="login-screen" class="login-card">
+        <h3 class="mb-4">🔐 Área Restringida</h3>
+        <p class="text-muted small">Introduce la clave de Dirección para entrar</p>
+        <input type="password" id="pass-input" class="form-control mb-3" placeholder="Contraseña">
+        <button onclick="verificar()" class="btn btn-danger w-100">Acceder</button>
+        <div id="error-msg" class="text-danger mt-2 small" style="display:none;">Clave incorrecta</div>
+        <a href="index.html" class="d-block mt-3 small text-secondary">Volver al inicio</a>
     </div>
-</div>
 
-<div class="container mt-5">
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card card-modulo shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold"><i class="bi bi-cash-coin"></i> Gestión Económica</h5>
-                    <a href="#" class="link-item">Presupuesto Anual 2026</a>
-                    <a href="#" class="link-item">Facturas y Justificantes</a>
-                    <a href="#" class="link-item">Caja del Centro</a>
-                </div>
+    <div id="contenido-privado" style="width: 100%; height: 100vh; background: #f8f9fa;">
+        <div style="background: #b30000; color: white; padding: 20px;">
+            <div class="container d-flex justify-content-between">
+                <h2>PORTAL DIRECCIÓN</h2>
+                <a href="index.html" class="btn btn-dark btn-sm">Salir</a>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card card-modulo shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold"><i class="bi bi-people-fill"></i> Personal y Claustro</h5>
-                    <a href="#" class="link-item">Expedientes del Profesorado</a>
-                    <a href="#" class="link-item">Control de Bajas y Sustituciones</a>
-                    <a href="#" class="link-item">Actas de Consejo Escolar</a>
+        <div class="container mt-5">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card p-3 shadow-sm" style="border-top: 4px solid #b30000;">
+                        <h5>Gestión Económica</h5>
+                        <p class="text-muted">Acceso a presupuestos y facturas.</p>
+                        <a href="#" class="btn btn-outline-danger btn-sm">Abrir Carpeta</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-3 shadow-sm" style="border-top: 4px solid #b30000;">
+                        <h5>Personal y Actas</h5>
+                        <p class="text-muted">Control de claustro y consejo escolar.</p>
+                        <a href="#" class="btn btn-outline-danger btn-sm">Ver Documentos</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <script>
+        function verificar() {
+            const claveCorrecta = "pedrer2026"; // <--- AQUÍ CAMBIA TU CONTRASEÑA
+            const entrada = document.getElementById('pass-input').value;
+            
+            if (entrada === claveCorrecta) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('contenido-privado').style.display = 'block';
+                document.body.style.backgroundColor = "#f8f9fa";
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>
