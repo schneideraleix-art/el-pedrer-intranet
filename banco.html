@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banca Empresas - El Pedrer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
+        .bank-header { background: #004481; color: white; padding: 15px 0; }
+        .balance-card { border: none; border-radius: 10px; background: linear-gradient(135deg, #004481 0%, #005eb8 100%); color: white; }
+        .table-transactions { background: white; border-radius: 10px; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+<div class="bank-header shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h4 class="m-0 fw-bold"><i class="bi bi-shield-shaded"></i> BANCA EMPRESAS</h4>
+        <a href="administracion.html" class="btn btn-sm btn-outline-light">Cerrar Sesión Segura</a>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card balance-card p-4 shadow">
+                <small class="opacity-75">Saldo Disponible</small>
+                <h1 class="fw-bold mt-2">14.250,60 €</h1>
+                <hr>
+                <small>IBAN: ES21 0049 1234 56 7890123456</small>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card table-transactions shadow-sm border-0">
+                <div class="card-header bg-white fw-bold py-3">Últimos Movimientos</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover m-0">
+                        <thead class="table-light">
+                            <tr><th>Fecha</th><th>Concepto</th><th class="text-end">Importe</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>19/02/2026</td><td>Ingreso Recibos Mensuales</td><td class="text-end text-success">+4.200,00 €</td></tr>
+                            <tr><td>18/02/2026</td><td>Factura Luz - Endesa</td><td class="text-end text-danger">-840,20 €</td></tr>
+                            <tr><td>15/02/2026</td><td>Proveedor Alimentación S.L.</td><td class="text-end text-danger">-1.150,00 €</td></tr>
+                            <tr><td>10/02/2026</td><td>Subvención Educación GVA</td><td class="text-end text-success">+3.500,00 €</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
