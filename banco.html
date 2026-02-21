@@ -12,10 +12,15 @@
         .bank-header { background: var(--bank-blue); color: white; padding: 15px 0; }
         .nav-tabs .nav-link { color: var(--bank-blue); font-weight: bold; border: none; margin-right: 10px; }
         .nav-tabs .nav-link.active { background-color: var(--bank-blue); color: white !important; border-radius: 5px; }
-        .balance-card { border: none; border-radius: 12px; background: linear-gradient(135deg, var(--bank-blue) 0%, var(--bank-sky) 100%); color: white; }
-        .doc-card { border-left: 4px solid var(--bank-sky); transition: 0.2s; }
-        .doc-card:hover { background-color: #f8f9fa; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .status-paid { color: #27ae60; font-size: 0.8rem; font-weight: bold; }
+        
+        /* Estilos de las Tarjetas */
+        .doc-card { border-left: 4px solid var(--bank-sky); transition: 0.2s; position: relative; cursor: pointer; }
+        .doc-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-delete { position: absolute; top: 10px; right: 10px; color: #e74c3c; opacity: 0; transition: 0.3s; z-index: 10; }
+        .doc-card:hover .btn-delete { opacity: 1; }
+        
+        /* Visor de Documentos */
+        .pdf-placeholder { background: #525659; height: 400px; display: flex; align-items: center; justify-content: center; color: white; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -30,44 +35,18 @@
 <div class="container py-5">
     <ul class="nav nav-tabs mb-4 border-0" id="bankTabs" role="tablist">
         <li class="nav-item">
-            <button class="nav-link active shadow-sm" id="resumen-tab" data-bs-toggle="tab" data-bs-target="#resumen" type="button">
-                <i class="bi bi-house-door me-1"></i> Resumen de Cuenta
-            </button>
+            <button class="nav-link active shadow-sm" data-bs-toggle="tab" data-bs-target="#resumen">Resumen de Cuenta</button>
         </li>
         <li class="nav-item">
-            <button class="nav-link shadow-sm" id="facturas-tab" data-bs-toggle="tab" data-bs-target="#facturas" type="button">
-                <i class="bi bi-file-earmark-pdf me-1"></i> Facturas y Tiques
-            </button>
+            <button class="nav-link shadow-sm" data-bs-toggle="tab" data-bs-target="#facturas">Facturas y Tiques</button>
         </li>
     </ul>
 
     <div class="tab-content">
         <div class="tab-pane fade show active" id="resumen">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card balance-card p-4 shadow">
-                        <small class="opacity-75">Saldo Disponible</small>
-                        <h1 class="fw-bold mt-2">14.250,60 €</h1>
-                        <hr>
-                        <small>IBAN: ES21 0049 1234 56 7890123456</small>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card shadow-sm border-0">
-                        <div class="card-header bg-white fw-bold py-3">Últimos Movimientos</div>
-                        <div class="card-body p-0">
-                            <table class="table table-hover m-0">
-                                <thead class="table-light">
-                                    <tr><th>Fecha</th><th>Concepto</th><th class="text-end">Importe</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>19/02/2026</td><td>Ingreso Recibos Mensuales</td><td class="text-end text-success">+4.200,00 €</td></tr>
-                                    <tr><td>18/02/2026</td><td>Factura Luz - Endesa</td><td class="text-end text-danger">-840,20 €</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+            <div class="card p-4 shadow-sm border-0" style="max-width: 400px; background: linear-gradient(135deg, #004481, #005eb8); color: white;">
+                <small>Saldo Disponible</small>
+                <h2 class="fw-bold">14.250,60 €</h2>
             </div>
         </div>
 
@@ -80,20 +59,16 @@
                     </button>
                 </div>
                 <div class="card-body bg-light">
-                    <div class="row g-3" id="contenedorFacturas">
-                        <div class="col-md-6">
-                            <div class="card doc-card p-3 shadow-sm">
-                                <div class="d-flex justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-file-pdf text-danger fs-2 me-3"></i>
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">Factura Luz - FEB 2026</h6>
-                                            <small class="text-muted">ENDESA ENERGÍA S.A.U.</small>
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="fw-bold">840,20 €</div>
-                                        <span class="status-paid"><i class="bi bi-check-circle-fill"></i> Pagado</span>
+                    <div class="row g-3" id="listaFacturas">
+                        <div class="col-md-6 invoice-item">
+                            <div class="card doc-card p-3 shadow-sm" onclick="verDocumento('Factura Luz - FEB 2026', 'Endesa')">
+                                <button class="btn btn-sm btn-delete" onclick="eliminarDoc(event, this)"><i class="bi bi-trash3-fill"></i></button>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-file-pdf text-danger fs-2 me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Factura Luz - FEB 2026</h6>
+                                        <small class="text-muted">ENDESA ENERGÍA S.A.U.</small>
+                                        <div class="fw-bold text-dark">840,20 €</div>
                                     </div>
                                 </div>
                             </div>
@@ -108,33 +83,40 @@
 <div class="modal fade" id="modalSubir" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Subir Justificante</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+            <div class="modal-header border-0 pb-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <h5 class="fw-bold mb-3">Registrar Nuevo Documento</h5>
                 <form id="formSubir">
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Tipo de documento</label>
-                        <select id="tipoDoc" class="form-select">
-                            <option value="bi-file-pdf text-danger">Factura (PDF)</option>
-                            <option value="bi-receipt text-warning">Tiquet (Recibo)</option>
-                        </select>
+                        <label class="form-label small">Proveedor / Concepto</label>
+                        <input type="text" id="nombreProv" class="form-control" placeholder="Ej: Mercadona" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Concepto / Proveedor</label>
-                        <input type="text" id="conceptoDoc" class="form-control" placeholder="Ej: Mercadona, Papelería..." required>
+                        <label class="form-label small">Importe (€)</label>
+                        <input type="number" step="0.01" id="montoProv" class="form-control" placeholder="0.00" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Importe (€)</label>
-                        <input type="number" step="0.01" id="importeDoc" class="form-control" placeholder="0.00" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Archivo</label>
-                        <input type="file" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Registrar en el Sistema</button>
+                    <button type="submit" class="btn btn-primary w-100">Subir al Archivo</button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalVisor" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark border-0">
+            <div class="modal-header border-0 text-white">
+                <h6 class="modal-title" id="visorTitulo">Visualizando documento...</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="pdf-placeholder">
+                    <div class="text-center">
+                        <i class="bi bi-file-earmark-pdf display-1 mb-3"></i>
+                        <p>Vista previa del documento PDF / Tiquet</p>
+                        <button class="btn btn-light btn-sm"><i class="bi bi-download"></i> Descargar Original</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -142,43 +124,46 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // FUNCIÓN: SUBIR NUEVO
     document.getElementById('formSubir').addEventListener('submit', function(e) {
         e.preventDefault();
+        const nombre = document.getElementById('nombreProv').value;
+        const monto = document.getElementById('montoProv').value;
         
-        // Obtener valores
-        const tipo = document.getElementById('tipoDoc').value;
-        const concepto = document.getElementById('conceptoDoc').value;
-        const importe = document.getElementById('importeDoc').value;
-        
-        // Crear el nuevo elemento HTML
         const nuevaCard = `
-            <div class="col-md-6">
-                <div class="card doc-card p-3 shadow-sm border-primary">
-                    <div class="d-flex justify-content-between">
-                        <div class="d-flex align-items-center">
-                            <i class="bi ${tipo} fs-2 me-3"></i>
-                            <div>
-                                <h6 class="mb-0 fw-bold">${concepto}</h6>
-                                <small class="text-muted">Subido ahora mismo</small>
-                            </div>
-                        </div>
-                        <div class="text-end">
-                            <div class="fw-bold">${importe} €</div>
-                            <span class="status-paid"><i class="bi bi-check-circle-fill"></i> Procesado</span>
+            <div class="col-md-6 invoice-item">
+                <div class="card doc-card p-3 shadow-sm border-primary" onclick="verDocumento('${nombre}', 'Recién subido')">
+                    <button class="btn btn-sm btn-delete" onclick="eliminarDoc(event, this)"><i class="bi bi-trash3-fill"></i></button>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-receipt text-warning fs-2 me-3"></i>
+                        <div>
+                            <h6 class="mb-0 fw-bold">${nombre}</h6>
+                            <small class="text-muted">Procesado hoy</small>
+                            <div class="fw-bold text-dark">${monto} €</div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
+            </div>`;
         
-        // Añadir al contenedor
-        document.getElementById('contenedorFacturas').insertAdjacentHTML('afterbegin', nuevaCard);
-        
-        // Cerrar modal y limpiar
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalSubir'));
-        modal.hide();
+        document.getElementById('listaFacturas').insertAdjacentHTML('afterbegin', nuevaCard);
+        bootstrap.Modal.getInstance(document.getElementById('modalSubir')).hide();
         this.reset();
     });
+
+    // FUNCIÓN: ELIMINAR
+    function eliminarDoc(event, btn) {
+        event.stopPropagation(); // Evita que se abra el visor al hacer clic en borrar
+        if(confirm('¿Estás seguro de que deseas eliminar este registro?')) {
+            btn.closest('.invoice-item').remove();
+        }
+    }
+
+    // FUNCIÓN: VISUALIZAR
+    function verDocumento(titulo, info) {
+        document.getElementById('visorTitulo').innerText = titulo + " (" + info + ")";
+        const modalVisor = new bootstrap.Modal(document.getElementById('modalVisor'));
+        modalVisor.show();
+    }
 </script>
 </body>
 </html>
