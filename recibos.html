@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Recibos - El Pedrer</title>
+    <title>Control de Recibos - El Pedrer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root { --admin-blue: #2c3e50; --accent-blue: #3498db; }
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        .header-admin { background: var(--admin-blue); color: white; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .header-admin { background: #3c4e5e; color: white; padding: 20px; shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .card-stats { border: none; border-radius: 10px; border-left: 5px solid var(--accent-blue); }
         .status-badge { font-size: 0.75rem; padding: 5px 10px; border-radius: 20px; }
         .table-container { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .btn-action { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
     </style>
 </head>
 <body>
@@ -53,8 +54,10 @@
         <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
             <h5 class="m-0 fw-bold">Detalle de Cobros - Febrero 2026</h5>
             <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-success"><i class="bi bi-file-earmark-excel"></i> Exportar</button>
-                <button class="btn btn-sm btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Recibo</button>
+                <button class="btn btn-sm btn-success" onclick="exportarExcel()"><i class="bi bi-file-earmark-excel"></i> Exportar</button>
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoRecibo">
+                    <i class="bi bi-plus-circle"></i> Nuevo Recibo
+                </button>
             </div>
         </div>
         <div class="table-responsive">
@@ -69,38 +72,29 @@
                         <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
+                <tbody id="cuerpoTabla">
+                    <tr id="fila-1">
                         <td>#REC-2026-001</td>
                         <td>García López, Lucía</td>
                         <td>Comedor + Aula Matinal</td>
                         <td class="fw-bold">145,00 €</td>
                         <td><span class="badge bg-success status-badge">Pagado</span></td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer"></i></button>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-envelope"></i></button>
+                            <button class="btn btn-outline-secondary btn-action" onclick="imprimir('#REC-2026-001')"><i class="bi bi-printer"></i></button>
+                            <button class="btn btn-outline-primary btn-action" onclick="enviarEmail('Lucía García')"><i class="bi bi-envelope"></i></button>
+                            <button class="btn btn-outline-danger btn-action" onclick="eliminarFila('fila-1')"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="fila-2">
                         <td>#REC-2026-002</td>
                         <td>Martínez Sanz, Hugo</td>
                         <td>Comedor Mensual</td>
                         <td class="fw-bold">120,00 €</td>
                         <td><span class="badge bg-warning text-dark status-badge">Pendiente</span></td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer"></i></button>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-envelope"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#REC-2026-003</td>
-                        <td>Torres Ruiz, Elena</td>
-                        <td>Actividades Extraescolares</td>
-                        <td class="fw-bold">35,00 €</td>
-                        <td><span class="badge bg-danger status-badge">Devuelto</span></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer"></i></button>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-envelope"></i></button>
+                            <button class="btn btn-outline-secondary btn-action" onclick="imprimir('#REC-2026-002')"><i class="bi bi-printer"></i></button>
+                            <button class="btn btn-outline-primary btn-action" onclick="enviarEmail('Hugo Martínez')"><i class="bi bi-envelope"></i></button>
+                            <button class="btn btn-outline-danger btn-action" onclick="eliminarFila('fila-2')"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -109,6 +103,98 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalNuevoRecibo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Generar Nuevo Recibo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRecibo">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Alumno / Familia</label>
+                        <input type="text" id="nombreAlumno" class="form-control" required placeholder="Nombre completo">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Concepto</label>
+                        <select id="conceptoRecibo" class="form-select">
+                            <option>Comedor Mensual</option>
+                            <option>Aula Matinal</option>
+                            <option>Extraescolares</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Importe (€)</label>
+                        <input type="number" id="importeRecibo" class="form-control" required placeholder="0.00">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Crear Recibo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 1. FUNCIÓN EXPORTAR
+    function exportarExcel() {
+        alert("📊 Generando remesa bancaria y archivo Excel...\nEl archivo se descargará automáticamente en unos segundos.");
+    }
+
+    // 2. FUNCIÓN IMPRIMIR
+    function imprimir(id) {
+        alert("🖨️ Generando vista de impresión para el recibo: " + id);
+        window.print();
+    }
+
+    // 3. FUNCIÓN ENVIAR EMAIL
+    function enviarEmail(nombre) {
+        const confirmacion = confirm("¿Deseas enviar el justificante de pago por correo a la familia de " + nombre + "?");
+        if(confirmacion) {
+            alert("📧 Correo electrónico enviado correctamente.");
+        }
+    }
+
+    // 4. FUNCIÓN ELIMINAR (SUPRIMIR)
+    function eliminarFila(idFila) {
+        if(confirm("¿Estás seguro de que deseas eliminar este recibo?")) {
+            document.getElementById(idFila).remove();
+        }
+    }
+
+    // 5. LÓGICA PARA AÑADIR NUEVO RECIBO
+    document.getElementById('formRecibo').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const nombre = document.getElementById('nombreAlumno').value;
+        const concepto = document.getElementById('conceptoRecibo').value;
+        const importe = document.getElementById('importeRecibo').value;
+        const idNuevo = "fila-" + Date.now();
+        const idRecibo = "#REC-2026-" + Math.floor(Math.random() * 900 + 100);
+
+        const nuevaFila = `
+            <tr id="${idNuevo}">
+                <td>${idRecibo}</td>
+                <td>${nombre}</td>
+                <td>${concepto}</td>
+                <td class="fw-bold">${importe},00 €</td>
+                <td><span class="badge bg-warning text-dark status-badge">Pendiente</span></td>
+                <td class="text-end">
+                    <button class="btn btn-outline-secondary btn-action" onclick="imprimir('${idRecibo}')"><i class="bi bi-printer"></i></button>
+                    <button class="btn btn-outline-primary btn-action" onclick="enviarEmail('${nombre}')"><i class="bi bi-envelope"></i></button>
+                    <button class="btn btn-outline-danger btn-action" onclick="eliminarFila('${idNuevo}')"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        `;
+
+        document.getElementById('cuerpoTabla').insertAdjacentHTML('afterbegin', nuevaFila);
+        
+        // Cerrar modal y limpiar
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevoRecibo'));
+        modal.hide();
+        this.reset();
+    });
+</script>
 </body>
 </html>
