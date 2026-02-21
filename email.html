@@ -3,154 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Correo El Pedrer - Gmail Style</title>
+    <title>Webmail - El Pedrer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        :root { --g-blue: #1a73e8; --g-bg: #f6f8fc; --g-hover: #e1e3e1; }
-        body { background-color: var(--g-bg); font-family: 'Segoe UI', sans-serif; height: 100vh; overflow: hidden; }
+        :root {
+            --sidebar-bg: #2c3e50;
+            --list-bg: #ffffff;
+            --content-bg: #fdfdfd;
+            --accent: #3498db;
+        }
+        body { background-color: #f0f2f5; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
         
-        /* Layout */
-        .app-container { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 64px); }
-        .header { height: 64px; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
+        .main-layout { display: flex; height: 100vh; }
+
+        /* Columna 1: Navegación Estrecha */
+        .mail-sidebar { width: 80px; background: var(--sidebar-bg); display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
+        .nav-icon { color: #bdc3c7; font-size: 1.5rem; margin-bottom: 25px; cursor: pointer; transition: 0.3s; }
+        .nav-icon:hover, .nav-icon.active { color: white; }
+
+        /* Columna 2: Lista de Correos */
+        .mail-list { width: 350px; background: var(--list-bg); border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; }
+        .list-header { padding: 20px; border-bottom: 1px solid #eee; }
+        .mail-item { padding: 15px 20px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s; position: relative; }
+        .mail-item:hover { background: #f8f9fa; }
+        .mail-item.active { background: #eaf2f8; border-left: 4px solid var(--accent); }
+        .mail-item.unread::after { content: ""; position: absolute; right: 15px; top: 15px; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+
+        /* Columna 3: Contenido */
+        .mail-content { flex-grow: 1; background: var(--content-bg); display: flex; flex-direction: column; }
+        .content-toolbar { padding: 15px 30px; border-bottom: 1px solid #eee; background: white; display: flex; justify-content: space-between; }
+        .content-body { padding: 40px; overflow-y: auto; }
         
-        /* Sidebar */
-        .btn-redactar { background: #c2e7ff; border: none; padding: 18px 24px; border-radius: 16px; font-weight: 600; margin: 10px 0 20px 10px; transition: 0.3s; }
-        .btn-redactar:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .nav-item { border-radius: 0 25px 25px 0; padding: 10px 25px; cursor: pointer; color: #444; font-size: 0.95rem; }
-        .nav-item:hover { background: var(--g-hover); }
-        .nav-item.active { background: #d3e3fd; color: #041e49; font-weight: bold; }
-
-        /* Lista de Correos */
-        .mail-box { background: white; border-radius: 16px; margin-right: 16px; margin-bottom: 16px; overflow-y: auto; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .mail-item { display: grid; grid-template-columns: 50px 200px 1fr 100px; padding: 12px 16px; border-bottom: 1px solid #f1f3f4; cursor: pointer; transition: 0.1s; align-items: center; }
-        .mail-item:hover { box-shadow: inset 1px 0 0 #dadce0, 0 1px 3px rgba(60,64,67,0.2); }
-        .mail-item.unread { font-weight: bold; background: #fff; }
-        .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; }
-
-        /* Visor */
-        #visor { display: none; padding: 30px; }
-        .btn-circle { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; }
-        .btn-circle:hover { background: #eee; }
+        .avatar-circle { width: 45px; height: 45px; border-radius: 12px; background: #eee; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <div class="d-flex align-items-center">
-        <i class="bi bi-list fs-4 me-3" style="cursor:pointer"></i>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" width="30" class="me-2">
-        <span class="fs-5 text-secondary">Correo Institucional</span>
-    </div>
-    <div class="flex-grow-1 mx-5">
-        <div class="input-group" style="max-width: 720px;">
-            <span class="input-group-text bg-light border-0 rounded-start-pill ps-3"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control bg-light border-0 rounded-end-pill" placeholder="Buscar en el correo">
+<div class="main-layout">
+    <nav class="mail-sidebar">
+        <div class="nav-icon active" title="Bandeja de entrada"><i class="bi bi-inbox"></i></div>
+        <div class="nav-icon" title="Enviados"><i class="bi bi-send"></i></div>
+        <div class="nav-icon" title="Archivados"><i class="bi bi-archive"></i></div>
+        <div class="nav-icon" title="Papelera"><i class="bi bi-trash"></i></div>
+        <div class="mt-auto nav-icon" title="Volver al Panel" onclick="window.location.href='administracion.html'"><i class="bi bi-house-door"></i></div>
+    </nav>
+
+    <div class="mail-list">
+        <div class="list-header">
+            <h4 class="fw-bold mb-3">Mensajes</h4>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0" placeholder="Filtrar por nombre...">
+            </div>
+        </div>
+        <div class="overflow-auto">
+            <div class="mail-item unread active" onclick="mostrarMail(this, 'Consejería de Educación', 'Nueva Circular 04/2026', 'Estimados centros, se comunica la apertura del plazo para la solicitud de becas de transporte...')">
+                <div class="d-flex justify-content-between mb-1">
+                    <small class="fw-bold text-primary">Consejería</small>
+                    <small class="text-muted">14:20</small>
+                </div>
+                <div class="fw-bold small text-dark">Nueva Circular 04/2026</div>
+                <div class="small text-muted text-truncate">Estimados centros, se comunica la...</div>
+            </div>
+            
+            <div class="mail-item unread" onclick="mostrarMail(this, 'Suministros Horeca', 'Albarán Entrega #4412', 'Adjuntamos el albarán de la mercancía entregada esta mañana en la zona de carga...')">
+                <div class="d-flex justify-content-between mb-1">
+                    <small class="fw-bold text-primary">Suministros</small>
+                    <small class="text-muted">11:05</small>
+                </div>
+                <div class="fw-bold small text-dark">Albarán Entrega #4412</div>
+                <div class="small text-muted text-truncate">Adjuntamos el albarán de la mercancía...</div>
+            </div>
+
+            <div class="mail-item" onclick="mostrarMail(this, 'Mantenimiento Fontanería', 'Presupuesto Grifería Cocina', 'Buenas tardes, le envío el presupuesto para la sustitución de los grifos del fregadero...')">
+                <div class="d-flex justify-content-between mb-1">
+                    <small class="fw-bold text-primary">Mantenimiento</small>
+                    <small class="text-muted">Ayer</small>
+                </div>
+                <div class="fw-bold small text-dark">Presupuesto Grifería</div>
+                <div class="small text-muted text-truncate">Buenas tardes, le envío el presupuesto...</div>
+            </div>
         </div>
     </div>
-    <a href="administracion.html" class="btn btn-outline-dark rounded-pill btn-sm">Volver al Panel</a>
-</header>
 
-<div class="app-container">
-    <aside class="sidebar">
-        <button class="btn-redactar" onclick="alert('Abriendo ventana de composición...')">
-            <i class="bi bi-pencil-fill me-2"></i> Redactar
-        </button>
-        <div class="nav-item active"><i class="bi bi-inbox-fill me-3"></i> Recibidos</div>
-        <div class="nav-item"><i class="bi bi-star me-3"></i> Destacados</div>
-        <div class="nav-item"><i class="bi bi-send me-3"></i> Enviados</div>
-        <div class="nav-item"><i class="bi bi-file-earmark me-3"></i> Borradores</div>
-        <div class="nav-item"><i class="bi bi-trash me-3"></i> Papelera</div>
-    </aside>
-
-    <main class="mail-box">
-        <div id="lista-correos">
-            <div class="mail-item unread" onclick="abrirCorreo('Generalitat Valenciana', 'GVA Educación', 'Instrucciones Comedor 2026', 'Se ha publicado el nuevo protocolo para la gestión de excedentes alimentarios en centros educativos...')">
-                <div class="ps-2"><input type="checkbox"></div>
-                <div class="d-flex align-items-center">
-                    <div class="avatar bg-danger me-2">GVA</div>
-                    <span>GVA Educación</span>
-                </div>
-                <div class="text-truncate">
-                    <span class="text-dark">Instrucciones Comedor 2026</span> - 
-                    <span class="text-muted fw-normal">Estimados, les hacemos llegar la circular...</span>
-                </div>
-                <div class="text-end text-muted small pe-3">12:15</div>
+    <div class="mail-content">
+        <div class="content-toolbar">
+            <div class="d-flex gap-3">
+                <button class="btn btn-sm btn-outline-secondary" onclick="alert('Respondiendo...')"><i class="bi bi-reply"></i></button>
+                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-forward"></i></button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
             </div>
-
-            <div class="mail-item unread" onclick="abrirCorreo('Martín Gómez', 'Mantenimiento El Pedrer', 'Reparación Campana Extractora', 'Hola, el técnico pasará mañana jueves a las 09:00 para revisar la extracción de humos de la cocina central.')">
-                <div class="ps-2"><input type="checkbox"></div>
-                <div class="d-flex align-items-center">
-                    <div class="avatar bg-primary me-2">MG</div>
-                    <span>Mantenimiento</span>
-                </div>
-                <div class="text-truncate">
-                    <span class="text-dark">Reparación Campana Extractora</span> - 
-                    <span class="text-muted fw-normal">Hola, el técnico pasará mañana jueves a las...</span>
-                </div>
-                <div class="text-end text-muted small pe-3">09:30</div>
-            </div>
-
-            <div class="mail-item" onclick="abrirCorreo('Factura Directa', 'Administración', 'Factura Suministros Enero', 'Adjuntamos la factura detallada de los suministros de papelería y material de oficina correspondientes...')">
-                <div class="ps-2"><input type="checkbox"></div>
-                <div class="d-flex align-items-center">
-                    <div class="avatar bg-success me-2">FD</div>
-                    <span>Factura Directa</span>
-                </div>
-                <div class="text-truncate">
-                    <span class="text-dark">Factura Suministros Enero</span> - 
-                    <span class="text-muted fw-normal">Adjuntamos la factura detallada de los...</span>
-                </div>
-                <div class="text-end text-muted small pe-3">Ayer</div>
-            </div>
+            <div class="text-muted small align-self-center">Sábado, 21 Feb 2026</div>
         </div>
 
-        <div id="visor">
-            <div class="d-flex mb-4">
-                <div class="btn-circle" onclick="cerrarCorreo()"><i class="bi bi-arrow-left"></i></div>
-                <div class="btn-circle ms-3"><i class="bi bi-archive"></i></div>
-                <div class="btn-circle"><i class="bi bi-trash"></i></div>
-                <div class="btn-circle"><i class="bi bi-envelope-open"></i></div>
-            </div>
-            <h2 id="v-asunto" class="mb-4"></h2>
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="d-flex align-items-center">
-                    <div id="v-avatar" class="avatar fs-5 me-3" style="width:48px; height:48px;"></div>
-                    <div>
-                        <strong id="v-nombre"></strong> <span class="text-muted">&lt;noreply@gva.es&gt;</span><br>
-                        <small>Para: administracion@elpedrer.es</small>
-                    </div>
+        <div class="content-body" id="mail-view">
+            <h2 class="fw-bold mb-4" id="m-asunto">Nueva Circular 04/2026</h2>
+            <div class="d-flex align-items-center mb-5">
+                <div class="avatar-circle bg-primary me-3" id="m-avatar">CO</div>
+                <div>
+                    <h6 class="m-0 fw-bold" id="m-nombre">Consejería de Educación</h6>
+                    <small class="text-muted">De: secretaria@educacion.gva.es</small>
                 </div>
-                <div class="text-muted small">21 feb 2026, 12:15</div>
             </div>
-            <div id="v-cuerpo" class="py-3" style="line-height: 1.7; color: #333;"></div>
-            <hr class="mt-5">
-            <div class="mt-3">
-                <button class="btn btn-outline-secondary rounded-pill me-2"><i class="bi bi-reply-fill"></i> Responder</button>
-                <button class="btn btn-outline-secondary rounded-pill"><i class="bi bi-arrow-right"></i> Reenviar</button>
+            <div class="mail-text" id="m-cuerpo" style="font-size: 1.1rem; line-height: 1.8; color: #444;">
+                Estimados centros, se comunica la apertura del plazo para la solicitud de becas de transporte para el próximo curso. 
+                Rogamos publiquen esta información en el tablón de anuncios y lo comuniquen a las familias.
             </div>
         </div>
-    </main>
+    </div>
 </div>
 
 <script>
-    function abrirCorreo(nombre, de, asunto, cuerpo) {
-        document.getElementById('lista-correos').style.display = 'none';
-        document.getElementById('visor').style.display = 'block';
-        
-        document.getElementById('v-nombre').innerText = de;
-        document.getElementById('v-asunto').innerText = asunto;
-        document.getElementById('v-cuerpo').innerText = cuerpo;
-        
-        // Generar avatar visual
-        const vAvatar = document.getElementById('v-avatar');
-        vAvatar.innerText = nombre.substring(0,2).toUpperCase();
-        vAvatar.style.backgroundColor = (de.includes('GVA')) ? '#dc3545' : '#0d6efd';
-    }
+    function mostrarMail(elemento, nombre, asunto, cuerpo) {
+        // Quitar 'active' de todos los items
+        document.querySelectorAll('.mail-item').forEach(item => item.classList.remove('active'));
+        // Añadir 'active' al seleccionado
+        elemento.classList.add('active');
+        // Marcar como leído (quitar círculo azul)
+        elemento.classList.remove('unread');
 
-    function cerrarCorreo() {
-        document.getElementById('lista-correos').style.display = 'block';
-        document.getElementById('visor').style.display = 'none';
+        // Actualizar contenido
+        document.getElementById('m-asunto').innerText = asunto;
+        document.getElementById('m-nombre').innerText = nombre;
+        document.getElementById('m-cuerpo').innerText = cuerpo;
+        
+        // Actualizar Avatar
+        const avatar = document.getElementById('m-avatar');
+        avatar.innerText = nombre.substring(0,2).toUpperCase();
+        
+        // Cambiar color de avatar según remitente
+        const colores = ['#3498db', '#e67e22', '#2ecc71', '#9b59b6'];
+        avatar.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
     }
 </script>
 </body>
