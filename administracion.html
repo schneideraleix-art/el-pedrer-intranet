@@ -7,39 +7,135 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        :root { --admin-blue: #2c3e50; --accent-blue: #3498db; }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        .header-admin { background: var(--admin-blue); color: white; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .card-tool { border: none; border-radius: 12px; transition: 0.3s; cursor: pointer; background: white; text-decoration: none; display: block; color: inherit; }
-        .card-tool:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-left: 5px solid var(--accent-blue); color: inherit; }
-        .icon-box { font-size: 2.5rem; color: var(--accent-blue); margin-bottom: 15px; }
+        :root { 
+            --admin-blue: #34495e; 
+            --accent-blue: #3498db; 
+        }
+        body { 
+            background-color: #f4f7f6; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+        /* Cabecera idéntica a tus capturas */
+        .header-admin { 
+            background: #3c4e5e; 
+            color: white; 
+            padding: 30px 0; 
+            margin-bottom: 40px;
+        }
+        /* Diseño de tarjetas corregido */
+        .card-tool { 
+            border: none; 
+            border-radius: 15px; 
+            transition: all 0.3s ease; 
+            cursor: pointer; 
+            background: white; 
+            text-decoration: none; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .card-tool:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 20px rgba(0,0,0,0.08); 
+            border-bottom: 4px solid var(--accent-blue);
+        }
+        .icon-box { 
+            font-size: 3rem; 
+            color: var(--accent-blue); 
+            margin-bottom: 15px; 
+        }
+        .card-tool h5 { 
+            color: #2c3e50; 
+            font-weight: 700; 
+            margin-bottom: 5px;
+        }
+        .card-tool p { 
+            font-size: 0.85rem; 
+            color: #7f8c8d; 
+            margin: 0;
+        }
     </style>
 </head>
 <body>
 
-<div class="header-admin mb-5">
+<div class="header-admin shadow-sm">
     <div class="container d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="fw-bold m-0"><i class="bi bi-briefcase-fill me-2"></i> GESTIÓN ADMINISTRATIVA</h2>
-            <small class="opacity-75">Área restringida de contabilidad</small>
+            <h1 class="fw-bold m-0"><i class="bi bi-briefcase-fill me-3"></i>GESTIÓN ADMINISTRATIVA</h1>
+            <p class="m-0 opacity-75">Área restringida de contabilidad y documentos</p>
         </div>
-        <a href="comedor.html" class="btn btn-outline-light btn-sm">Volver al Comedor</a>
+        <a href="comedor.html" class="btn btn-outline-light px-4">Volver al Comedor</a>
     </div>
 </div>
 
-<div class="container">
+<div class="container mb-5">
     <div class="row g-4">
         <div class="col-md-3">
-            <div class="card card-tool h-100 p-4 text-center" data-bs-toggle="modal" data-bs-target="#modalSeguridad">
+            <div class="card card-tool p-4 text-center" data-bs-toggle="modal" data-bs-target="#modalSeguridad">
                 <div class="icon-box"><i class="bi bi-bank"></i></div>
-                <h5 class="fw-bold">Cuenta Bancaria</h5>
-                <p class="text-muted small">Acceso seguro a banca online.</p>
+                <h5>Cuenta Bancaria</h5>
+                <p>Acceso seguro a banca online.</p>
             </div>
         </div>
 
-        <div class="col-md-3"><div class="card card-tool h-100 p-4 text-center"><div class="icon-box"><i class="bi bi-receipt"></i></div><h5 class="fw-bold">Recibos</h5><p class="text-muted small">Gestión de cobros.</p></div></div>
-        <div class="col-md-3"><div class="card card-tool h-100 p-4 text-center"><div class="icon-box"><i class="bi bi-cart-check"></i></div><h5 class="fw-bold">Pedidos</h5><p class="text-muted small">Compras y proveedores.</p></div></div>
-        <div class="col-md-3"><div class="card card-tool h-100 p-4 text-center"><div class="icon-box"><i class="bi bi-envelope-at"></i></div><h5 class="fw-bold">E-mail</h5><p class="text-muted small">Correo institucional.</p></div></div>
+        <div class="col-md-3">
+            <a href="recibos.html" class="card card-tool p-4 text-center">
+                <div class="icon-box"><i class="bi bi-receipt"></i></div>
+                <h5>Recibos</h5>
+                <p>Gestión de cobros y pagos.</p>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-tool p-4 text-center">
+                <div class="icon-box"><i class="bi bi-cart-check"></i></div>
+                <h5>Pedidos</h5>
+                <p>Compras y proveedores.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-tool p-4 text-center">
+                <div class="icon-box"><i class="bi bi-exclamation-triangle"></i></div>
+                <h5>Incidencias</h5>
+                <p>Mantenimiento y avisos.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-tool p-4 text-center">
+                <div class="icon-box"><i class="bi bi-file-earmark-text"></i></div>
+                <h5>Documentos</h5>
+                <p>Plantillas y normativa.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-tool p-4 text-center">
+                <div class="icon-box"><i class="bi bi-graph-up-arrow"></i></div>
+                <h5>Informes</h5>
+                <p>Memorias y balances.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-tool p-4 text-center">
+                <div class="icon-box"><i class="bi bi-folder2-open"></i></div>
+                <h5>Expedientes</h5>
+                <p>Archivo histórico.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-tool p-4 text-center">
+                <div class="icon-box"><i class="bi bi-envelope-at"></i></div>
+                <h5>E-mail</h5>
+                <p>Correo institucional.</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -47,12 +143,12 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-body text-center p-4">
-                <i class="bi bi-shield-lock-fill text-primary fs-1"></i>
-                <h5 class="mt-3 fw-bold">Verificación Requerida</h5>
-                <p class="text-muted small">Introduce la clave de acceso financiero</p>
+                <i class="bi bi-shield-lock text-primary display-4 mb-3"></i>
+                <h5 class="fw-bold">Acceso Protegido</h5>
+                <p class="text-muted small">Introduzca la clave financiera</p>
                 <input type="password" id="pass-banco" class="form-control text-center mb-3" placeholder="Contraseña">
-                <button onclick="validarBanco()" class="btn btn-primary w-100">Acceder</button>
-                <div id="error-bank" class="text-danger mt-2 small" style="display:none;">⚠️ Clave incorrecta</div>
+                <button onclick="validarAcceso()" class="btn btn-primary w-100">Verificar e Ingresar</button>
+                <div id="error-msg" class="text-danger mt-2 small" style="display:none;">❌ Clave incorrecta</div>
             </div>
         </div>
     </div>
@@ -60,13 +156,17 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function validarBanco() {
-        const clave = "adminbank2026";
-        const input = document.getElementById('pass-banco').value;
-        if (input === clave) {
+    function validarAcceso() {
+        // La contraseña que acordamos
+        const claveCorrecta = "adminbank2026";
+        const inputClave = document.getElementById('pass-banco').value;
+        const errorDiv = document.getElementById('error-msg');
+
+        if (inputClave === claveCorrecta) {
             window.location.href = "banco.html";
         } else {
-            document.getElementById('error-bank').style.display = 'block';
+            errorDiv.style.display = 'block';
+            document.getElementById('pass-banco').value = ""; // Limpiar input
         }
     }
 </script>
