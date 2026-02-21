@@ -3,203 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gmail - El Pedrer Intranet</title>
+    <title>Correo El Pedrer - Gmail Style</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        :root {
-            --gmail-red: #ea4335;
-            --gmail-blue: #1a73e8;
-            --gmail-gray: #f2f6fc;
-            --sidebar-width: 250px;
-        }
-        body { background-color: #f6f8fc; font-family: 'Open Sans', Arial, sans-serif; height: 100vh; overflow: hidden; }
+        :root { --g-blue: #1a73e8; --g-bg: #f6f8fc; --g-hover: #e1e3e1; }
+        body { background-color: var(--g-bg); font-family: 'Segoe UI', sans-serif; height: 100vh; overflow: hidden; }
         
-        /* Header estilo Google */
-        .gmail-header { background: #f6f8fc; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; }
-        .search-bar { background: #eaf1fb; border: none; border-radius: 24px; padding: 10px 20px; width: 100%; max-width: 700px; }
+        /* Layout */
+        .app-container { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 64px); }
+        .header { height: 64px; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
         
         /* Sidebar */
-        .sidebar { width: var(--sidebar-width); padding: 10px; }
-        .btn-compose { 
-            background: #c2e7ff; color: #001d35; padding: 16px 24px; 
-            border-radius: 16px; font-weight: 500; transition: 0.3s; margin-bottom: 20px;
-        }
-        .btn-compose:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.3); background: #b3d7ef; }
-        
-        .nav-link { 
-            border-radius: 0 20px 20px 0; color: #444746; padding: 8px 24px; 
-            margin-bottom: 2px; font-size: 0.9rem; transition: 0.2s; cursor: pointer;
-        }
-        .nav-link:hover { background-color: #e1e3e1; }
-        .nav-link.active { background-color: #d3e3fd; color: #041e49; font-weight: bold; }
+        .btn-redactar { background: #c2e7ff; border: none; padding: 18px 24px; border-radius: 16px; font-weight: 600; margin: 10px 0 20px 10px; transition: 0.3s; }
+        .btn-redactar:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .nav-item { border-radius: 0 25px 25px 0; padding: 10px 25px; cursor: pointer; color: #444; font-size: 0.95rem; }
+        .nav-item:hover { background: var(--g-hover); }
+        .nav-item.active { background: #d3e3fd; color: #041e49; font-weight: bold; }
 
-        /* Contenedor Principal */
-        .main-container { background: white; border-radius: 16px; margin: 0 16px 16px 0; display: flex; flex-direction: column; flex-grow: 1; }
-        
         /* Lista de Correos */
-        .email-row { 
-            display: flex; align-items: center; padding: 10px 16px; 
-            border-bottom: 1px solid #f1f3f4; cursor: pointer; font-size: 0.9rem; transition: 0.1s;
-        }
-        .email-row:hover { box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15); z-index: 1; }
-        .email-row.unread { background: #fff; font-weight: bold; }
-        .email-row.unread .text-muted { color: #202124 !important; }
-        
-        .sender { width: 200px; }
-        .subject-preview { flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .mail-box { background: white; border-radius: 16px; margin-right: 16px; margin-bottom: 16px; overflow-y: auto; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .mail-item { display: grid; grid-template-columns: 50px 200px 1fr 100px; padding: 12px 16px; border-bottom: 1px solid #f1f3f4; cursor: pointer; transition: 0.1s; align-items: center; }
+        .mail-item:hover { box-shadow: inset 1px 0 0 #dadce0, 0 1px 3px rgba(60,64,67,0.2); }
+        .mail-item.unread { font-weight: bold; background: #fff; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; }
 
-        /* Visor de Correo */
-        #email-detail { display: none; padding: 20px; }
-        .back-btn { cursor: pointer; font-size: 1.2rem; margin-right: 20px; padding: 8px; border-radius: 50%; }
-        .back-btn:hover { background: #eee; }
+        /* Visor */
+        #visor { display: none; padding: 30px; }
+        .btn-circle { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; }
+        .btn-circle:hover { background: #eee; }
     </style>
 </head>
-<body class="d-flex flex-column">
+<body>
 
-    <header class="gmail-header">
-        <div class="d-flex align-items-center">
-            <i class="bi bi-list fs-4 me-3"></i>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" width="30" class="me-2">
-            <span class="fs-5 text-muted">Gmail</span>
-        </div>
-        <input type="text" class="search-bar" placeholder="Buscar en el correo">
-        <div class="d-flex align-items-center">
-            <a href="administracion.html" class="btn btn-outline-primary btn-sm rounded-pill">Salir a Intranet</a>
-        </div>
-    </header>
-
-    <div class="d-flex flex-grow-1">
-        <div class="sidebar">
-            <button class="btn btn-compose d-flex align-items-center" onclick="redactar()">
-                <i class="bi bi-pencil fs-4 me-3"></i> Redactar
-            </button>
-            <div class="nav flex-column">
-                <div class="nav-link active" onclick="cambiarCarpeta(this, 'Recibidos')">
-                    <i class="bi bi-inbox-fill me-3"></i> Recibidos <span class="float-end">2</span>
-                </div>
-                <div class="nav-link" onclick="cambiarCarpeta(this, 'Destacados')">
-                    <i class="bi bi-star me-3"></i> Destacados
-                </div>
-                <div class="nav-link" onclick="cambiarCarpeta(this, 'Enviados')">
-                    <i class="bi bi-send me-3"></i> Enviados
-                </div>
-                <div class="nav-link" onclick="cambiarCarpeta(this, 'Borradores')">
-                    <i class="bi bi-file-earmark me-3"></i> Borradores
-                </div>
-                <div class="nav-link" onclick="cambiarCarpeta(this, 'Papelera')">
-                    <i class="bi bi-trash me-3"></i> Papelera
-                </div>
-            </div>
-        </div>
-
-        <main class="main-container shadow-sm overflow-auto">
-            
-            <div id="email-list-view">
-                <div class="p-2 border-bottom d-flex align-items-center bg-white" style="position: sticky; top:0; z-index: 10;">
-                    <div class="ms-3 me-4"><input type="checkbox"></div>
-                    <i class="bi bi-arrow-clockwise p-2"></i>
-                    <i class="bi bi-three-dots-vertical p-2"></i>
-                </div>
-
-                <div class="email-row unread" onclick="verDetalle('Secretaría GVA', 'Nueva normativa Comedores 2026', 'Estimados directores, adjuntamos la normativa vigente para el próximo curso escolar. Es obligatorio revisar los protocolos de alérgenos.')">
-                    <div class="mx-3"><input type="checkbox"></div>
-                    <i class="bi bi-star me-3 text-muted"></i>
-                    <div class="sender">Secretaría GVA</div>
-                    <div class="subject-preview">
-                        <span>Nueva normativa Comedores 2026</span> - <span class="text-muted fw-normal">Estimados directores, adjuntamos la normativa vigente...</span>
-                    </div>
-                    <div class="ms-2 text-muted small">10:45</div>
-                </div>
-
-                <div class="email-row unread" onclick="verDetalle('Proveedor Fruta', 'Retraso en entrega Lunes 23', 'Lamentamos informar que el camión de reparto ha sufrido una avería. La fruta llegará a las 11:00 AM.')">
-                    <div class="mx-3"><input type="checkbox"></div>
-                    <i class="bi bi-star me-3 text-muted"></i>
-                    <div class="sender">Proveedor Fruta</div>
-                    <div class="subject-preview">
-                        <span>Retraso en entrega Lunes 23</span> - <span class="text-muted fw-normal">Lamentamos informar que el camión de reparto...</span>
-                    </div>
-                    <div class="ms-2 text-muted small">09:12</div>
-                </div>
-
-                <div class="email-row" onclick="verDetalle('Mantenimiento Gómez', 'Presupuesto Aire Acondicionado', 'Adjunto envío el presupuesto solicitado para la reparación de la unidad del comedor.')">
-                    <div class="mx-3"><input type="checkbox"></div>
-                    <i class="bi bi-star me-3 text-muted"></i>
-                    <div class="sender">Mantenimiento Gómez</div>
-                    <div class="subject-preview">
-                        <span>Presupuesto Aire Acondicionado</span> - <span class="text-muted fw-normal">Adjunto envío el presupuesto solicitado para...</span>
-                    </div>
-                    <div class="ms-2 text-muted small">Ayer</div>
-                </div>
-            </div>
-
-            <div id="email-detail">
-                <div class="d-flex align-items-center mb-4">
-                    <i class="bi bi-arrow-left back-btn" onclick="volverALista()"></i>
-                    <i class="bi bi-archive p-2"></i>
-                    <i class="bi bi-exclamation-octagon p-2"></i>
-                    <i class="bi bi-trash p-2" onclick="volverALista(); alert('Correo movido a la papelera')"></i>
-                </div>
-                <h3 id="view-subject" class="mb-4"></h3>
-                <div class="d-flex align-items-center mb-4">
-                    <i class="bi bi-person-circle fs-2 me-3 text-secondary"></i>
-                    <div>
-                        <strong id="view-sender"></strong> <span class="text-muted small">&lt;correo-ficticio@elpedrer.es&gt;</span><br>
-                        <small class="text-muted">Para mí</small>
-                    </div>
-                </div>
-                <p id="view-body" style="white-space: pre-line; line-height: 1.6;"></p>
-                <div class="mt-5">
-                    <button class="btn btn-outline-secondary btn-sm me-2" onclick="alert('Abriendo respuesta...')"><i class="bi bi-reply-fill"></i> Responder</button>
-                    <button class="btn btn-outline-secondary btn-sm" onclick="alert('Reenviando...')"><i class="bi bi-forward-fill"></i> Reenviar</button>
-                </div>
-            </div>
-
-        </main>
+<header class="header">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-list fs-4 me-3" style="cursor:pointer"></i>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" width="30" class="me-2">
+        <span class="fs-5 text-secondary">Correo Institucional</span>
     </div>
+    <div class="flex-grow-1 mx-5">
+        <div class="input-group" style="max-width: 720px;">
+            <span class="input-group-text bg-light border-0 rounded-start-pill ps-3"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control bg-light border-0 rounded-end-pill" placeholder="Buscar en el correo">
+        </div>
+    </div>
+    <a href="administracion.html" class="btn btn-outline-dark rounded-pill btn-sm">Volver al Panel</a>
+</header>
 
-    <script>
-        function verDetalle(remitente, asunto, cuerpo) {
-            document.getElementById('email-list-view').style.display = 'none';
-            document.getElementById('email-detail').style.display = 'block';
-            
-            document.getElementById('view-sender').innerText = remitente;
-            document.getElementById('view-subject').innerText = asunto;
-            document.getElementById('view-body').innerText = cuerpo;
-        }
+<div class="app-container">
+    <aside class="sidebar">
+        <button class="btn-redactar" onclick="alert('Abriendo ventana de composición...')">
+            <i class="bi bi-pencil-fill me-2"></i> Redactar
+        </button>
+        <div class="nav-item active"><i class="bi bi-inbox-fill me-3"></i> Recibidos</div>
+        <div class="nav-item"><i class="bi bi-star me-3"></i> Destacados</div>
+        <div class="nav-item"><i class="bi bi-send me-3"></i> Enviados</div>
+        <div class="nav-item"><i class="bi bi-file-earmark me-3"></i> Borradores</div>
+        <div class="nav-item"><i class="bi bi-trash me-3"></i> Papelera</div>
+    </aside>
 
-        function volverALista() {
-            document.getElementById('email-list-view').style.display = 'block';
-            document.getElementById('email-detail').style.display = 'none';
-        }
+    <main class="mail-box">
+        <div id="lista-correos">
+            <div class="mail-item unread" onclick="abrirCorreo('Generalitat Valenciana', 'GVA Educación', 'Instrucciones Comedor 2026', 'Se ha publicado el nuevo protocolo para la gestión de excedentes alimentarios en centros educativos...')">
+                <div class="ps-2"><input type="checkbox"></div>
+                <div class="d-flex align-items-center">
+                    <div class="avatar bg-danger me-2">GVA</div>
+                    <span>GVA Educación</span>
+                </div>
+                <div class="text-truncate">
+                    <span class="text-dark">Instrucciones Comedor 2026</span> - 
+                    <span class="text-muted fw-normal">Estimados, les hacemos llegar la circular...</span>
+                </div>
+                <div class="text-end text-muted small pe-3">12:15</div>
+            </div>
 
-        function cambiarCarpeta(el, nombre) {
-            // Quitar clase active de todos
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            // Poner active al actual
-            el.classList.add('active');
-            
-            if(nombre === 'Recibidos') {
-                volverALista();
-            } else {
-                document.getElementById('email-list-view').innerHTML = `
-                    <div class="text-center mt-5 p-5 text-muted">
-                        <i class="bi bi-folder-x display-1"></i>
-                        <p class="mt-3 fs-5">La carpeta <strong>${nombre}</strong> está vacía en este momento.</p>
+            <div class="mail-item unread" onclick="abrirCorreo('Martín Gómez', 'Mantenimiento El Pedrer', 'Reparación Campana Extractora', 'Hola, el técnico pasará mañana jueves a las 09:00 para revisar la extracción de humos de la cocina central.')">
+                <div class="ps-2"><input type="checkbox"></div>
+                <div class="d-flex align-items-center">
+                    <div class="avatar bg-primary me-2">MG</div>
+                    <span>Mantenimiento</span>
+                </div>
+                <div class="text-truncate">
+                    <span class="text-dark">Reparación Campana Extractora</span> - 
+                    <span class="text-muted fw-normal">Hola, el técnico pasará mañana jueves a las...</span>
+                </div>
+                <div class="text-end text-muted small pe-3">09:30</div>
+            </div>
+
+            <div class="mail-item" onclick="abrirCorreo('Factura Directa', 'Administración', 'Factura Suministros Enero', 'Adjuntamos la factura detallada de los suministros de papelería y material de oficina correspondientes...')">
+                <div class="ps-2"><input type="checkbox"></div>
+                <div class="d-flex align-items-center">
+                    <div class="avatar bg-success me-2">FD</div>
+                    <span>Factura Directa</span>
+                </div>
+                <div class="text-truncate">
+                    <span class="text-dark">Factura Suministros Enero</span> - 
+                    <span class="text-muted fw-normal">Adjuntamos la factura detallada de los...</span>
+                </div>
+                <div class="text-end text-muted small pe-3">Ayer</div>
+            </div>
+        </div>
+
+        <div id="visor">
+            <div class="d-flex mb-4">
+                <div class="btn-circle" onclick="cerrarCorreo()"><i class="bi bi-arrow-left"></i></div>
+                <div class="btn-circle ms-3"><i class="bi bi-archive"></i></div>
+                <div class="btn-circle"><i class="bi bi-trash"></i></div>
+                <div class="btn-circle"><i class="bi bi-envelope-open"></i></div>
+            </div>
+            <h2 id="v-asunto" class="mb-4"></h2>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <div id="v-avatar" class="avatar fs-5 me-3" style="width:48px; height:48px;"></div>
+                    <div>
+                        <strong id="v-nombre"></strong> <span class="text-muted">&lt;noreply@gva.es&gt;</span><br>
+                        <small>Para: administracion@elpedrer.es</small>
                     </div>
-                `;
-            }
-        }
+                </div>
+                <div class="text-muted small">21 feb 2026, 12:15</div>
+            </div>
+            <div id="v-cuerpo" class="py-3" style="line-height: 1.7; color: #333;"></div>
+            <hr class="mt-5">
+            <div class="mt-3">
+                <button class="btn btn-outline-secondary rounded-pill me-2"><i class="bi bi-reply-fill"></i> Responder</button>
+                <button class="btn btn-outline-secondary rounded-pill"><i class="bi bi-arrow-right"></i> Reenviar</button>
+            </div>
+        </div>
+    </main>
+</div>
 
-        function redactar() {
-            const dest = prompt("Para:");
-            if(dest) {
-                const sub = prompt("Asunto:");
-                alert("Mensaje enviado correctamente a: " + dest);
-            }
-        }
-    </script>
+<script>
+    function abrirCorreo(nombre, de, asunto, cuerpo) {
+        document.getElementById('lista-correos').style.display = 'none';
+        document.getElementById('visor').style.display = 'block';
+        
+        document.getElementById('v-nombre').innerText = de;
+        document.getElementById('v-asunto').innerText = asunto;
+        document.getElementById('v-cuerpo').innerText = cuerpo;
+        
+        // Generar avatar visual
+        const vAvatar = document.getElementById('v-avatar');
+        vAvatar.innerText = nombre.substring(0,2).toUpperCase();
+        vAvatar.style.backgroundColor = (de.includes('GVA')) ? '#dc3545' : '#0d6efd';
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    function cerrarCorreo() {
+        document.getElementById('lista-correos').style.display = 'block';
+        document.getElementById('visor').style.display = 'none';
+    }
+</script>
 </body>
 </html>
