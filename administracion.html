@@ -8,34 +8,32 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root { 
-            --admin-blue: #34495e; 
+            --admin-blue: #3c4e5e; 
             --accent-blue: #3498db; 
         }
         body { 
             background-color: #f4f7f6; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: 'Segoe UI', sans-serif; 
         }
-        /* Cabecera idéntica a tus capturas */
         .header-admin { 
-            background: #3c4e5e; 
+            background: var(--admin-blue); 
             color: white; 
             padding: 30px 0; 
             margin-bottom: 40px;
         }
-        /* Diseño de tarjetas corregido */
         .card-tool { 
             border: none; 
             border-radius: 15px; 
             transition: all 0.3s ease; 
-            cursor: pointer; 
             background: white; 
-            text-decoration: none; 
+            text-decoration: none !important; 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 200px;
+            min-height: 220px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            color: inherit;
         }
         .card-tool:hover { 
             transform: translateY(-8px); 
@@ -47,16 +45,8 @@
             color: var(--accent-blue); 
             margin-bottom: 15px; 
         }
-        .card-tool h5 { 
-            color: #2c3e50; 
-            font-weight: 700; 
-            margin-bottom: 5px;
-        }
-        .card-tool p { 
-            font-size: 0.85rem; 
-            color: #7f8c8d; 
-            margin: 0;
-        }
+        h5 { font-weight: 700; color: #2c3e50; }
+        .text-muted { font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -74,10 +64,10 @@
 <div class="container mb-5">
     <div class="row g-4">
         <div class="col-md-3">
-            <div class="card card-tool p-4 text-center" data-bs-toggle="modal" data-bs-target="#modalSeguridad">
+            <div class="card card-tool p-4 text-center" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#modalSeguridad">
                 <div class="icon-box"><i class="bi bi-bank"></i></div>
                 <h5>Cuenta Bancaria</h5>
-                <p>Acceso seguro a banca online.</p>
+                <p class="text-muted">Acceso seguro a banca online.</p>
             </div>
         </div>
 
@@ -85,56 +75,56 @@
             <a href="recibos.html" class="card card-tool p-4 text-center">
                 <div class="icon-box"><i class="bi bi-receipt"></i></div>
                 <h5>Recibos</h5>
-                <p>Gestión de cobros y pagos.</p>
+                <p class="text-muted">Gestión de cobros y pagos.</p>
             </a>
         </div>
 
         <div class="col-md-3">
-            <div class="card card-tool p-4 text-center">
+            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Abriendo sistema de pedidos a proveedores...')">
                 <div class="icon-box"><i class="bi bi-cart-check"></i></div>
                 <h5>Pedidos</h5>
-                <p>Compras y proveedores.</p>
-            </div>
+                <p class="text-muted">Compras y proveedores.</p>
+            </a>
         </div>
 
         <div class="col-md-3">
-            <div class="card card-tool p-4 text-center">
+            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Módulo de mantenimiento técnico')">
                 <div class="icon-box"><i class="bi bi-exclamation-triangle"></i></div>
                 <h5>Incidencias</h5>
-                <p>Mantenimiento y avisos.</p>
-            </div>
+                <p class="text-muted">Mantenimiento y avisos.</p>
+            </a>
         </div>
 
         <div class="col-md-3">
-            <div class="card card-tool p-4 text-center">
+            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Cargando repositorio de plantillas...')">
                 <div class="icon-box"><i class="bi bi-file-earmark-text"></i></div>
                 <h5>Documentos</h5>
-                <p>Plantillas y normativa.</p>
-            </div>
+                <p class="text-muted">Plantillas y normativa.</p>
+            </a>
         </div>
 
         <div class="col-md-3">
-            <div class="card card-tool p-4 text-center">
+            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Generando balances mensuales...')">
                 <div class="icon-box"><i class="bi bi-graph-up-arrow"></i></div>
                 <h5>Informes</h5>
-                <p>Memorias y balances.</p>
-            </div>
+                <p class="text-muted">Memorias y balances.</p>
+            </a>
         </div>
 
         <div class="col-md-3">
-            <div class="card card-tool p-4 text-center">
+            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Accediendo al archivo histórico')">
                 <div class="icon-box"><i class="bi bi-folder2-open"></i></div>
                 <h5>Expedientes</h5>
-                <p>Archivo histórico.</p>
-            </div>
+                <p class="text-muted">Archivo histórico.</p>
+            </a>
         </div>
 
         <div class="col-md-3">
-            <div class="card card-tool p-4 text-center">
+            <a href="email.html" class="card card-tool p-4 text-center">
                 <div class="icon-box"><i class="bi bi-envelope-at"></i></div>
                 <h5>E-mail</h5>
-                <p>Correo institucional.</p>
-            </div>
+                <p class="text-muted">Correo institucional.</p>
+            </a>
         </div>
     </div>
 </div>
@@ -144,11 +134,10 @@
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-body text-center p-4">
                 <i class="bi bi-shield-lock text-primary display-4 mb-3"></i>
-                <h5 class="fw-bold">Acceso Protegido</h5>
-                <p class="text-muted small">Introduzca la clave financiera</p>
+                <h5 class="fw-bold">Acceso Seguro</h5>
                 <input type="password" id="pass-banco" class="form-control text-center mb-3" placeholder="Contraseña">
-                <button onclick="validarAcceso()" class="btn btn-primary w-100">Verificar e Ingresar</button>
-                <div id="error-msg" class="text-danger mt-2 small" style="display:none;">❌ Clave incorrecta</div>
+                <button onclick="validarAcceso()" class="btn btn-primary w-100">Ingresar al Banco</button>
+                <div id="error-msg" class="text-danger mt-2 small" style="display:none;">❌ Contraseña incorrecta</div>
             </div>
         </div>
     </div>
@@ -157,16 +146,12 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function validarAcceso() {
-        // La contraseña que acordamos
-        const claveCorrecta = "adminbank2026";
-        const inputClave = document.getElementById('pass-banco').value;
-        const errorDiv = document.getElementById('error-msg');
-
-        if (inputClave === claveCorrecta) {
+        const pass = document.getElementById('pass-banco').value;
+        if (pass === "adminbank2026") {
             window.location.href = "banco.html";
         } else {
-            errorDiv.style.display = 'block';
-            document.getElementById('pass-banco').value = ""; // Limpiar input
+            document.getElementById('error-msg').style.display = 'block';
+            document.getElementById('pass-banco').value = "";
         }
     }
 </script>
