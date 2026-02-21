@@ -10,13 +10,12 @@
         :root { --bank-blue: #004481; --bank-sky: #005eb8; }
         body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
         .bank-header { background: var(--bank-blue); color: white; padding: 15px 0; }
-        .nav-tabs .nav-link { color: var(--bank-blue); fw-bold; }
-        .nav-tabs .nav-link.active { background-color: var(--bank-blue); color: white !important; border: none; }
-        .balance-card { border: none; border-radius: 12px; background: linear-gradient(135deg, var(--bank-blue) 0%, var(--bank-sky) 100%); color: white; transition: 0.3s; }
-        .balance-card:hover { transform: scale(1.02); }
-        .doc-card { border-left: 4px solid var(--bank-sky); transition: 0.2s; cursor: pointer; }
-        .doc-card:hover { background-color: #f8f9fa; }
-        .status-paid { color: #27ae60; font-size: 0.8rem; fw-bold; }
+        .nav-tabs .nav-link { color: var(--bank-blue); font-weight: bold; border: none; margin-right: 10px; }
+        .nav-tabs .nav-link.active { background-color: var(--bank-blue); color: white !important; border-radius: 5px; }
+        .balance-card { border: none; border-radius: 12px; background: linear-gradient(135deg, var(--bank-blue) 0%, var(--bank-sky) 100%); color: white; }
+        .doc-card { border-left: 4px solid var(--bank-sky); transition: 0.2s; }
+        .doc-card:hover { background-color: #f8f9fa; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .status-paid { color: #27ae60; font-size: 0.8rem; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -31,42 +30,39 @@
 <div class="container py-5">
     <ul class="nav nav-tabs mb-4 border-0" id="bankTabs" role="tablist">
         <li class="nav-item">
-            <button class="nav-link active me-2 rounded shadow-sm" id="resumen-tab" data-bs-toggle="tab" data-bs-target="#resumen" type="button">
+            <button class="nav-link active shadow-sm" id="resumen-tab" data-bs-toggle="tab" data-bs-target="#resumen" type="button">
                 <i class="bi bi-house-door me-1"></i> Resumen de Cuenta
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link rounded shadow-sm" id="facturas-tab" data-bs-toggle="tab" data-bs-target="#facturas" type="button">
+            <button class="nav-link shadow-sm" id="facturas-tab" data-bs-toggle="tab" data-bs-target="#facturas" type="button">
                 <i class="bi bi-file-earmark-pdf me-1"></i> Facturas y Tiques
             </button>
         </li>
     </ul>
 
-    <div class="tab-content" id="bankTabsContent">
-        
-        <div class="tab-pane fade show active" id="resumen" role="tabpanel">
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="resumen">
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <div class="card balance-card p-4 shadow">
                         <small class="opacity-75">Saldo Disponible</small>
                         <h1 class="fw-bold mt-2">14.250,60 €</h1>
                         <hr>
-                        <small class="d-block mb-1">IBAN: ES21 0049 1234 56 7890123456</small>
-                        <span class="badge bg-light text-primary mt-2">Cuenta Corriente Operativa</span>
+                        <small>IBAN: ES21 0049 1234 56 7890123456</small>
                     </div>
                 </div>
                 <div class="col-md-8">
                     <div class="card shadow-sm border-0">
                         <div class="card-header bg-white fw-bold py-3">Últimos Movimientos</div>
-                        <div class="card-body p-0 text-center">
-                            <table class="table table-hover m-0 align-middle">
+                        <div class="card-body p-0">
+                            <table class="table table-hover m-0">
                                 <thead class="table-light">
                                     <tr><th>Fecha</th><th>Concepto</th><th class="text-end">Importe</th></tr>
                                 </thead>
                                 <tbody>
                                     <tr><td>19/02/2026</td><td>Ingreso Recibos Mensuales</td><td class="text-end text-success">+4.200,00 €</td></tr>
                                     <tr><td>18/02/2026</td><td>Factura Luz - Endesa</td><td class="text-end text-danger">-840,20 €</td></tr>
-                                    <tr><td>15/02/2026</td><td>Proveedor Alimentación S.L.</td><td class="text-end text-danger">-1.150,00 €</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -75,14 +71,16 @@
             </div>
         </div>
 
-        <div class="tab-pane fade" id="facturas" role="tabpanel">
+        <div class="tab-pane fade" id="facturas">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                     <h5 class="m-0 fw-bold text-primary">Archivo de Justificantes</h5>
-                    <button class="btn btn-sm btn-primary"><i class="bi bi-upload"></i> Subir Nuevo</button>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalSubir">
+                        <i class="bi bi-plus-lg"></i> Subir Nuevo
+                    </button>
                 </div>
                 <div class="card-body bg-light">
-                    <div class="row g-3">
+                    <div class="row g-3" id="contenedorFacturas">
                         <div class="col-md-6">
                             <div class="card doc-card p-3 shadow-sm">
                                 <div class="d-flex justify-content-between">
@@ -100,48 +98,87 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card doc-card p-3 shadow-sm">
-                                <div class="d-flex justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-receipt text-warning fs-2 me-3"></i>
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">Tiquet Material Escolar</h6>
-                                            <small class="text-muted">Papelería Central</small>
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="fw-bold">45,15 €</div>
-                                        <span class="status-paid"><i class="bi bi-check-circle-fill"></i> Pagado</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card doc-card p-3 shadow-sm">
-                                <div class="d-flex justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-file-pdf text-danger fs-2 me-3"></i>
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">Reparación Aire Acondicionado</h6>
-                                            <small class="text-muted">Mantenimientos Gómez</small>
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="fw-bold">210,00 €</div>
-                                        <span class="status-paid"><i class="bi bi-check-circle-fill"></i> Pagado</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
+<div class="modal fade" id="modalSubir" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Subir Justificante</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSubir">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Tipo de documento</label>
+                        <select id="tipoDoc" class="form-select">
+                            <option value="bi-file-pdf text-danger">Factura (PDF)</option>
+                            <option value="bi-receipt text-warning">Tiquet (Recibo)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Concepto / Proveedor</label>
+                        <input type="text" id="conceptoDoc" class="form-control" placeholder="Ej: Mercadona, Papelería..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Importe (€)</label>
+                        <input type="number" step="0.01" id="importeDoc" class="form-control" placeholder="0.00" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Archivo</label>
+                        <input type="file" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Registrar en el Sistema</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('formSubir').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Obtener valores
+        const tipo = document.getElementById('tipoDoc').value;
+        const concepto = document.getElementById('conceptoDoc').value;
+        const importe = document.getElementById('importeDoc').value;
+        
+        // Crear el nuevo elemento HTML
+        const nuevaCard = `
+            <div class="col-md-6">
+                <div class="card doc-card p-3 shadow-sm border-primary">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <i class="bi ${tipo} fs-2 me-3"></i>
+                            <div>
+                                <h6 class="mb-0 fw-bold">${concepto}</h6>
+                                <small class="text-muted">Subido ahora mismo</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">${importe} €</div>
+                            <span class="status-paid"><i class="bi bi-check-circle-fill"></i> Procesado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Añadir al contenedor
+        document.getElementById('contenedorFacturas').insertAdjacentHTML('afterbegin', nuevaCard);
+        
+        // Cerrar modal y limpiar
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalSubir'));
+        modal.hide();
+        this.reset();
+    });
+</script>
 </body>
 </html>
