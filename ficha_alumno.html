@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centralita Inteligente - El Pedrer</title>
+    <title>Centralita El Pedrer - Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -13,7 +13,7 @@
         .sidebar-ficha { background: #2c3e50; color: white; width: 320px; padding: 30px 20px; text-align: center; }
         .avatar-circle { width: 100px; height: 100px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 15px; border: 4px solid rgba(255,255,255,0.1); }
 
-        /* Centralita con Bot de Voz */
+        /* Centralita */
         #callOverlay { 
             display: none; position: fixed; top: 20px; right: 20px; width: 350px; 
             background: #121212; color: white; border-radius: 15px; padding: 25px; 
@@ -21,40 +21,46 @@
         }
 
         .bot-waves { display: flex; justify-content: center; align-items: center; gap: 4px; height: 40px; margin: 15px 0; }
-        .wave { width: 4px; height: 10px; background: #00d2ff; border-radius: 2px; }
+        .wave { width: 4px; height: 10px; background: #00d2ff; border-radius: 2px; transition: 0.3s; }
         .wave.active { animation: wavePulse 0.5s infinite; }
         @keyframes wavePulse { 0%, 100% { height: 10px; } 50% { height: 35px; } }
 
-        .bot-bubble { font-size: 0.9rem; color: #00d2ff; background: rgba(0,210,255,0.1); padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(0,210,255,0.3); }
+        .bot-bubble { font-size: 0.85rem; color: #00d2ff; background: rgba(0,210,255,0.1); padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(0,210,255,0.3); min-height: 65px; display: flex; align-items: center; justify-content: center; }
 
-        /* Indicador de Micrófono */
         #micIndicator { display: none; color: #ff4757; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
+        #smsStatus { display: none; color: #2ecc71; font-size: 0.75rem; margin-top: 10px; font-weight: bold; }
+
         .timer { font-family: 'Courier New', monospace; font-size: 1.5rem; color: #2ecc71; }
-        .btn-hangup { background: #ff4757; border: none; color: white; width: 50px; height: 50px; border-radius: 50%; }
+        .btn-hangup { background: #ff4757; border: none; color: white; width: 50px; height: 50px; border-radius: 50%; transition: 0.3s; }
+        .btn-hangup:hover { transform: scale(1.1); background: #c0392b; }
 
         .content-ficha { flex: 1; padding: 45px; position: relative; }
     </style>
 </head>
 <body>
 
-<audio id="waitingMusic" src="https://www.chosic.com/wp-content/uploads/2021/07/The-Elevator-Bossa-Nova.mp3" loop></audio>
+<audio id="waitingMusic" preload="auto">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
+</audio>
+<audio id="smsSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
 
 <div id="callOverlay">
-    <div class="small opacity-50 mb-2">IA VOICE CONTROL + IVR</div>
+    <div class="small opacity-50 mb-2">IVR SYSTEM v2.0 - SONIDO OK</div>
     
-    <div class="bot-waves" id="waveContainer">
+    <div class="bot-waves">
         <div class="wave active"></div><div class="wave active" style="animation-delay: 0.1s"></div>
         <div class="wave active" style="animation-delay: 0.2s"></div><div class="wave active" style="animation-delay: 0.3s"></div>
         <div class="wave active" style="animation-delay: 0.4s"></div>
     </div>
 
-    <div id="botSpeech" class="bot-bubble">Iniciando protocolo vocal...</div>
+    <div id="botSpeech" class="bot-bubble">Preparando audio...</div>
     
-    <div id="micIndicator"><i class="bi bi-mic-fill"></i> ESCUCHANDO TU RESPUESTA...</div>
+    <div id="micIndicator"><i class="bi bi-mic-fill"></i> LE ESCUCHO...</div>
+    <div id="smsStatus"><i class="bi bi-chat-left-text-fill"></i> SMS ENVIADO A LA FAMILIA</div>
 
-    <h6 id="callStatus" class="mb-1">Centralita Virtual</h6>
+    <h6 id="callStatus" class="mb-1">Centralita</h6>
     <span class="timer" id="timerDisplay">00:00</span>
 
     <div class="d-flex justify-content-center mt-3">
@@ -65,23 +71,26 @@
 <div class="ficha-container">
     <div class="sidebar-ficha">
         <div class="avatar-circle" id="avatarLetra">--</div>
-        <h4 class="fw-bold mb-1" id="nombreAlumno">Alumno</h4>
+        <h4 class="fw-bold mb-1" id="nombreAlumno">...</h4>
         <p class="small text-info mb-4" id="niaAlumno">NIA: 1084251</p>
         
-        <button class="btn btn-info w-100 fw-bold py-3 shadow-sm text-white" onclick="startAdvancedBot()">
-            <i class="bi bi-robot me-2"></i> LLAMADA POR VOZ
+        <button class="btn btn-primary w-100 fw-bold py-3 shadow-sm mb-3" onclick="startFullIvr()">
+            <i class="bi bi-telephone-plus-fill me-2"></i> LLAMADA CON SONIDO
         </button>
+        
+        <div class="text-start small opacity-50 px-2">
+            <i class="bi bi-info-circle me-1"></i> El sistema enviará un SMS si no hay respuesta en 10 segundos.
+        </div>
     </div>
 
     <div class="content-ficha">
         <h4 class="fw-bold mb-4">Gestión de Centro</h4>
         <ul class="nav nav-tabs mb-4">
-            <li class="nav-item"><a class="nav-link active" onclick="showTab('notas')">Notas</a></li>
-            <li class="nav-item"><a class="nav-link" onclick="showTab('historial')">Registro IA</a></li>
+            <li class="nav-item"><a class="nav-link active" onclick="showTab('notas')">Académico</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="showTab('historial')">Log de Eventos</a></li>
         </ul>
         <div id="sec-notas">
             <table class="table table-hover border small">
-                <thead><tr class="table-light"><th>Asignatura</th><th class="text-center">Nota</th></tr></thead>
                 <tbody id="notasCuerpo"></tbody>
             </table>
         </div>
@@ -92,82 +101,86 @@
 </div>
 
 <script>
-    // Inicialización de Datos
     const params = new URLSearchParams(window.location.search);
-    const nombre = params.get('nombre') || 'Estudiante';
+    const nombre = params.get('nombre') || 'Alumno';
     document.getElementById('nombreAlumno').innerText = nombre;
     document.getElementById('avatarLetra').innerText = nombre[0].toUpperCase();
-    ["Lengua", "Matemáticas", "Física"].forEach(m => {
-        document.getElementById('notasCuerpo').innerHTML += `<tr><td>${m}</td><td class="text-center fw-bold">9.0</td></tr>`;
-    });
+    document.getElementById('notasCuerpo').innerHTML = `<tr><td>Comportamiento</td><td class="text-end fw-bold">Excelente</td></tr>`;
 
-    let timer; let sec = 0;
-    const waitingMusic = document.getElementById('waitingMusic');
-    
-    // Configuración de Reconocimiento de Voz
+    let timer; let sec = 0; let step = 1;
+    let smsTimer;
+    const music = document.getElementById('waitingMusic');
+    const smsAudio = document.getElementById('smsSound');
+
+    // RECONOCIMIENTO
     const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = Recognition ? new Recognition() : null;
-    if (recognition) {
-        recognition.lang = 'es-ES';
-        recognition.continuous = false;
-    }
+    if (recognition) { recognition.lang = 'es-ES'; recognition.continuous = false; }
 
     function botSpeak(text, callback) {
+        // Cancelar cualquier habla anterior
+        window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = 'es-ES';
+        msg.rate = 1.1;
         msg.onend = callback;
         window.speechSynthesis.speak(msg);
         document.getElementById('botSpeech').innerText = `"${text}"`;
     }
 
-    function startAdvancedBot() {
+    function startFullIvr() {
+        // Truco para activar audio en navegadores
+        music.play(); music.pause(); music.currentTime = 0;
+        
         document.getElementById('callOverlay').style.display = 'block';
-        botSpeak("Hola. Soy el asistente de El Pedrer. ¿Desea grabar esta llamada por seguridad? Responda sí o no.", () => {
-            startListening();
-        });
+        document.getElementById('smsStatus').style.display = 'none';
+        step = 1;
+        botSpeak("Bienvenido. ¿Activo grabación de seguridad?", () => { startListening(); });
     }
 
     function startListening() {
-        if (!recognition) {
-            alert("Tu navegador no soporta reconocimiento de voz. Usando modo manual.");
-            confirmAction(true);
-            return;
-        }
+        if (!recognition) { setTimeout(() => processIvr("sí"), 1000); return; }
         document.getElementById('micIndicator').style.display = 'block';
-        document.querySelectorAll('.wave').forEach(w => w.style.background = '#ff4757');
         recognition.start();
-
-        recognition.onresult = (event) => {
-            const response = event.results[0][0].transcript.toLowerCase();
+        recognition.onresult = (e) => {
             document.getElementById('micIndicator').style.display = 'none';
-            document.querySelectorAll('.wave').forEach(w => w.style.background = '#00d2ff');
-            
-            if (response.includes("sí") || response.includes("si")) {
-                confirmAction(true);
-            } else {
-                confirmAction(false);
-            }
-        };
-
-        recognition.onerror = () => {
-            document.getElementById('micIndicator').style.display = 'none';
-            confirmAction(false);
+            processIvr(e.results[0][0].transcript.toLowerCase());
         };
     }
 
-    function confirmAction(isRecording) {
-        const txt = isRecording ? "Perfecto, grabaré la sesión. Conectando con el centro." : "Entendido, no grabaré la sesión. Conectando.";
-        botSpeak(txt, () => {
-            // Fase de Música de Espera
-            document.getElementById('callStatus').innerText = "ESPERANDO RESPUESTA...";
-            waitingMusic.play();
-            
-            setTimeout(() => {
-                waitingMusic.pause();
-                document.getElementById('callStatus').innerText = "EN LÍNEA";
-                timer = setInterval(() => { sec++; updateTimer(); }, 1000);
-            }, 5000); // 5 segundos de música de espera
-        });
+    function processIvr(resp) {
+        if (step === 1) {
+            step = 2;
+            botSpeak("Entendido. Diga: uno para Secretaría o dos para Jefatura.", () => { startListening(); });
+        } else {
+            botSpeak("Transferiendo. Espere un momento.", () => {
+                document.getElementById('callStatus').innerText = "ESPERANDO...";
+                // REPRODUCIR MÚSICA DE ESPERA
+                music.volume = 0.3;
+                music.play().catch(e => console.log("Error de audio:", e));
+
+                // Si en 10 segundos no "descuelgan", enviamos SMS
+                smsTimer = setTimeout(sendSms, 10000);
+
+                // Simulamos que descuelgan a los 4 segundos
+                setTimeout(() => {
+                    if(music.paused === false) {
+                        clearTimeout(smsTimer);
+                        music.pause();
+                        document.getElementById('callStatus').innerText = "EN LÍNEA";
+                        timer = setInterval(() => { sec++; updateTimer(); }, 1000);
+                    }
+                }, 4000);
+            });
+        }
+    }
+
+    function sendSms() {
+        smsAudio.play();
+        document.getElementById('smsStatus').style.display = 'block';
+        document.getElementById('smsStatus').innerText = "SMS ENVIADO: 'El centro ha intentado contactar con usted'";
+        const log = document.getElementById('historialLog');
+        log.innerHTML = `<div class="list-group-item list-group-item-warning small">SMS automático enviado por falta de respuesta</div>` + log.innerHTML;
     }
 
     function updateTimer() {
@@ -178,14 +191,17 @@
 
     function endCall() {
         clearInterval(timer);
-        waitingMusic.pause();
-        window.speechSynthesis.cancel();
-        if(recognition) recognition.stop();
-        document.getElementById('callOverlay').style.display = 'none';
-        
-        const log = document.getElementById('historialLog');
-        log.innerHTML = `<div class="list-group-item small"><b>Llamada IA Controlada</b> (${sec}s)<div class="text-muted">Hoy - Reconocimiento de voz usado</div></div>` + log.innerHTML;
-        sec = 0;
+        clearTimeout(smsTimer);
+        music.pause();
+        const finalSecs = sec;
+        botSpeak(`Llamada terminada. Duración: ${finalSecs} segundos. Hasta pronto.`, () => {
+            setTimeout(() => {
+                document.getElementById('callOverlay').style.display = 'none';
+                const log = document.getElementById('historialLog');
+                log.innerHTML = `<div class="list-group-item small"><b>Resumen IA:</b> ${finalSecs}s de conversación exitosa.</div>` + log.innerHTML;
+                sec = 0;
+            }, 1500);
+        });
     }
 
     function showTab(t) {
@@ -193,7 +209,5 @@
         document.getElementById('sec-historial').style.display = t === 'historial' ? 'block' : 'none';
     }
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
