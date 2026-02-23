@@ -8,36 +8,34 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1000px; width: 95%; display: flex; min-height: 700px; position: relative; }
+        .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1000px; width: 95%; display: flex; min-height: 750px; position: relative; }
         
-        /* Sidebar Izquierda */
+        /* Sidebar */
         .sidebar-ficha { background: #2c3e50; color: white; width: 35%; padding: 40px 30px; text-align: center; }
         .photo-container { position: relative; width: 150px; height: 150px; margin: 0 auto 20px; }
         .avatar-circle, .student-photo { width: 150px; height: 150px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; border: 5px solid rgba(255,255,255,0.1); object-fit: cover; }
         .avatar-circle { background: #2ecc71; text-transform: uppercase; }
-        
         .btn-change-photo { position: absolute; bottom: 5px; right: 5px; background: #007bff; color: white; border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 5; }
-        .btn-change-photo:hover { background: #0056b3; transform: rotate(90deg); }
 
-        .nia-badge { background: #007bff; color: white; padding: 4px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        
-        /* Contenido Derecha */
+        /* Contenido */
         .content-ficha { width: 65%; padding: 45px; position: relative; }
         .nav-tabs .nav-link { border: none; color: #888; font-weight: 600; cursor: pointer; }
         .nav-tabs .nav-link.active { color: #007bff; border-bottom: 3px solid #007bff; background: none; }
         
-        /* Estilos de Edición */
-        .editable-input { border: 1px solid #ddd !important; background: #fff !important; width: 60px; text-align: center; border-radius: 4px; }
-        .is-editing .sidebar-ficha { border-left: 8px solid #ffc107; }
-        .save-banner { display: none; background: #ffc107; color: #000; padding: 10px; text-align: center; font-weight: bold; position: absolute; top: 0; left: 0; width: 100%; z-index: 10; }
+        /* Historial de Correos */
+        .history-box { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-top: 20px; border-left: 4px solid #6f42c1; }
+        .history-item { font-size: 0.8rem; border-bottom: 1px solid #eee; padding: 8px 0; }
+        .history-item:last-child { border-bottom: none; }
 
-        /* Botones de Acción Inferiores */
-        .action-bar { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-action { flex: 1; font-weight: bold; padding: 12px; border-radius: 8px; border: none; transition: 0.3s; color: white; }
-        .btn-mail { background: #6f42c1; } /* Púrpura para correo */
-        .btn-mail:hover { background: #59359a; }
+        /* Botones */
+        .action-bar { display: flex; gap: 10px; margin-top: 25px; }
+        .btn-action { flex: 1; font-weight: bold; padding: 12px; border-radius: 8px; border: none; color: white; transition: 0.3s; }
+        .btn-mail { background: #6f42c1; }
         .btn-print { background: #dc3545; }
         .btn-save { background: #198754; }
+        
+        .is-editing .sidebar-ficha { border-left: 8px solid #ffc107; }
+        .save-banner { display: none; background: #ffc107; color: #000; padding: 10px; text-align: center; font-weight: bold; position: absolute; top: 0; left: 0; width: 100%; z-index: 10; }
     </style>
 </head>
 <body>
@@ -52,12 +50,11 @@
             <button class="btn-change-photo" onclick="document.getElementById('fileInput').click()"><i class="bi bi-camera-fill"></i></button>
             <input type="file" id="fileInput" hidden accept="image/*" onchange="previewImage(this)">
         </div>
-
-        <h3 class="fw-bold mb-1" id="nombreDisplay" contenteditable="false">Nombre Alumno</h3>
-        <div class="mb-3"><span class="nia-badge" id="niaDisplay">NIA: 0000000</span></div>
+        <h3 class="fw-bold mb-1" id="nombreDisplay">Nombre Alumno</h3>
+        <span class="badge bg-primary mb-4" id="niaDisplay">NIA: 0000000</span>
         
-        <div class="info-contacto mt-4 text-start small opacity-75">
-            <p><i class="bi bi-envelope-at-fill me-2"></i> <span id="emailFamilia">familia.ejemplo@email.com</span></p>
+        <div class="text-start small opacity-75">
+            <p><i class="bi bi-envelope-fill me-2"></i> <span id="mailLabel">familia@email.com</span></p>
             <p><i class="bi bi-telephone-fill me-2"></i> +34 600 000 000</p>
         </div>
 
@@ -67,77 +64,64 @@
     </div>
 
     <div class="content-ficha">
-        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Cerrar</a>
-        <h4 class="fw-bold mb-4">Gestión de Expediente</h4>
+        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Volver</a>
+        <h4 class="fw-bold mb-4">Panel de Gestión</h4>
 
-        <ul class="nav nav-tabs mb-4">
-            <li class="nav-item"><a class="nav-link active" onclick="showSection('notas')">Notas</a></li>
-            <li class="nav-item"><a class="nav-link" onclick="showSection('asistencia')">Asistencia</a></li>
-            <li class="nav-item"><a class="nav-link" onclick="showSection('obs')">Observaciones</a></li>
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item"><a class="nav-link active" onclick="showSection('notas')">Calificaciones</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="showSection('history')">Historial Correo</a></li>
         </ul>
 
         <div id="sec-notas">
-            <table class="table table-hover border align-middle">
-                <thead class="table-light small">
-                    <tr><th>Asignatura</th><th class="text-center">1ª Eval</th></tr>
-                </thead>
+            <table class="table table-sm border align-middle">
+                <thead class="table-light"><tr><th>Materia</th><th class="text-center">Nota</th></tr></thead>
                 <tbody id="tablaNotas"></tbody>
             </table>
         </div>
 
-        <div id="sec-asistencia" style="display:none;">
-            <ul class="list-group list-group-flush small">
-                <li class="list-group-item d-flex justify-content-between">23/02/2026 <span class="badge bg-danger">Falta</span></li>
-                <li class="list-group-item d-flex justify-content-between">15/02/2026 <span class="badge bg-warning">Retraso</span></li>
-            </ul>
-        </div>
-
-        <div id="sec-obs" style="display:none;">
-            <textarea class="form-control" rows="5" id="obsText" placeholder="Notas internas de dirección..."></textarea>
+        <div id="sec-history" style="display:none;">
+            <div class="history-box">
+                <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>Últimos envíos</h6>
+                <div id="listaHistorial">
+                    <div class="history-item d-flex justify-content-between">
+                        <span><i class="bi bi-check2-all text-success me-2"></i>Informe Trimestral</span>
+                        <span class="text-muted">10 Feb 2026</span>
+                    </div>
+                    <div class="history-item d-flex justify-content-between">
+                        <span><i class="bi bi-check2-all text-success me-2"></i>Aviso de Ausencia</span>
+                        <span class="text-muted">22 Ene 2026</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="action-bar">
             <button class="btn-action btn-mail" data-bs-toggle="modal" data-bs-target="#mailModal">
-                <i class="bi bi-envelope-paper-fill me-2"></i>ENVIAR A FAMILIA
+                <i class="bi bi-send-plus-fill me-2"></i>ENVIAR A FAMILIA
             </button>
             <button class="btn-action btn-print" onclick="window.print()">
                 <i class="bi bi-printer-fill me-2"></i>IMPRIMIR
             </button>
             <button class="btn-action btn-save d-none" id="btnSave" onclick="saveChanges()">
-                <i class="bi bi-cloud-check-fill me-2"></i>GUARDAR
+                <i class="bi bi-check-circle-fill me-2"></i>GUARDAR
             </button>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="mailModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="mailModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title fw-bold"><i class="bi bi-pencil-fill me-2"></i>Redactar Correo</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold">Nuevo Mensaje Interno</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">PARA:</label>
-                    <input type="text" class="form-control bg-light" id="mailDestino" readonly>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">ASUNTO:</label>
-                    <input type="text" class="form-control" id="mailAsunto" placeholder="Ej: Información sobre rendimiento académico">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">MENSAJE:</label>
-                    <textarea class="form-control" id="mailCuerpo" rows="6" placeholder="Estimada familia..."></textarea>
-                </div>
-                <div class="form-check small text-muted">
-                    <input class="form-check-input" type="checkbox" checked>
-                    <label class="form-check-label">Adjuntar copia del expediente en PDF</label>
-                </div>
+                <input type="text" class="form-control mb-3" id="mailAsunto" placeholder="Asunto del correo...">
+                <textarea class="form-control" id="mailCuerpo" rows="5" placeholder="Escriba aquí el mensaje para los padres..."></textarea>
             </div>
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">CANCELAR</button>
-                <button type="button" class="btn btn-primary fw-bold px-4" onclick="enviarSimulado()">ENVIAR AHORA <i class="bi bi-send-fill ms-1"></i></button>
+            <div class="modal-footer">
+                <button class="btn btn-primary w-100 fw-bold" onclick="enviarSimulado()">ENVIAR AHORA</button>
             </div>
         </div>
     </div>
@@ -145,71 +129,63 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    let isEditing = false;
     const params = new URLSearchParams(window.location.search);
     const nombre = params.get('nombre') || 'Alumno';
     const apellido = params.get('ape') || 'Ejemplo';
 
-    // Inicializar datos
     document.getElementById('nombreDisplay').innerText = nombre + " " + apellido;
     document.getElementById('niaDisplay').innerText = "NIA: " + (params.get('nia') || '1084251');
-    document.getElementById('avatarDefault').innerText = (nombre[0] + (apellido[0] || "")).toUpperCase();
-    document.getElementById('mailDestino').value = "familia." + nombre.toLowerCase() + "@email.com";
-    document.getElementById('mailAsunto').value = "Expediente Académico: " + nombre + " " + apellido;
+    document.getElementById('avatarDefault').innerText = nombre[0].toUpperCase();
+    document.getElementById('mailLabel').innerText = "familia." + nombre.toLowerCase() + "@email.com";
 
-    // Generar tabla de notas
-    const asignaturas = ["Lengua", "Matemáticas", "Inglés", "Ciencias", "Ed. Física", "Plástica"];
     const tBody = document.getElementById('tablaNotas');
-    asignaturas.forEach(asig => {
-        tBody.innerHTML += `<tr><td class="small fw-bold">${asig}</td><td class="text-center score-cell">${(Math.random()*4+6).toFixed(1)}</td></tr>`;
+    ["Lengua", "Mates", "Inglés", "Sociales", "Gimnasia"].forEach(a => {
+        tBody.innerHTML += `<tr><td class="fw-bold small">${a}</td><td class="text-center score-cell">7.5</td></tr>`;
     });
 
+    function showSection(s) {
+        document.getElementById('sec-notas').style.display = s === 'notas' ? 'block' : 'none';
+        document.getElementById('sec-history').style.display = s === 'history' ? 'block' : 'none';
+    }
+
     function toggleEditMode() {
-        isEditing = !isEditing;
-        document.getElementById('fichaMain').classList.toggle('is-editing');
+        const isEditing = document.getElementById('fichaMain').classList.toggle('is-editing');
         document.getElementById('saveBanner').style.display = isEditing ? 'block' : 'none';
         document.getElementById('btnSave').classList.toggle('d-none');
-        document.getElementById('nombreDisplay').contentEditable = isEditing;
-        
-        document.querySelectorAll('.score-cell').forEach(cell => {
-            if(isEditing) {
-                const val = cell.innerText;
-                cell.innerHTML = `<input type="number" class="editable-input" value="${val}">`;
-            } else {
-                location.reload();
-            }
+        document.querySelectorAll('.score-cell').forEach(c => {
+            if(isEditing) c.innerHTML = `<input type="number" class="form-control form-control-sm" value="${c.innerText}" style="width:60px; margin:auto">`;
         });
     }
 
+    function enviarSimulado() {
+        const asunto = document.getElementById('mailAsunto').value;
+        if(!asunto) return alert("Por favor, escribe un asunto.");
+        
+        // Añadir al historial visualmente
+        const nuevoHistorial = `<div class="history-item d-flex justify-content-between">
+            <span><i class="bi bi-check2-all text-success me-2"></i>${asunto}</span>
+            <span class="text-muted">Hoy</span>
+        </div>`;
+        document.getElementById('listaHistorial').innerHTML = nuevoHistorial + document.getElementById('listaHistorial').innerHTML;
+        
+        alert("📧 Correo enviado a la familia.");
+        bootstrap.Modal.getInstance(document.getElementById('mailModal')).hide();
+    }
+
+    function previewImage(i) {
+        const r = new FileReader();
+        r.onload = e => {
+            document.getElementById('studentImage').src = e.target.result;
+            document.getElementById('studentImage').classList.remove('d-none');
+            document.getElementById('avatarDefault').classList.add('d-none');
+        };
+        r.readAsDataURL(i.files[0]);
+    }
+
     function saveChanges() {
-        alert("✅ Datos guardados en el servidor de El Pedrer.");
+        alert("✅ Cambios guardados correctamente.");
         location.reload();
     }
-
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('studentImage').src = e.target.result;
-                document.getElementById('studentImage').classList.remove('d-none');
-                document.getElementById('avatarDefault').classList.add('d-none');
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    function showSection(sec) {
-        document.getElementById('sec-notas').style.display = sec === 'notas' ? 'block' : 'none';
-        document.getElementById('sec-asistencia').style.display = sec === 'asistencia' ? 'block' : 'none';
-        document.getElementById('sec-obs').style.display = sec === 'obs' ? 'block' : 'none';
-    }
-
-    function enviarSimulado() {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('mailModal'));
-        alert("📧 Correo enviado con éxito a la familia de " + nombre + ".");
-        modal.hide();
-    }
 </script>
-
 </body>
 </html>
