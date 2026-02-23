@@ -3,194 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Comunicación - El Pedrer</title>
+    <title>Comunicación El Pedrer</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: #0f172a; /* Fondo oscuro tecnológico */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        /* Fondo con esferas de luz decorativas */
-        .bg-glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(56, 189, 248, 0.15);
-            filter: blur(80px);
-            border-radius: 50%;
-            z-index: -1;
-        }
-
-        .portal-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px); /* Efecto cristal esmerilado */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px;
-            padding: 50px 30px;
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            color: white;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-        }
-
-        .school-logo {
-            width: 100px;
-            height: 100px;
-            background: white;
-            border-radius: 30px;
-            margin: 0 auto 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: #0f172a;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background: #22c55e;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            box-shadow: 0 0 10px #22c55e;
-        }
-
-        .call-btn {
-            width: 100%;
-            background: #22c55e;
-            border: none;
-            padding: 18px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: all 0.3s;
-            margin-top: 30px;
-        }
-
-        .call-btn:hover {
-            background: #16a34a;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
-        }
-
-        .call-btn:disabled {
-            background: #475569;
-            transform: none;
-        }
-
-        #status-text {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-top: 15px;
-        }
-
-        /* Animación de ondas cuando se llama */
-        .calling-waves {
-            display: none;
-            margin: 20px auto;
-        }
-        .dot { width: 8px; height: 8px; background: #38bdf8; border-radius: 50%; display: inline-block; animation: wave 1.2s infinite; }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes wave { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.5); opacity: 1; } }
+        body { background: #0f172a; height: 100vh; display: flex; align-items: center; justify-content: center; color: white; font-family: sans-serif; }
+        .portal { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); text-align: center; width: 90%; max-width: 400px; }
+        .btn-opt { background: #38bdf8; border: none; width: 100%; padding: 15px; border-radius: 12px; margin-bottom: 10px; color: white; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
-
-    <div class="bg-glow" style="top: 10%; left: 10%;"></div>
-    <div class="bg-glow" style="bottom: 10%; right: 10%; background: rgba(230, 57, 70, 0.1);"></div>
-
-    <div class="portal-card">
-        <div class="school-logo">
-            <i class="bi bi-building-fill"></i>
+    <div class="portal">
+        <i class="bi bi-robot" style="font-size: 3rem; color: #38bdf8;"></i>
+        <h2 class="fw-bold mt-3">Centralita Virtual</h2>
+        <p id="status">Iniciando asistente de voz...</p>
+        <div id="options">
+            <button class="btn-opt" onclick="llamar('Secretaría')">1. Secretaría</button>
+            <button class="btn-opt" onclick="llamar('Administración')">2. Administración</button>
+            <button class="btn-opt" onclick="llamar('Dirección')">3. Dirección</button>
         </div>
-        
-        <h2 class="fw-bold mb-1">El Pedrer</h2>
-        <div class="mb-4">
-            <span class="status-dot"></span>
-            <small class="opacity-75">Centralita Disponible</small>
-        </div>
-
-        <p class="small opacity-50 px-3">
-            Estás a punto de establecer una conexión cifrada con la Dirección del centro.
-        </p>
-
-        <div class="calling-waves" id="waves">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-
-        <button id="btnLlamar" class="call-btn" onclick="iniciarLlamada()">
-            <i class="bi bi-telephone-fill"></i>
-            ESTABLECER LLAMADA
-        </button>
-
-        <p id="status-text">Listo para conectar</p>
     </div>
 
-    <script>
-        const peer = new Peer(); 
-        let currentCall = null;
+<script>
+    const peer = new Peer();
+    const sndHold = new Audio('https://www.soundjay.com/phone/sounds/phone-calling-1.mp3');
 
-        function iniciarLlamada() {
-            const btn = document.getElementById('btnLlamar');
-            const status = document.getElementById('status-text');
-            const waves = document.getElementById('waves');
+    window.onload = () => {
+        const msg = new SpeechSynthesisUtterance("Bienvenido a El Pedrer. Seleccione con quién desea hablar. 1 Secretaría, 2 Administración o 3 Dirección.");
+        msg.lang = 'es-ES';
+        msg.onend = () => {
+            document.querySelectorAll('.btn-opt').forEach(b => b.style.display = 'block');
+            document.getElementById('status').innerText = "Esperando su selección...";
+        };
+        window.speechSynthesis.speak(msg);
+    };
 
-            status.innerText = "Solicitando acceso al terminal...";
-            
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                status.innerText = "Conectando con Dirección...";
-                waves.style.display = "block";
-                btn.disabled = true;
-                btn.innerText = "CONECTANDO...";
-                btn.style.background = "#38bdf8";
+    function llamar(depto) {
+        document.getElementById('options').style.display = 'none';
+        document.getElementById('status').innerText = "Llamando a " + depto + "...";
+        sndHold.play(); sndHold.loop = true;
 
-                // Llamada al ID del panel
-                const call = peer.call('elpedrer-direccion', stream);
-                currentCall = call;
-
-                call.on('stream', remoteStream => {
-                    const audio = new Audio();
-                    audio.srcObject = remoteStream;
-                    audio.play();
-                    status.innerText = "CONEXIÓN ESTABLECIDA";
-                    btn.style.background = "#e63946";
-                    btn.innerHTML = '<i class="bi bi-telephone-x-fill"></i> FINALIZAR';
-                    btn.disabled = false;
-                    btn.onclick = () => location.reload();
-                });
-
-                call.on('close', () => {
-                    alert("La dirección ha finalizado la comunicación.");
-                    location.reload();
-                });
-
-            }).catch(err => {
-                alert("Error: Se requiere permiso de micrófono.");
-                status.innerText = "Error de hardware";
-                btn.disabled = false;
+        navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
+            const call = peer.call('elpedrer-direccion', stream, { metadata: { depto: depto } });
+            call.on('stream', s => {
+                sndHold.pause();
+                const audio = new Audio(); audio.srcObject = s; audio.play();
+                document.getElementById('status').innerText = "CONECTADO CON " + depto.toUpperCase();
             });
-        }
-    </script>
+            call.on('close', () => location.reload());
+        });
+    }
+</script>
 </body>
 </html>
