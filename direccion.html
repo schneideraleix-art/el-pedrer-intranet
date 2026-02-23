@@ -7,158 +7,184 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        :root { --admin-red: #e63946; --sidebar-dark: #1a1a1a; --bg-light: #f8f9fa; }
-        body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; display: flex; }
+        :root { --admin-red: #e63946; --sidebar-dark: #1a1a1a; --bg-light: #f4f7f6; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; min-height: 100vh; margin: 0; }
 
-        /* Sidebar similar a tu captura */
-        .sidebar { width: 220px; background: var(--sidebar-dark); min-height: 100vh; color: white; padding-top: 20px; position: fixed; }
-        .sidebar-link { padding: 15px 25px; display: flex; align-items: center; color: rgba(255,255,255,0.7); text-decoration: none; transition: 0.3s; }
-        .sidebar-link:hover, .sidebar-link.active { background: var(--admin-red); color: white; }
+        /* Sidebar mejorado */
+        .sidebar { width: 260px; background: var(--sidebar-dark); color: white; position: fixed; height: 100vh; padding: 25px 15px; z-index: 1000; }
+        .admin-profile img { width: 70px; height: 70px; border: 3px solid var(--admin-red); padding: 2px; }
         
-        .main-content { margin-left: 220px; width: 100%; padding: 30px; }
+        .nav-link { color: rgba(255,255,255,0.7); padding: 12px 20px; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; display: flex; align-items: center; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { background: var(--admin-red); color: white; }
+        .nav-link i { font-size: 1.2rem; margin-right: 15px; }
+
+        .btn-marcador { background: transparent; border: 1px solid white; color: white; width: 100%; border-radius: 10px; padding: 10px; margin-top: 50px; transition: 0.3s; }
+        .btn-marcador:hover { background: white; color: var(--sidebar-dark); }
+
+        /* Contenido Principal */
+        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 40px; }
         
-        /* Tarjetas de Indicadores (Top) */
-        .stat-card { background: white; border-radius: 12px; padding: 20px; border-left: 5px solid; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .card-matricula { border-left-color: #e63946; }
-        .card-absentismo { border-left-color: #ffb703; }
-        .card-comedor { border-left-color: #219ebc; }
-        .card-caja { border-left-color: #023047; }
+        /* Tarjetas de Indicadores */
+        .stat-card { background: white; border-radius: 20px; padding: 25px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+        .stat-card::before { content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 6px; }
+        .card-red::before { background: #e63946; }
+        .card-yellow::before { background: #ffb703; }
+        .card-blue::before { background: #219ebc; }
+        .card-navy::before { background: #023047; }
 
-        /* Botones de Operaciones */
-        .op-button { background: white; border-radius: 12px; padding: 25px; text-align: left; border: 1px solid #eee; transition: 0.3s; height: 100%; width: 100%; }
-        .op-button:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: var(--admin-red); }
-        .op-icon { font-size: 1.5rem; margin-bottom: 15px; display: block; }
+        /* Rejilla de Botones (Apps) */
+        .app-btn { background: white; border-radius: 24px; padding: 30px; text-align: center; border: 1px solid rgba(0,0,0,0.05); transition: 0.3s; height: 100%; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .app-btn:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-color: var(--admin-red); }
+        .app-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+        .app-title { font-weight: 700; color: #333; display: block; }
 
-        /* MODAL DE LLAMADA VOIP */
-        #voipPanel { 
-            display: none; position: fixed; bottom: 30px; right: 30px; 
-            width: 300px; background: #2d3436; color: white; border-radius: 20px; 
-            padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.4); z-index: 9999;
-            text-align: center; border: 1px solid rgba(255,255,255,0.1);
+        /* Interfaz de Llamada */
+        #callOverlay { 
+            display: none; position: fixed; top: 20px; right: 20px; width: 320px; 
+            background: #212529; color: white; border-radius: 25px; padding: 25px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 9999; text-align: center;
         }
-        .pulse-ring { animation: pulse 1.5s infinite; border-radius: 50%; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(230, 57, 70, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); } }
+        .pulse-call { animation: pulse 1.5s infinite; background: var(--admin-red); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(230, 57, 70, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); } }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <div class="text-center mb-4">
-        <img src="https://via.placeholder.com/60" class="rounded-circle border border-2 border-danger mb-2" alt="Admin">
-        <p class="small fw-bold mb-0">Admin Dirección</p>
+    <div class="admin-profile text-center mb-5">
+        <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="Admin">
+        <h6 class="fw-bold mb-0">ADMIN DIRECCIÓN</h6>
+        <small class="opacity-50">Centro El Pedrer</small>
     </div>
-    <a href="#" class="sidebar-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-    <a href="personal_docente.html" class="sidebar-link"><i class="bi bi-people me-2"></i> Claustro</a>
-    <a href="#" class="sidebar-link"><i class="bi bi-exclamation-triangle me-2 text-warning"></i> EMERGENCIA</a>
-    <div class="mt-5 p-3">
-        <button class="btn btn-sm btn-outline-light w-100" onclick="abrirMarcador()">📞 Marcador Manual</button>
-    </div>
+
+    <nav>
+        <a href="direccion.html" class="nav-link active"><i class="bi bi-grid-fill"></i> Dashboard</a>
+        <a href="personal_docente.html" class="nav-link"><i class="bi bi-people-fill"></i> Claustro</a>
+        <a href="horarios_docentes.html" class="nav-link"><i class="bi bi-calendar3"></i> Horarios</a>
+        <a href="#" class="nav-link text-warning"><i class="bi bi-shield-fill-exclamation"></i> Emergencia</a>
+    </nav>
+
+    <button class="btn-marcador" onclick="marcarNumero()">
+        <i class="bi bi-telephone-fill me-2"></i> Marcador Manual
+    </button>
 </div>
 
 <div class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold">Panel de Control Directivo</h3>
-        <span class="badge bg-danger">NUEVA ALERTA</span>
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="fw-bold m-0">Panel de Control Directivo</h2>
+        <span class="badge bg-danger p-2 px-3 rounded-pill animate__animated animate__pulse animate__infinite">
+            <i class="bi bi-broadcast me-2"></i>NUEVA ALERTA
+        </span>
     </div>
 
-    <div class="row g-3 mb-5">
-        <div class="col-md-3">
-            <div class="stat-card card-matricula">
-                <small class="text-muted fw-bold">MATRÍCULA</small>
-                <h2 class="fw-bold">842</h2>
-                <small class="text-success"><i class="bi bi-arrow-up"></i> 2.4%</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card card-absentismo">
-                <small class="text-muted fw-bold">ABSENTISMO</small>
-                <h2 class="fw-bold">12</h2>
-                <small class="text-danger">Hoy</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card card-comedor">
-                <small class="text-muted fw-bold">COMEDOR</small>
-                <h2 class="fw-bold">315</h2>
-                <small>Menús servidos</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card card-caja">
-                <small class="text-muted fw-bold">CAJA CENTRO</small>
-                <h2 class="fw-bold">1.250€</h2>
-                <small>Saldo actual</small>
-            </div>
-        </div>
-    </div>
-
-    <h6 class="text-muted fw-bold mb-3 text-uppercase small">Gestión y Operaciones</h6>
     <div class="row g-4 mb-5">
         <div class="col-md-3">
-            <button class="op-button" onclick="window.location.href='contabilidad.html'">
-                <i class="bi bi-calculator op-icon text-primary"></i>
-                <span class="fw-bold">Contabilidad</span>
+            <div class="stat-card card-red">
+                <small class="text-muted fw-bold text-uppercase">Matrícula</small>
+                <h2 class="fw-bold mt-1">842</h2>
+                <div class="text-success small fw-bold"><i class="bi bi-graph-up-arrow"></i> +2.4% este mes</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card card-yellow">
+                <small class="text-muted fw-bold text-uppercase">Absentismo</small>
+                <h2 class="fw-bold mt-1">12</h2>
+                <div class="text-danger small fw-bold">Incidencias hoy</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card card-blue">
+                <small class="text-muted fw-bold text-uppercase">Comedor</small>
+                <h2 class="fw-bold mt-1">315</h2>
+                <div class="text-muted small">Menús servidos</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card card-navy">
+                <small class="text-muted fw-bold text-uppercase">Caja Centro</small>
+                <h2 class="fw-bold mt-1">1.250€</h2>
+                <div class="text-primary small">Saldo conciliado</div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="fw-bold mb-4">Gestión y Operaciones</h5>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <button class="app-btn" onclick="window.location.href='contabilidad.html'">
+                <i class="bi bi-calculator app-icon text-primary"></i>
+                <span class="app-title">Contabilidad</span>
             </button>
         </div>
         <div class="col-md-3">
-            <button class="op-button" onclick="lanzarLlamadaUrgente('Familia García - Comedor')">
-                <i class="bi bi-telephone-outbound op-icon text-success"></i>
-                <span class="fw-bold">Llamada Rápida</span>
+            <button class="app-btn" onclick="lanzarLlamada('Familia García (Comedor)')">
+                <i class="bi bi-telephone-outbound app-icon text-success"></i>
+                <span class="app-title">Llamada Rápida</span>
             </button>
         </div>
         <div class="col-md-3">
-            <button class="op-button" onclick="window.location.href='gestion_bajas.html'">
-                <i class="bi bi-person-badge op-icon text-info"></i>
-                <span class="fw-bold">Control Bajas</span>
+            <button class="app-btn" onclick="window.location.href='gestion_bajas.html'">
+                <i class="bi bi-file-earmark-person app-icon text-info"></i>
+                <span class="app-title">Control Bajas</span>
             </button>
         </div>
         <div class="col-md-3">
-            <button class="op-button">
-                <i class="bi bi-bell op-icon text-danger"></i>
-                <span class="fw-bold">Timbre Manual</span>
+            <button class="app-btn">
+                <i class="bi bi-bell-fill app-icon text-danger"></i>
+                <span class="app-title">Timbre Manual</span>
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="app-btn">
+                <i class="bi bi-archive app-icon text-secondary"></i>
+                <span class="app-title">Expedientes</span>
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="app-btn">
+                <i class="bi bi-camera-video app-icon text-dark"></i>
+                <span class="app-title">Cámaras CCTV</span>
             </button>
         </div>
     </div>
 </div>
 
-<div id="voipPanel">
-    <div class="pulse-ring mb-3">
-        <i class="bi bi-person-circle display-4"></i>
-    </div>
-    <h6 id="contactoNombre" class="fw-bold">Llamando a Familia...</h6>
-    <p class="small text-success mb-3" id="tiempoLlamada">Conectando VoIP...</p>
+<div id="callOverlay">
+    <div class="pulse-call"><i class="bi bi-telephone-fill fs-4"></i></div>
+    <h6 id="callName" class="fw-bold mb-1">Llamando...</h6>
+    <p class="text-success small mb-4" id="callTimer">00:00</p>
     
-    <div class="d-flex justify-content-center gap-2 mb-3">
-        <button class="btn btn-sm btn-outline-light"><i class="bi bi-mic-mute"></i></button>
-        <button class="btn btn-sm btn-outline-light"><i class="bi bi-record-circle text-danger"></i></button>
+    <div class="d-flex justify-content-center gap-3 mb-4">
+        <button class="btn btn-outline-light rounded-circle"><i class="bi bi-mic-mute"></i></button>
+        <button class="btn btn-outline-light rounded-circle"><i class="bi bi-pause"></i></button>
     </div>
     
-    <button class="btn btn-danger w-100 rounded-pill fw-bold" onclick="colgar()">COLGAR</button>
+    <button class="btn btn-danger w-100 rounded-pill fw-bold" onclick="colgar()">COLGAR LLAMADA</button>
 </div>
 
 <script>
-    let timer;
-    function lanzarLlamadaUrgente(nombre) {
-        document.getElementById('contactoNombre').innerText = nombre;
-        document.getElementById('voipPanel').style.display = 'block';
-        let seg = 0;
-        timer = setInterval(() => {
-            seg++;
-            let m = Math.floor(seg/60);
-            let s = seg%60;
-            document.getElementById('tiempoLlamada').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    let interval;
+    function lanzarLlamada(nombre) {
+        document.getElementById('callName').innerText = nombre;
+        document.getElementById('callOverlay').style.display = 'block';
+        let sec = 0;
+        interval = setInterval(() => {
+            sec++;
+            let m = Math.floor(sec/60);
+            let s = sec%60;
+            document.getElementById('callTimer').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
         }, 1000);
     }
 
     function colgar() {
-        clearInterval(timer);
-        document.getElementById('voipPanel').style.display = 'none';
-        alert("Llamada finalizada y registrada en el historial del centro.");
+        clearInterval(interval);
+        document.getElementById('callOverlay').style.display = 'none';
+        alert("Llamada finalizada.");
     }
-    
-    function abrirMarcador() {
-        let num = prompt("Introduce el número de teléfono:");
-        if(num) lanzarLlamadaUrgente("Marcación: " + num);
+
+    function marcarNumero() {
+        let n = prompt("Introduce número de teléfono:");
+        if(n) lanzarLlamada("Marcando: " + n);
     }
 </script>
 
