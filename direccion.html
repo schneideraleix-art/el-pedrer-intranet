@@ -1,68 +1,173 @@
-<div id="pePhoneContainer" style="display:none; position:fixed; bottom:20px; right:20px; width:300px; height:550px; background:#111; border-radius:40px; border:8px solid #333; overflow:hidden; z-index:99999; box-shadow:0 20px 50px rgba(0,0,0,0.5); font-family: sans-serif;">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Maestro - El Pedrer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     
-    <div style="background: linear-gradient(180deg, #1a1a1a 0%, #000 100%); height:100%; color:white; padding:20px; display:flex; flex-direction:column; align-items:center;">
+    <style>
+        :root { --admin-red: #e63946; --sidebar-dark: #111111; --accent-blue: #38bdf8; }
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; display: flex; margin: 0; overflow-x: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--sidebar-dark); color: white; position: fixed; height: 100vh; padding: 30px 20px; z-index: 1000; }
+        .nav-link { color: rgba(255,255,255,0.6); padding: 14px 20px; border-radius: 15px; margin-bottom: 10px; display: flex; align-items: center; text-decoration: none; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { background: var(--admin-red); color: white; box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3); }
+
+        /* Dashboard */
+        .main-content { margin-left: 280px; width: calc(100% - 280px); padding: 50px; }
+        .app-btn { background: white; border-radius: 25px; padding: 35px; text-align: center; border: none; transition: 0.4s; height: 100%; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+        .app-btn:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-bottom: 4px solid var(--admin-red); }
+        .app-icon { font-size: 2.8rem; margin-bottom: 15px; display: block; }
+
+        /* pe-phone UI */
+        #pePhone { 
+            display: none; position: fixed; bottom: 30px; right: 30px; width: 320px; height: 580px; 
+            background: #000; border-radius: 45px; border: 8px solid #222; overflow: hidden; z-index: 9999;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .phone-screen { height: 100%; background: linear-gradient(180deg, #0f172a 0%, #000 100%); color: white; padding: 25px; display: flex; flex-direction: column; align-items: center; }
+        .bot-glow { width: 100px; height: 100px; border-radius: 50%; background: rgba(56, 189, 248, 0.1); display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent-blue); position: relative; margin: 40px 0; }
+        .bot-glow::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--accent-blue); animation: pulseBot 2s infinite; }
+        @keyframes pulseBot { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.4); opacity: 0; } }
         
-        <div style="width:60px; height:5px; background:#333; border-radius:10px; margin-bottom:40px;"></div>
-        
-        <div id="phoneStatus" class="text-success small mb-2">● En línea</div>
-        <h5 id="callerName" style="font-weight: 300; margin-bottom:5px;">674 02 02 47</h5>
-        <div id="callTimer" style="font-size: 0.8rem; opacity:0.6; margin-bottom:40px;">Llamada entrante...</div>
+        .btn-call { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
+        .btn-accept { background: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
+        .btn-reject { background: #ef4444; }
+    </style>
+</head>
+<body>
 
-        <div id="phoneAvatar" style="width:120px; height:120px; background:#333; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:50px; border:2px solid #444;">
-            <i class="bi bi-person-fill" style="font-size: 4rem; color:#666;"></i>
-        </div>
+<div class="sidebar">
+    <div class="text-center mb-5">
+        <h4 class="fw-bold m-0">EL PEDRER</h4>
+        <small class="opacity-50">SISTEMA DIRECTIVO</small>
+    </div>
+    <nav>
+        <a href="#" class="nav-link active"><i class="bi bi-grid-fill me-3"></i> Dashboard</a>
+        <a href="personal_docente.html" class="nav-link"><i class="bi bi-people me-3"></i> Claustro</a>
+        <a href="#" class="nav-link"><i class="bi bi-calendar3 me-3"></i> Horarios</a>
+        <button class="btn btn-outline-light w-100 rounded-pill mt-5 py-2 fw-bold" onclick="alert('Tu ID de Centralita es: elpedrer-direccion')">
+            <i class="bi bi-info-circle me-2"></i> Info VoIP
+        </button>
+    </nav>
+</div>
 
-        <div id="peBotResponse" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; width:100%; font-size:0.8rem; margin-bottom:40px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
-            <i class="bi bi-robot"></i> <span id="botMsg">Asistente filtrando...</span>
-        </div>
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="fw-bold">Panel Directivo</h1>
+        <div id="connectionBadge" class="badge bg-secondary p-2 px-3 rounded-pill">Centralita: Conectando...</div>
+    </div>
 
-        <div style="display:flex; gap:30px;">
-            <button onclick="acceptPeCall()" style="width:60px; height:60px; border-radius:50%; background:#22c55e; border:none; color:white; font-size:1.5rem; cursor:pointer; box-shadow: 0 0 20px rgba(34,197,94,0.4);">
-                <i class="bi bi-telephone-fill"></i>
+    <div class="row g-4 mb-5">
+        <div class="col-md-3"><div class="app-btn p-3"><h6>ALUMNOS</h6><h3 class="fw-bold text-danger">842</h3></div></div>
+        <div class="col-md-3"><div class="app-btn p-3"><h6>PROFESORES</h6><h3 class="fw-bold text-primary">137</h3></div></div>
+        <div class="col-md-3"><div class="app-btn p-3"><h6>BAJAS HOY</h6><h3 class="fw-bold text-warning">4</h3></div></div>
+        <div class="col-md-3"><div class="app-btn p-3"><h6>COMEDOR</h6><h3 class="fw-bold text-success">315</h3></div></div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <button class="app-btn" onclick="lanzarTimbre()">
+                <i class="bi bi-bell-fill app-icon text-warning"></i>
+                <span class="fw-bold">Timbre Manual</span>
             </button>
-            <button onclick="rejectPeCall()" style="width:60px; height:60px; border-radius:50%; background:#ef4444; border:none; color:white; font-size:1.5rem; cursor:pointer;">
-                <i class="bi bi-telephone-x-fill"></i>
+        </div>
+        <div class="col-md-3">
+            <button class="app-btn" onclick="alert('Abriendo Marcador...')">
+                <i class="bi bi-telephone-outbound app-icon text-success"></i>
+                <span class="fw-bold">Marcador Manual</span>
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="app-btn">
+                <i class="bi bi-camera-video app-icon text-dark"></i>
+                <span class="fw-bold">Cámaras CCTV</span>
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="app-btn" onclick="window.location.href='gestion_bajas.html'">
+                <i class="bi bi-person-x app-icon text-danger"></i>
+                <span class="fw-bold">Control Bajas</span>
             </button>
         </div>
     </div>
 </div>
 
+<div id="pePhone">
+    <div class="phone-screen">
+        <div style="width: 50px; height: 5px; background: #333; border-radius: 10px; margin-bottom: 30px;"></div>
+        <div class="text-center">
+            <h6 class="text-info small mb-1">LLAMADA DIGITAL REAL</h6>
+            <h2 id="callerIdDisplay" class="fw-bold">Entrante...</h2>
+        </div>
+
+        <div class="bot-glow">
+            <i class="bi bi-robot" style="font-size: 2.5rem; color: var(--accent-blue);"></i>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); width: 100%; margin-bottom: 40px;">
+            <p id="botText" class="small mb-0 opacity-75">"El asistente está filtrando la llamada..."</p>
+        </div>
+
+        <div class="d-flex justify-content-around w-100">
+            <button class="btn-call btn-reject" onclick="colgar()"><i class="bi bi-telephone-x-fill"></i></button>
+            <button class="btn-call btn-accept" onclick="aceptar()"><i class="bi bi-telephone-fill"></i></button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Sistema de Audio Estilo pe-phone
-    const peRing = new Audio('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Xylo-Ziko/Phase/Xylo-Ziko_-_03_-_Phase.mp3'); // Tono chill estilo juego
+    // --- LÓGICA DE TELEFONÍA REAL (PEERJS) ---
+    const peer = new Peer('elpedrer-direccion'); 
+    let callActiva = null;
+    const ringtone = new Audio('https://www.soundjay.com/phone/sounds/phone-calling-1.mp3');
 
-    function simularLlamadaPePhone() {
-        document.getElementById('pePhoneContainer').style.display = 'block';
-        peRing.play();
-        peRing.loop = true;
+    peer.on('open', (id) => {
+        document.getElementById('connectionBadge').innerText = "Centralita Online: " + id;
+        document.getElementById('connectionBadge').className = "badge bg-success p-2 px-3 rounded-pill";
+    });
 
-        // El Bot asistente (IVR) habla gratis
-        const synth = window.speechSynthesis;
-        const intro = new SpeechSynthesisUtterance("Bienvenido a la centralita de El Pedrer. Un momento por favor.");
-        synth.speak(intro);
+    // Recibir llamada real
+    peer.on('call', (call) => {
+        callActiva = call;
+        document.getElementById('pePhone').style.display = 'block';
+        ringtone.play();
+        ringtone.loop = true;
+
+        // BOT HABLA CON EL PADRE/MADRE
+        const mensaje = new SpeechSynthesisUtterance("Ha llamado a El Pedrer. Un momento por favor, conectamos con dirección.");
+        mensaje.lang = 'es-ES';
+        window.speechSynthesis.speak(mensaje);
 
         setTimeout(() => {
-            document.getElementById('botMsg').innerText = "Preguntando motivo...";
-        }, 2000);
-    }
+            document.getElementById('botText').innerText = '"Derivando llamada al especialista..."';
+        }, 2500);
+    });
 
-    function acceptPeCall() {
-        peRing.pause();
-        document.getElementById('callTimer').innerText = "00:01";
-        document.getElementById('botMsg').innerText = "CONECTADO - AUDIO OK";
-        document.getElementById('phoneAvatar').style.borderColor = "#22c55e";
-        
-        // ACTIVAR MICRO REAL (P2P)
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-            console.log("Stream de voz iniciado estilo pe-phone");
+    function aceptar() {
+        ringtone.pause();
+        navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
+            callActiva.answer(stream); // Envía tu voz al que llama
+            document.getElementById('botText').innerHTML = "<b class='text-success'>● LLAMADA ACTIVA</b>";
         });
     }
 
-    function rejectPeCall() {
-        peRing.pause();
-        document.getElementById('pePhoneContainer').style.display = 'none';
+    function colgar() {
+        ringtone.pause();
+        if(callActiva) callActiva.close();
+        document.getElementById('pePhone').style.display = 'none';
+        window.speechSynthesis.cancel();
     }
 
-    // Activar simulación al cargar
-    setTimeout(simularLlamadaPePhone, 3000);
+    // --- FUNCIONES EXTRA ---
+    function lanzarTimbre() {
+        let bell = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+        bell.play();
+    }
 </script>
+</body>
+</html>
