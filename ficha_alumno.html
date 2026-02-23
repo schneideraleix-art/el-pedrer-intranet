@@ -18,38 +18,42 @@
 
         /* Botón de Llamada IP */
         .btn-call { background: #27ae60; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; transition: 0.3s; }
-        .btn-call:hover { background: #219150; transform: translateY(-2px); }
+        .btn-call:hover { background: #219150; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
 
         /* Portal de Llamada Flotante */
         #callOverlay { 
             display: none; position: fixed; top: 20px; right: 20px; width: 300px; 
-            background: #1a1a1a; color: white; border-radius: 15px; padding: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 2000; text-align: center;
-            border: 2px solid #27ae60; animation: slideIn 0.4s ease;
+            background: #1a1a1a; color: white; border-radius: 15px; padding: 25px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 2000; text-align: center;
+            border: 1px solid #27ae60; animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .call-avatar { width: 80px; height: 80px; background: #555; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-        .timer { font-family: monospace; font-size: 1.2rem; color: #27ae60; margin-bottom: 20px; display: block; }
-        .btn-hangup { background: #e74c3c; border: none; color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; }
+        .call-avatar { width: 80px; height: 80px; background: #27ae60; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 0 20px rgba(39, 174, 96, 0.4); }
+        .timer { font-family: 'Courier New', monospace; font-size: 1.4rem; color: #27ae60; margin-bottom: 20px; display: block; font-weight: bold; }
+        .btn-hangup { background: #e74c3c; border: none; color: white; width: 55px; height: 55px; border-radius: 50%; font-size: 1.6rem; transition: 0.2s; }
+        .btn-hangup:hover { transform: scale(1.1); background: #c0392b; }
 
         /* Contenido */
         .content-ficha { width: 65%; padding: 45px; position: relative; }
         .nav-tabs .nav-link { border: none; color: #888; font-weight: 600; cursor: pointer; }
         .nav-tabs .nav-link.active { color: #007bff; border-bottom: 3px solid #007bff; background: none; }
         
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
 
+<audio id="dialTone" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" loop></audio>
+<audio id="hangupTone" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
+
 <div id="callOverlay">
-    <div class="small text-uppercase opacity-50 mb-2">Centralita IP - El Pedrer</div>
-    <div class="call-avatar" id="callAvatarIcon">A</div>
-    <h5 id="callName">Padre/Madre</h5>
-    <span class="timer" id="callTimer">Marcando...</span>
+    <div class="small text-uppercase opacity-50 mb-2" style="letter-spacing: 1px;">Centralita VoIP</div>
+    <div class="call-avatar" id="callAvatarIcon">--</div>
+    <h5 id="callName" class="mb-1">Conectando...</h5>
+    <span class="timer" id="callTimer">00:00</span>
     <div class="d-flex justify-content-center gap-3">
-        <button class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-mic-mute"></i></button>
-        <button class="btn-hangup" onclick="endCall()"><i class="bi bi-telephone-x-fill"></i></button>
-        <button class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-volume-up"></i></button>
+        <button class="btn btn-outline-light btn-sm rounded-circle p-2"><i class="bi bi-mic-mute-fill"></i></button>
+        <button class="btn-hangup shadow" onclick="endCall()"><i class="bi bi-telephone-x-fill"></i></button>
+        <button class="btn btn-outline-light btn-sm rounded-circle p-2"><i class="bi bi-record-circle"></i></button>
     </div>
 </div>
 
@@ -62,87 +66,68 @@
             <input type="file" id="fileInput" hidden onchange="previewImage(this)">
         </div>
         
-        <h3 class="fw-bold mb-1" id="nombreDisplay">Alumno</h3>
-        <span class="badge bg-primary mb-3" id="niaDisplay">NIA: 0000000</span>
+        <h3 class="fw-bold mb-1" id="nombreDisplay">Nombre</h3>
+        <span class="badge bg-primary mb-3 px-3 py-2" id="niaDisplay">NIA: 0000000</span>
         
-        <div class="text-start small opacity-75 mb-4">
-            <p class="mb-1"><i class="bi bi-person-heart me-2"></i> Tutor: Elena R.</p>
-            <p class="mb-1"><i class="bi bi-telephone-fill me-2"></i> +34 655 443 322</p>
+        <div class="text-start small opacity-75 mb-4 px-2">
+            <p class="mb-2"><i class="bi bi-person-fill-check me-2"></i> Tutor: Elena Rodríguez</p>
+            <p class="mb-2"><i class="bi bi-telephone-fill me-2"></i> +34 655 443 322</p>
+            <p class="mb-2"><i class="bi bi-shield-check me-2"></i> Nivel de Acceso: 3</p>
         </div>
 
-        <button class="btn-call" onclick="startCall()">
-            <i class="bi bi-headset me-2"></i> LLAMADA IP (PC)
+        <button class="btn-call shadow-sm" onclick="startCall()">
+            <i class="bi bi-headset me-2"></i> LLAMADA CENTRALITA IP
         </button>
 
-        <button class="btn btn-warning btn-sm mt-3 w-100 fw-bold" onclick="alert('Modo edición activado')">
-            <i class="bi bi-pencil-square me-2"></i>EDITAR DATOS
+        <button class="btn btn-warning btn-sm mt-3 w-100 fw-bold" onclick="alert('Abriendo editor de campos...')">
+            <i class="bi bi-pencil-square me-2"></i>EDITAR EXPEDIENTE
         </button>
     </div>
 
     <div class="content-ficha">
         <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Volver</a>
-        <h4 class="fw-bold mb-4">Historial y Calificaciones</h4>
+        <h4 class="fw-bold mb-4">Registro de Alumno</h4>
 
-        <ul class="nav nav-tabs mb-3">
-            <li class="nav-item"><a class="nav-link active" onclick="showSection('notas')">Notas</a></li>
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item"><a class="nav-link active" onclick="showSection('notas')">Académico</a></li>
             <li class="nav-item"><a class="nav-link" onclick="showSection('historial')">Comunicaciones</a></li>
         </ul>
 
         <div id="sec-notas">
-            <table class="table table-sm border">
-                <thead class="table-light"><tr><th>Asignatura</th><th class="text-center">Nota</th></tr></thead>
+            <table class="table table-hover border">
+                <thead class="table-light"><tr><th>Materia</th><th class="text-center">Estado</th><th class="text-center">Nota</th></tr></thead>
                 <tbody id="tablaNotas"></tbody>
             </table>
         </div>
 
         <div id="sec-historial" style="display:none;">
-            <div class="p-3 bg-light rounded small" id="logComunicaciones">
-                <div class="border-bottom py-2"><i class="bi bi-envelope text-primary me-2"></i> Correo enviado - 20/02/2026</div>
-                <div class="border-bottom py-2"><i class="bi bi-telephone text-success me-2"></i> Llamada realizada - 15/01/2026</div>
+            <div class="p-3 bg-light rounded" id="logComunicaciones" style="max-height: 300px; overflow-y: auto;">
+                <div class="border-bottom py-2 small"><i class="bi bi-info-circle me-2"></i> No hay registros previos de hoy.</div>
             </div>
         </div>
 
         <div class="d-flex gap-2 mt-4">
-            <button class="btn btn-primary flex-grow-1 fw-bold" data-bs-toggle="modal" data-bs-target="#mailModal">
-                <i class="bi bi-envelope-paper-fill me-2"></i>MENSAJE
+            <button class="btn btn-primary flex-grow-1 fw-bold p-3" onclick="alert('Abriendo redactor de correo...')">
+                <i class="bi bi-envelope-at-fill me-2"></i>ENVIAR CORREO
             </button>
-            <button class="btn btn-danger flex-grow-1 fw-bold" onclick="window.print()">
-                <i class="bi bi-printer-fill me-2"></i>PDF
+            <button class="btn btn-dark flex-grow-1 fw-bold p-3" onclick="window.print()">
+                <i class="bi bi-file-earmark-pdf-fill me-2"></i>EXPEDIENTE PDF
             </button>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="mailModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow border-0">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title">Redactar Correo</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="text" class="form-control mb-3" placeholder="Asunto...">
-                <textarea class="form-control" rows="4" placeholder="Cuerpo del mensaje..."></textarea>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary w-100 fw-bold" onclick="alert('Enviado');">ENVIAR</button>
-            </div>
         </div>
     </div>
 </div>
 
 <script>
     const params = new URLSearchParams(window.location.search);
-    const nombre = params.get('nombre') || 'Pablo';
-    document.getElementById('nombreDisplay').innerText = nombre + " " + (params.get('ape') || 'Fernández');
+    const nombre = params.get('nombre') || 'Alumno';
+    document.getElementById('nombreDisplay').innerText = nombre + " " + (params.get('ape') || 'Ejemplo');
     document.getElementById('niaDisplay').innerText = "NIA: " + (params.get('nia') || '1084251');
-    document.getElementById('avatarDefault').innerText = nombre[0];
-    document.getElementById('callAvatarIcon').innerText = nombre[0];
-    document.getElementById('callName').innerText = "Familia de " + nombre;
+    document.getElementById('avatarDefault').innerText = nombre[0].toUpperCase();
+    document.getElementById('callAvatarIcon').innerText = nombre[0].toUpperCase();
 
     const tBody = document.getElementById('tablaNotas');
-    ["Matemáticas", "Lengua", "Inglés", "Física"].forEach(a => {
-        tBody.innerHTML += `<tr><td class="small fw-bold">${a}</td><td class="text-center">8.2</td></tr>`;
+    ["Matemáticas", "Lengua", "Inglés", "Historia", "Tecnología"].forEach(a => {
+        tBody.innerHTML += `<tr><td class="fw-bold small">${a}</td><td class="text-center small text-success">Evaluado</td><td class="text-center fw-bold">8.5</td></tr>`;
     });
 
     function showSection(s) {
@@ -150,37 +135,52 @@
         document.getElementById('sec-historial').style.display = s === 'historial' ? 'block' : 'none';
     }
 
-    // LÓGICA DE LLAMADA
+    // LÓGICA DE LLAMADA CON SONIDO
     let seconds = 0;
     let timerInterval;
+    const dialSound = document.getElementById('dialTone');
+    const hangupSound = document.getElementById('hangupTone');
 
     function startCall() {
         document.getElementById('callOverlay').style.display = 'block';
+        document.getElementById('callName').innerText = "Marcando...";
         document.getElementById('callTimer').innerText = "Conectando...";
         
+        // Reproducir sonido de marcado
+        dialSound.play();
+        
         setTimeout(() => {
+            dialSound.pause();
+            dialSound.currentTime = 0;
+            document.getElementById('callName').innerText = "En Llamada: Familia de " + nombre;
             document.getElementById('callTimer').innerText = "00:00";
+            
             timerInterval = setInterval(() => {
                 seconds++;
                 let m = Math.floor(seconds / 60).toString().padStart(2, '0');
                 let s = (seconds % 60).toString().padStart(2, '0');
                 document.getElementById('callTimer').innerText = `${m}:${s}`;
             }, 1000);
-        }, 2000);
+        }, 3000); // 3 segundos de marcado
     }
 
     function endCall() {
         clearInterval(timerInterval);
-        seconds = 0;
-        document.getElementById('callTimer').innerText = "Llamada finalizada";
+        dialSound.pause();
+        hangupSound.play(); // Sonido de colgar
+        
+        document.getElementById('callName').innerText = "Finalizada";
+        document.getElementById('callTimer').innerText = "Desconectando...";
         
         // Registrar en el historial
         const log = document.getElementById('logComunicaciones');
-        log.innerHTML = `<div class="border-bottom py-2 text-success"><i class="bi bi-telephone-outbound-fill me-2"></i> Llamada VoIP realizada - Hoy</div>` + log.innerHTML;
+        const tiempoTotal = document.getElementById('callTimer').innerText;
+        log.innerHTML = `<div class="border-bottom py-2 text-success small"><i class="bi bi-telephone-outbound-fill me-2"></i> Llamada VoIP - Duración: ${seconds}s - Hoy</div>` + log.innerHTML;
         
         setTimeout(() => {
             document.getElementById('callOverlay').style.display = 'none';
-        }, 1500);
+            seconds = 0;
+        }, 1200);
     }
 
     function previewImage(i) {
