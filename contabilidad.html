@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Contabilidad - El Pedrer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+        .header-finanzas { background: #27ae60; color: white; padding: 30px 0; }
+        .card-fin { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="header-finanzas">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h3 class="m-0 fw-bold"><i class="bi bi-cash-stack"></i> GESTIÓN ECONÓMICA</h3>
+            <a href="direccion.html" class="btn btn-outline-light btn-sm">Volver al Panel</a>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card card-fin p-3 bg-white border-start border-4 border-success">
+                    <small class="text-muted fw-bold">SALDO DISPONIBLE</small>
+                    <h2 class="fw-bold">12.450,20€</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-fin p-3 bg-white border-start border-4 border-danger">
+                    <small class="text-muted fw-bold">GASTOS MES</small>
+                    <h2 class="fw-bold">3.120,45€</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-fin p-3 bg-white border-start border-4 border-warning">
+                    <small class="text-muted fw-bold">PENDIENTE COBRO</small>
+                    <h2 class="fw-bold">850,00€</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-fin overflow-hidden">
+            <div class="card-header bg-white fw-bold py-3">Últimos Movimientos</div>
+            <table class="table table-hover m-0">
+                <thead class="table-light">
+                    <tr><th>Fecha</th><th>Concepto</th><th>Categoría</th><th>Importe</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>22/02/2026</td><td>Suministros Oficina</td><td>Material</td><td class="text-danger">-145,00€</td></tr>
+                    <tr><td>20/02/2026</td><td>Subvención GVA</td><td>Ingresos</td><td class="text-success">+5.000,00€</td></tr>
+                    <tr><td>18/02/2026</td><td>Reparación Fontanería</td><td>Mantenimiento</td><td class="text-danger">-210,50€</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
