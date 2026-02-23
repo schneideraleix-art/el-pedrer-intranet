@@ -3,145 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Bajas Docentes - El Pedrer</title>
+    <title>Control de Bajas - El Pedrer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        :root { --danger-soft: #fff1f2; --danger-dark: #e11d48; }
-        body { background-color: var(--danger-soft); font-family: 'Segoe UI', sans-serif; padding: 30px; }
+        :root { --danger-dark: #be123c; --danger-light: #fff1f2; }
+        body { background-color: var(--danger-light); font-family: 'Segoe UI', sans-serif; padding: 30px; }
         
-        .glass-card { background: white; border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(225, 29, 72, 0.05); padding: 25px; margin-bottom: 25px; }
+        .header-section { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(190, 18, 60, 0.05); margin-bottom: 30px; border-left: 8px solid var(--danger-dark); }
+        .glass-card { background: white; border-radius: 20px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.03); padding: 25px; height: 100%; }
         
-        .baja-active { border-left: 6px solid var(--danger-dark); transition: 0.3s; }
-        .baja-active:hover { transform: scale(1.01); }
-
-        .stat-box { border-radius: 15px; padding: 20px; text-align: center; color: white; }
-        .bg-gradient-danger { background: linear-gradient(135deg, #e11d48, #fb7185); }
-        .bg-gradient-warning { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-
-        .btn-action { font-size: 0.75rem; font-weight: 700; border-radius: 8px; padding: 8px 12px; }
+        .stat-card { background: var(--danger-dark); color: white; border-radius: 15px; padding: 20px; text-align: center; }
+        .baja-item { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid #fecaca; transition: 0.3s; }
+        .baja-item:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(190, 18, 60, 0.1); }
+        
+        .btn-main { background: var(--danger-dark); color: white; border-radius: 12px; font-weight: bold; border: none; padding: 12px; transition: 0.3s; }
+        .btn-main:hover { background: #9f1239; transform: scale(1.02); color: white; }
     </style>
 </head>
 <body>
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-5">
+<div class="container">
+    <div class="header-section d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="fw-bold text-danger mb-0"><i class="bi bi-shield-exclamation me-3"></i>Gestión de Incidencias Docentes</h1>
-            <p class="text-muted ps-5">Panel de control de ausencias y sustituciones en tiempo real</p>
+            <h2 class="fw-bold text-danger mb-0"><i class="bi bi-file-earmark-medical-fill me-2"></i> Control de Bajas Docentes</h2>
+            <p class="text-muted mb-0">Gestión de ausencias y sustituciones del profesorado</p>
         </div>
         <button class="btn btn-outline-danger rounded-pill px-4 fw-bold" onclick="window.history.back()">
-            <i class="bi bi-arrow-left me-2"></i> VOLVER AL PANEL
+            <i class="bi bi-arrow-left me-2"></i> Volver al Panel
         </button>
     </div>
 
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stat-box bg-gradient-danger shadow">
-                <h2 class="fw-bold mb-0">12</h2>
-                <small class="text-uppercase fw-bold opacity-75">Bajas Activas</small>
+        <div class="col-md-4">
+            <div class="stat-card shadow">
+                <small class="text-uppercase opacity-75 fw-bold">Bajas Activas Hoy</small>
+                <h1 class="display-2 fw-bold mb-0" id="totalBajas">14</h1>
+                <p class="mb-0">Requieren atención inmediata</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-box bg-gradient-warning shadow">
-                <h2 class="fw-bold mb-0">4</h2>
-                <small class="text-uppercase fw-bold opacity-75">Pendiente Sustituto</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-box bg-dark shadow">
-                <h2 class="fw-bold mb-0">94%</h2>
-                <small class="text-uppercase fw-bold opacity-75">Cobertura de Aula</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-box bg-white text-danger border border-danger shadow-sm">
-                <h2 class="fw-bold mb-0">156</h2>
-                <small class="text-uppercase fw-bold opacity-75 text-muted">Días Totales/Mes</small>
+        <div class="col-md-8">
+            <div class="glass-card">
+                <h5 class="fw-bold mb-3">Registrar Nueva Incidencia</h5>
+                <div class="row g-2">
+                    <div class="col-md-8">
+                        <input type="text" id="profesorNombre" class="form-control form-control-lg" placeholder="Nombre del docente...">
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-main w-100 h-100" onclick="agregarBaja()">
+                            REGISTRAR BAJA
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-4">
-            <div class="glass-card">
-                <h5 class="fw-bold mb-4"><i class="bi bi-plus-circle me-2"></i>Nueva Incidencia</h5>
-                <form id="bajaForm">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Nombre del Docente</label>
-                        <input type="text" class="form-control" placeholder="Ej: Sánchez, Julia">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Tipo de Baja</label>
-                        <select class="form-select">
-                            <option>Enfermedad Común</option>
-                            <option>Accidente Laboral</option>
-                            <option>Maternidad/Paternidad</option>
-                            <option>Asuntos Propios</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold">Fecha de Inicio</label>
-                        <input type="date" class="form-control">
-                    </div>
-                    <button type="button" class="btn btn-danger w-100 py-3 fw-bold rounded-pill shadow">
-                        REGISTRAR Y NOTIFICAR
-                    </button>
-                </form>
-            </div>
+    <div class="glass-card">
+        <div class="d-flex justify-content-between mb-4 align-items-center">
+            <h5 class="fw-bold mb-0">Listado de Seguimiento</h5>
+            <span class="badge bg-danger-subtle text-danger p-2">Sincronizado en tiempo real</span>
         </div>
-
-        <div class="col-lg-8">
-            <div class="glass-card">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold mb-0">Bajas en Proceso</h5>
-                    <div class="btn-group">
-                        <button class="btn btn-sm btn-outline-secondary">Hoy</button>
-                        <button class="btn btn-sm btn-outline-secondary">Mes</button>
-                    </div>
+        
+        <div id="listaBajas">
+            <div class="baja-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-1">Pérez, David</h6>
+                    <p class="small text-muted mb-0"><i class="bi bi-calendar3 me-2"></i>Baja Médica - Desde: 15/02/2026</p>
                 </div>
-
-                <div class="glass-card baja-active border border-light p-3 mb-3">
-                    <div class="row align-items-center">
-                        <div class="col-md-5">
-                            <h6 class="fw-bold mb-1">Pérez, David</h6>
-                            <p class="small text-muted mb-0"><i class="bi bi-calendar-event me-2"></i>Desde: 15/02/2026 (Gripe)</p>
-                        </div>
-                        <div class="col-md-3">
-                            <span class="badge bg-danger-subtle text-danger p-2 px-3 rounded-pill fw-bold">
-                                <i class="bi bi-person-exclamation me-1"></i> SIN SUSTITUTO
-                            </span>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <button class="btn btn-light btn-action text-primary"><i class="bi bi-telephone-plus"></i></button>
-                            <button class="btn btn-light btn-action text-dark"><i class="bi bi-file-earmark-pdf"></i></button>
-                            <button class="btn btn-danger btn-action"><i class="bi bi-envelope-at me-1"></i> AVISAR</button>
-                        </div>
-                    </div>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-danger text-uppercase p-2">Pendiente Sustituto</span>
+                    <button class="btn btn-sm btn-light border"><i class="bi bi-telephone text-primary"></i></button>
+                    <button class="btn btn-sm btn-light border"><i class="bi bi-file-pdf text-danger"></i></button>
                 </div>
+            </div>
 
-                <div class="glass-card baja-active border border-light p-3 mb-3" style="border-left-color: #f59e0b;">
-                    <div class="row align-items-center">
-                        <div class="col-md-5">
-                            <h6 class="fw-bold mb-1">García, Elena</h6>
-                            <p class="small text-muted mb-0"><i class="bi bi-calendar-event me-2"></i>Desde: 10/02/2026 (Maternidad)</p>
-                        </div>
-                        <div class="col-md-3">
-                            <span class="badge bg-success-subtle text-success p-2 px-3 rounded-pill fw-bold">
-                                <i class="bi bi-person-check me-1"></i> SUSTITUIDO
-                            </span>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <button class="btn btn-light btn-action text-primary"><i class="bi bi-chat-dots"></i> Info</button>
-                            <button class="btn btn-outline-secondary btn-action">Finalizar</button>
-                        </div>
-                    </div>
+            <div class="baja-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-1">García, Elena</h6>
+                    <p class="small text-muted mb-0"><i class="bi bi-calendar3 me-2"></i>Maternidad - Desde: 10/02/2026</p>
                 </div>
-
+                <div class="d-flex gap-2">
+                    <span class="badge bg-success text-uppercase p-2">Sustituido</span>
+                    <button class="btn btn-sm btn-light border"><i class="bi bi-eye"></i> Ver Plan</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function agregarBaja() {
+        const nombre = document.getElementById('profesorNombre').value;
+        if(nombre === "") return alert("Escribe un nombre");
+
+        const lista = document.getElementById('listaBajas');
+        const nuevaBaja = `
+            <div class="baja-item d-flex justify-content-between align-items-center animate__animated animate__fadeIn">
+                <div>
+                    <h6 class="fw-bold mb-1">${nombre}</h6>
+                    <p class="small text-muted mb-0"><i class="bi bi-calendar3 me-2"></i>Baja registrada hoy: ${new Date().toLocaleDateString()}</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-warning text-dark text-uppercase p-2">En Revisión</span>
+                    <button class="btn btn-sm btn-danger" onclick="this.parentElement.parentElement.remove()">Eliminar</button>
+                </div>
+            </div>
+        `;
+        lista.insertAdjacentHTML('afterbegin', nuevaBaja);
+        document.getElementById('profesorNombre').value = "";
+        
+        // Actualizar contador
+        const contador = document.getElementById('totalBajas');
+        contador.innerText = parseInt(contador.innerText) + 1;
+    }
+</script>
 
 </body>
 </html>
