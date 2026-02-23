@@ -3,214 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema IVR El Pedrer - Versión Final</title>
+    <title>Expediente Pro - Colegio El Pedrer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --bot-color: #00d2ff; --human-color: #2ecc71; --bg-dark: #0f172a; }
-        body { background-color: #f1f5f9; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        :root { --primary: #1e293b; --accent: #00d2ff; --success: #2ecc71; --whatsapp: #25D366; }
+        body { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
         
-        .ficha-container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); overflow: hidden; max-width: 1000px; width: 90%; display: flex; min-height: 700px; }
-        .sidebar { background: #1e293b; color: white; width: 300px; padding: 40px 20px; text-align: center; }
-        
-        /* Centralita */
+        .sidebar { width: 280px; background: var(--primary); color: white; position: fixed; height: 100vh; padding: 30px; z-index: 100; }
+        .main-content { margin-left: 280px; padding: 40px; }
+
+        .card-custom { background: white; border-radius: 24px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.02); padding: 25px; margin-bottom: 25px; }
+
+        /* Centralita Flotante */
         #callOverlay { 
-            display: none; position: fixed; top: 30px; right: 30px; width: 380px; 
-            background: var(--bg-dark); color: white; border-radius: 24px; padding: 30px; 
-            box-shadow: 0 10px 50px rgba(0,0,0,0.5); z-index: 9999; text-align: center; border: 1px solid #334155;
+            display: none; position: fixed; bottom: 30px; right: 30px; width: 350px; 
+            background: #0f172a; color: white; border-radius: 30px; padding: 25px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4); z-index: 9999; border: 1px solid #334155;
         }
 
-        .viz-box { display: flex; justify-content: center; align-items: flex-end; gap: 5px; height: 50px; margin: 20px 0; }
-        .bar { width: 6px; height: 10px; background: var(--bot-color); border-radius: 3px; transition: 0.1s; }
-        .animating { animation: pulse 0.8s infinite ease-in-out; }
-        @keyframes pulse { 0%, 100% { height: 10px; } 50% { height: 45px; } }
+        .viz-bar { width: 4px; height: 8px; background: var(--accent); border-radius: 10px; transition: 0.1s; }
+        .animating { animation: bounce 0.5s infinite alternate; }
+        @keyframes bounce { from { height: 8px; } to { height: 35px; } }
 
-        .bot-bubble { font-size: 0.95rem; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--bot-color); min-height: 90px; color: #cbd5e1; line-height: 1.5; }
+        .bot-bubble { font-size: 0.85rem; background: rgba(255,255,255,0.06); padding: 15px; border-radius: 18px; margin: 15px 0; border-left: 4px solid var(--accent); }
 
-        .mic-badge { display: none; background: #ef4444; color: white; padding: 5px 15px; border-radius: 50px; font-size: 0.75rem; font-weight: bold; margin-bottom: 15px; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.4; } }
-
-        .btn-hangup { background: #ef4444; border: none; color: white; width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; transition: 0.3s; cursor: pointer; }
-        .btn-hangup:hover { transform: scale(1.1) rotate(135deg); background: #dc2626; }
-
-        .main-info { flex: 1; padding: 60px; }
+        /* Botón WhatsApp Final */
+        #whatsappBtn { display: none; background: var(--whatsapp); color: white; border: none; font-weight: bold; transition: 0.3s; }
+        #whatsappBtn:hover { transform: scale(1.05); background: #1eb954; }
     </style>
 </head>
 <body>
 
-<audio id="waitingMusic" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
-</audio>
+<audio id="waitingMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"></audio>
 
-<div id="callOverlay">
-    <div class="small text-uppercase tracking-widest opacity-50 mb-2" id="headerType">Sistema Asistido</div>
-    <div class="mic-badge" id="micBadge"><i class="bi bi-mic-fill me-1"></i> ESCUCHANDO...</div>
-    
-    <div class="viz-box" id="viz">
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+<div class="sidebar text-center">
+    <div class="bg-primary border border-secondary rounded-circle d-inline-block p-3 mb-3 shadow">
+        <i class="bi bi-person-badge-fill fs-1 text-info"></i>
     </div>
-
-    <div id="botSpeech" class="bot-bubble">Iniciando protocolo institucional...</div>
+    <h5 id="sideNombre" class="fw-bold mb-4">--</h5>
     
-    <div class="d-flex justify-content-between align-items: center; mb-4 px-3">
-        <div class="text-start">
-            <small class="d-block opacity-50">ESTADO</small>
-            <strong id="callStatus" class="text-info">CONECTANDO</strong>
-        </div>
-        <div class="text-end">
-            <small class="d-block opacity-50">TIEMPO</small>
-            <strong id="timerDisplay">00:00</strong>
-        </div>
-    </div>
+    <button class="btn btn-info w-100 py-3 fw-bold rounded-pill text-white shadow-lg mb-4" onclick="runCallFlow()">
+        <i class="bi bi-telephone-outbound-fill me-2"></i> LLAMAR AHORA
+    </button>
 
-    <button class="btn-hangup shadow" onclick="endCall()"><i class="bi bi-telephone-fill"></i></button>
+    <button id="whatsappBtn" class="btn w-100 py-3 rounded-pill shadow-lg" onclick="sendWhatsApp()">
+        <i class="bi bi-whatsapp me-2"></i> ENVIAR INFORME
+    </button>
 </div>
 
-<div class="ficha-container">
-    <div class="sidebar">
-        <div class="bg-primary rounded-circle d-inline-block p-4 mb-3"><i class="bi bi-person-badge text-white fs-1"></i></div>
-        <h4 id="nombreAlumno">Expediente Alumno</h4>
-        <p class="small opacity-50">Colegio El Pedrer</p>
-        <hr class="border-secondary my-4">
-        <button class="btn btn-success w-100 py-3 fw-bold rounded-pill shadow" onclick="runCallFlow()">
-            <i class="bi bi-telephone-outbound-fill me-2"></i> INICIAR LLAMADA
-        </button>
-    </div>
-    <div class="main-info">
-        <h2 class="fw-bold mb-4">Panel de Control de Voz</h2>
-        <p class="text-muted">Utilice el botón lateral para iniciar la comunicación. El sistema filtrará la llamada mediante el asistente virtual antes de conectar con el personal del centro.</p>
-        <div class="card mt-5 border-0 bg-light p-4 rounded-4">
-            <h6 class="text-uppercase small fw-bold mb-3">Registro de la sesión</h6>
-            <div id="logArea" class="small text-muted italic">No hay actividad registrada.</div>
+<div class="main-content">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="fw-bold">Expediente: <span id="mainNombre" class="text-info">--</span></h2>
+            <p class="text-muted">Interacción por voz y análisis de datos en tiempo real.</p>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card-custom">
+                <h6 class="fw-bold text-uppercase small text-muted mb-4">Evolución Académica (Interactivo)</h6>
+                <canvas id="evolucionChart" height="140"></canvas>
+            </div>
+            <div class="card-custom">
+                <h6 class="fw-bold text-uppercase small text-muted mb-4">Calificaciones actuales</h6>
+                <table class="table align-middle">
+                    <tbody id="tablaNotas"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card-custom bg-info text-white">
+                <h6 class="opacity-75">Media Actual</h6>
+                <h1 class="display-3 fw-bold mb-0">8.7</h1>
+            </div>
+            <div class="card-custom">
+                <h6 class="fw-bold mb-3">Asistencia</h6>
+                <div class="progress mb-2" style="height:10px"><div class="progress-bar bg-success" style="width: 96%"></div></div>
+                <small class="text-muted">96% de asistencia positiva</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="callOverlay">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="badge bg-primary-subtle text-info">LLAMADA EN CURSO</span>
+        <strong id="timer">00:00</strong>
+    </div>
+
+    <div id="botSpeech" class="bot-bubble">Listo para la gestión vocal.</div>
+    
+    <div class="d-flex justify-content-center gap-1 mb-4" id="viz">
+        <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+        <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+    </div>
+
+    <button class="btn btn-danger w-100 rounded-pill py-3 fw-bold shadow" onclick="endCall()">
+        COLGAR LLAMADA
+    </button>
 </div>
 
 <script>
-    const music = document.getElementById('waitingMusic');
+    const urlParams = new URLSearchParams(window.location.search);
+    const nombreAlumno = urlParams.get('nombre') || 'Alejandro Martínez';
+    document.getElementById('sideNombre').innerText = nombreAlumno;
+    document.getElementById('mainNombre').innerText = nombreAlumno;
+
+    // Configuración Gráfica e Interacción de Voz
+    const ctx = document.getElementById('evolucionChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Sep', 'Oct', 'Nov', 'Dic', 'Ene', 'Feb'],
+            datasets: [{
+                data: [7.5, 7.2, 8.0, 8.1, 8.5, 8.7],
+                borderColor: '#00d2ff', backgroundColor: 'rgba(0, 210, 255, 0.1)',
+                fill: true, tension: 0.4, borderWidth: 4, pointRadius: 6
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            onClick: (e, elements) => {
+                if (elements.length > 0) {
+                    const i = elements[0].index;
+                    const nota = myChart.data.datasets[0].data[i];
+                    hablar(`En el mes de ${myChart.data.labels[i]}, la nota media fue de ${nota}.`, 'bot');
+                }
+            }
+        }
+    });
+
+    // Lógica de Notas
+    const materias = ["Matemáticas", "Física", "Lengua", "Inglés"];
+    const tabla = document.getElementById('tablaNotas');
+    materias.forEach(m => {
+        tabla.innerHTML += `<tr><td class="fw-bold">${m}</td><td class="text-end"><strong>8.5</strong></td></tr>`;
+    });
+
+    // SISTEMA DE VOZ
     const synth = window.speechSynthesis;
-    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = Recognition ? new Recognition() : null;
-    if(recognition) { recognition.lang = 'es-ES'; recognition.continuous = false; }
+    const music = document.getElementById('waitingMusic');
+    let timer, sec = 0;
 
-    let voiceBot, voiceHuman;
-    let seconds = 0;
-    let callTimer;
-
-    const guionHumano = [
-        "Buenos días, le atiende el centro educativo. He recibido su solicitud, ¿en qué puedo ayudarle?",
-        "Entiendo. Respecto a su consulta sobre el alumno, estamos procesando la documentación necesaria.",
-        "Correcto. Le enviaremos una notificación oficial a su correo electrónico al finalizar el día.",
-        "Ha sido un placer atenderle. Procedo a cerrar la comunicación. Que tenga un buen día."
-    ];
-
-    function setupVoices() {
-        const v = synth.getVoices();
-        // Buscamos voces diferentes
-        voiceBot = v.find(voz => voz.name.includes('Google') && voz.lang.includes('es')) || v[0];
-        voiceHuman = v.find(voz => (voz.name.includes('Helena') || voz.name.includes('Microsoft')) && voz.lang.includes('es')) || v[1] || v[0];
-    }
-    synth.onvoiceschanged = setupVoices;
-    setupVoices();
-
-    function hablar(texto, quien) {
-        return new Promise((resolve) => {
+    function hablar(texto, tipo) {
+        return new Promise(r => {
             synth.cancel();
             const u = new SpeechSynthesisUtterance(texto);
             u.lang = 'es-ES';
-            
-            if (quien === 'bot') {
-                u.voice = voiceBot; u.pitch = 0.8; u.rate = 0.9;
-                document.getElementById('headerType').innerText = "Asistente Virtual";
-                document.querySelectorAll('.bar').forEach(b => b.style.background = '#00d2ff');
-                document.getElementById('botSpeech').style.borderColor = '#00d2ff';
-            } else {
-                u.voice = voiceHuman; u.pitch = 1.0; u.rate = 0.95;
-                document.getElementById('headerType').innerText = "Personal del Centro";
-                document.querySelectorAll('.bar').forEach(b => b.style.background = '#2ecc71');
-                document.getElementById('botSpeech').style.borderColor = '#2ecc71';
-            }
-
-            u.onstart = () => {
-                document.getElementById('botSpeech').innerText = texto;
-                document.querySelectorAll('.bar').forEach(b => b.classList.add('animating'));
-            };
-            u.onend = () => {
-                document.querySelectorAll('.bar').forEach(b => b.classList.remove('animating'));
-                resolve();
-            };
+            u.pitch = tipo === 'bot' ? 0.8 : 1.1;
+            document.getElementById('botSpeech').innerText = texto;
+            document.querySelectorAll('.viz-bar').forEach(b => b.classList.add('animating'));
+            u.onend = () => { document.querySelectorAll('.viz-bar').forEach(b => b.classList.remove('animating')); r(); };
             synth.speak(u);
         });
     }
 
-    function escuchar() {
-        return new Promise((resolve) => {
-            if(!recognition) return setTimeout(() => resolve("si"), 2000);
-            document.getElementById('micBadge').style.display = 'inline-block';
-            recognition.start();
-            recognition.onresult = (e) => {
-                document.getElementById('micBadge').style.display = 'none';
-                resolve(e.results[0][0].transcript.toLowerCase());
-            };
-            recognition.onerror = () => {
-                document.getElementById('micBadge').style.display = 'none';
-                resolve("");
-            };
-        });
-    }
-
     async function runCallFlow() {
-        // Desbloquear audio
         music.play().then(() => { music.pause(); music.currentTime = 0; });
-        
         document.getElementById('callOverlay').style.display = 'block';
-        document.getElementById('logArea').innerText = "Conexión establecida...";
-
-        // ETAPA 1: BOT
-        await hablar("Le damos la bienvenida al Colegio El Pedrer. ¿Autoriza usted la grabación de esta llamada por motivos de seguridad? Diga sí o no.", 'bot');
-        await escuchar();
-        
-        await hablar("Le agradezco la información. Indique el departamento: uno para Secretaría, dos para Jefatura.", 'bot');
-        await escuchar();
-
-        await hablar("Estamos gestionando su transferencia. Por favor, manténgase a la espera.", 'bot');
-
-        // ETAPA 2: MÚSICA
-        document.getElementById('callStatus').innerText = "TRANSFERIENDO";
-        music.volume = 0.2; music.play();
-
+        document.getElementById('whatsappBtn').style.display = 'none';
+        await hablar("Iniciando llamada institucional para " + nombreAlumno, 'bot');
+        music.volume = 0.1; music.play();
         setTimeout(async () => {
             music.pause();
-            document.getElementById('callStatus').innerText = "EN LÍNEA";
-            document.getElementById('callStatus').className = "text-success fw-bold";
-            callTimer = setInterval(() => {
-                seconds++;
-                let m = Math.floor(seconds/60).toString().padStart(2,'0');
-                let s = (seconds%60).toString().padStart(2,'0');
-                document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+            timer = setInterval(() => {
+                sec++;
+                document.getElementById('timer').innerText = `${Math.floor(sec/60).toString().padStart(2,'0')}:${(sec%60).toString().padStart(2,'0')}`;
             }, 1000);
-
-            // ETAPA 3: CONVERSACIÓN HUMANA
-            for(let frase of guionHumano) {
-                await hablar(frase, 'humano');
-                document.getElementById('botSpeech').innerText = "(Le escuchamos...)";
-                await escuchar();
-            }
-            endCall();
-        }, 5000);
+            await hablar("Buenos días. Le atendemos desde El Pedrer. ¿Desea comentar el expediente?", 'humano');
+        }, 4000);
     }
 
     function endCall() {
-        clearInterval(callTimer);
+        clearInterval(timer);
         music.pause();
-        hablar("La sesión ha finalizado. Gracias por su contacto. Que tenga un buen día.", 'bot').then(() => {
-            setTimeout(() => {
-                document.getElementById('callOverlay').style.display = 'none';
-                document.getElementById('logArea').innerText = `Llamada finalizada con éxito. Duración: ${seconds}s`;
-                seconds = 0;
-                document.getElementById('timerDisplay').innerText = "00:00";
-            }, 2000);
-        });
+        document.getElementById('callOverlay').style.display = 'none';
+        document.getElementById('whatsappBtn').style.display = 'block'; // Aparece el botón de WhatsApp
+        hablar("Gestión finalizada. Puede enviar el resumen por WhatsApp ahora.", 'bot');
+    }
+
+    function sendWhatsApp() {
+        const mensaje = `Hola, le escribimos desde el Colegio El Pedrer. Tras nuestra llamada, le informamos que el alumno ${nombreAlumno} tiene una media actual de 8.7. Saludos.`;
+        const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+        window.open(url, '_blank');
     }
 </script>
 </body>
