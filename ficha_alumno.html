@@ -8,36 +8,32 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1000px; width: 95%; display: flex; min-height: 780px; position: relative; }
+        .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1100px; width: 95%; display: flex; min-height: 850px; position: relative; }
         
-        .sidebar-ficha { background: #2c3e50; color: white; width: 35%; padding: 40px 30px; text-align: center; }
-        .avatar-circle { width: 150px; height: 150px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; margin: 0 auto 20px; border: 5px solid rgba(255,255,255,0.1); text-transform: uppercase; }
+        /* Sidebar Mejorada */
+        .sidebar-ficha { background: #2c3e50; color: white; width: 320px; padding: 30px 20px; text-align: center; display: flex; flex-direction: column; }
+        .avatar-circle { width: 120px; height: 120px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 15px; border: 4px solid rgba(255,255,255,0.1); text-transform: uppercase; }
 
-        /* Centralita VoIP */
+        /* Agenda de Contactos Rápidos */
+        .agenda-title { font-size: 0.7rem; font-weight: bold; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; margin-top: 30px; margin-bottom: 10px; text-align: left; }
+        .contact-pill { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; cursor: pointer; border: 1px solid transparent; }
+        .contact-pill:hover { background: rgba(255,255,255,0.15); border-color: #2ecc71; }
+        .contact-info { text-align: left; line-height: 1.2; }
+        .contact-name { font-size: 0.85rem; font-weight: 600; display: block; }
+        .contact-role { font-size: 0.7rem; color: #bdc3c7; }
+        .status-dot { width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 5px #2ecc71; }
+
+        /* Centralita */
         #callOverlay { 
             display: none; position: fixed; top: 20px; right: 20px; width: 320px; 
             background: #121212; color: white; border-radius: 15px; padding: 25px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 2000; text-align: center;
-            border: 1px solid #333; animation: slideIn 0.4s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 2000; text-align: center; border: 1px solid #333;
         }
-        .timer { font-family: 'Courier New', monospace; font-size: 1.5rem; color: #2ecc71; margin-bottom: 10px; display: block; }
-        .timer.on-hold { color: #f1c40f; }
+        .timer { font-family: 'Courier New', monospace; font-size: 1.5rem; color: #2ecc71; }
+        .btn-hangup { background: #ff4757; border: none; color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 1.3rem; }
 
-        /* Animación Música de Espera */
-        #holdMusicAnim { display: none; margin: 10px 0; }
-        .bar { display: inline-block; width: 3px; height: 15px; background: #f1c40f; margin: 0 2px; animation: music 1s infinite; }
-        @keyframes music { 0%, 100% { height: 5px; } 50% { height: 20px; } }
-
-        .btn-hangup { background: #ff4757; border: none; color: white; width: 55px; height: 55px; border-radius: 50%; font-size: 1.5rem; transition: 0.3s; }
-        
-        #transferPanel { display: none; background: #222; border-radius: 10px; padding: 10px; margin-top: 15px; border: 1px dashed #555; }
-        .btn-ext { background: #444; color: white; border: none; font-size: 0.75rem; margin: 2px; padding: 5px 10px; border-radius: 4px; width: 100%; text-align: left; }
-
-        .rec-indicator { display: none; color: #ff4757; font-size: 0.7rem; font-weight: bold; position: absolute; top: 15px; left: 20px; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
-
-        .content-ficha { width: 65%; padding: 45px; position: relative; }
+        /* Contenido */
+        .content-ficha { flex: 1; padding: 45px; position: relative; }
         .nav-tabs .nav-link { border: none; color: #888; font-weight: 600; cursor: pointer; }
         .nav-tabs .nav-link.active { color: #007bff; border-bottom: 3px solid #007bff; background: none; }
     </style>
@@ -48,50 +44,65 @@
 <audio id="holdMusic" src="https://www.chosic.com/wp-content/uploads/2021/04/Mozart-Turkish-March.mp3" loop></audio>
 
 <div id="callOverlay">
-    <div class="rec-indicator" id="recIcon"><i class="bi bi-circle-fill me-1"></i> REC</div>
-    <div class="small opacity-50 mb-2">VOIP DIRECCIÓN</div>
-    
-    <div id="holdMusicAnim">
-        <div class="bar"></div><div class="bar" style="animation-delay: 0.2s"></div><div class="bar" style="animation-delay: 0.4s"></div>
-        <div class="small text-warning mt-1">Música de espera activa...</div>
-    </div>
-
+    <div class="small opacity-50 mb-2" id="callType">Llamada Saliente</div>
     <h6 id="callStatus" class="mb-1">Marcando...</h6>
     <span class="timer" id="timerDisplay">00:00</span>
-    
-    <div class="d-flex justify-content-center align-items-center gap-2">
-        <button class="btn btn-outline-warning btn-sm rounded-circle" id="btnHold" onclick="toggleHold()" title="Poner en espera"><i class="bi bi-pause-fill"></i></button>
+    <div class="d-flex justify-content-center gap-2 mt-3">
+        <button class="btn btn-outline-warning btn-sm rounded-circle" onclick="toggleHold()"><i class="bi bi-pause-fill"></i></button>
         <button class="btn-hangup shadow" onclick="endCall()"><i class="bi bi-telephone-x-fill"></i></button>
-        <button class="btn btn-outline-info btn-sm rounded-circle" onclick="toggleTransfer()"><i class="bi bi-arrow-right-short"></i></button>
-    </div>
-
-    <div id="transferPanel">
-        <button class="btn-ext" onclick="transferTo('Secretaría')">Secretaría (Ext. 101)</button>
-        <button class="btn-ext" onclick="transferTo('Jefatura')">Jefatura (Ext. 102)</button>
+        <button class="btn btn-outline-info btn-sm rounded-circle" onclick="alert('Teclado numérico activo')"><i class="bi bi-grid-3x3-gap-fill"></i></button>
     </div>
 </div>
 
 <div class="ficha-container">
     <div class="sidebar-ficha">
         <div class="avatar-circle" id="avatarLetra">--</div>
-        <h3 class="fw-bold mb-1" id="nombreAlumno">...</h3>
-        <span class="badge bg-primary mb-4" id="niaAlumno">NIA: 0000000</span>
+        <h4 class="fw-bold mb-1" id="nombreAlumno">Estudiante</h4>
+        <p class="small text-info mb-4" id="niaAlumno">NIA: 0000000</p>
         
-        <button class="btn btn-success w-100 fw-bold py-3 mb-3" onclick="startCall()">
-            <i class="bi bi-telephone-plus-fill me-2"></i> LLAMADA PC
+        <button class="btn btn-success w-100 fw-bold py-3 shadow-sm mb-2" onclick="startCall('Familia')">
+            <i class="bi bi-telephone-outbound-fill me-2"></i> LLAMAR FAMILIA
         </button>
+
+        <div class="agenda-title">Agenda Interna</div>
+        
+        <div class="contact-pill" onclick="startCall('Secretaría (Ext. 101)')">
+            <div class="contact-info">
+                <span class="contact-name">Ana Belén</span>
+                <span class="contact-role">Secretaría</span>
+            </div>
+            <div class="status-dot"></div>
+        </div>
+
+        <div class="contact-pill" onclick="startCall('D. Julián (Ext. 102)')">
+            <div class="contact-info">
+                <span class="contact-name">D. Julián</span>
+                <span class="contact-role">Jefe Estudios</span>
+            </div>
+            <div class="status-dot"></div>
+        </div>
+
+        <div class="contact-pill" onclick="startCall('Lucía (Ext. 205)')">
+            <div class="contact-info">
+                <span class="contact-name">Lucía V.</span>
+                <span class="contact-role">Orientadora</span>
+            </div>
+            <div class="status-dot" style="background: #f1c40f; box-shadow: 0 0 5px #f1c40f;"></div>
+        </div>
     </div>
 
     <div class="content-ficha">
-        <h4 class="fw-bold mb-4">Panel Académico</h4>
+        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Volver</a>
+        <h4 class="fw-bold mb-4">Gestión Académica</h4>
+        
         <ul class="nav nav-tabs mb-4">
-            <li class="nav-item"><a class="nav-link active" onclick="showTab('notas')">Calificaciones</a></li>
+            <li class="nav-item"><a class="nav-link active" onclick="showTab('notas')">Resumen</a></li>
             <li class="nav-item"><a class="nav-link" onclick="showTab('historial')">Log Centralita</a></li>
         </ul>
 
         <div id="sec-notas">
             <table class="table table-hover border small">
-                <thead class="table-light"><tr><th>Asignatura</th><th class="text-center">Nota</th></tr></thead>
+                <thead class="table-light"><tr><th>Materia</th><th class="text-center">Nota</th></tr></thead>
                 <tbody id="notasCuerpo"></tbody>
             </table>
         </div>
@@ -104,28 +115,31 @@
 
 <script>
     const params = new URLSearchParams(window.location.search);
-    const nombre = params.get('nombre') || 'Estudiante';
+    const nombre = params.get('nombre') || 'Alumno';
     document.getElementById('nombreAlumno').innerText = nombre;
     document.getElementById('niaAlumno').innerText = "NIA: " + (params.get('nia') || '1084251');
     document.getElementById('avatarLetra').innerText = nombre[0].toUpperCase();
 
-    ["Lengua", "Matemáticas", "Inglés"].forEach(m => {
+    ["Mates", "Lengua", "Inglés", "Historia"].forEach(m => {
         document.getElementById('notasCuerpo').innerHTML += `<tr><td>${m}</td><td class="text-center fw-bold">8.5</td></tr>`;
     });
 
-    let timer; let sec = 0; let onHold = false;
-    const dialSound = document.getElementById('dialSound');
-    const holdMusic = document.getElementById('holdMusic');
+    let timer; let sec = 0; let activeCall = false;
 
-    function startCall() {
-        document.getElementById('callOverlay').style.display = 'block';
-        dialSound.play();
-        document.getElementById('callStatus').innerText = "Llamando...";
+    function startCall(target) {
+        if(activeCall) {
+            if(!confirm("¿Desea poner en espera la llamada actual e iniciar multiconferencia con " + target + "?")) return;
+        }
         
+        document.getElementById('callOverlay').style.display = 'block';
+        document.getElementById('dialSound').play();
+        document.getElementById('callStatus').innerText = "Llamando a " + target + "...";
+        activeCall = true;
+
         setTimeout(() => {
-            dialSound.pause();
-            document.getElementById('callStatus').innerText = "EN LÍNEA";
-            timer = setInterval(() => { sec++; updateTimer(); }, 1000);
+            document.getElementById('dialSound').pause();
+            document.getElementById('callStatus').innerText = "EN LÍNEA CON " + target.toUpperCase();
+            if(!timer) timer = setInterval(() => { sec++; updateTimer(); }, 1000);
         }, 3000);
     }
 
@@ -135,39 +149,30 @@
         document.getElementById('timerDisplay').innerText = `${m}:${s}`;
     }
 
-    function toggleHold() {
-        onHold = !onHold;
-        const btn = document.getElementById('btnHold');
-        const timerDisp = document.getElementById('timerDisplay');
-        const anim = document.getElementById('holdMusicAnim');
+    function endCall() {
+        clearInterval(timer);
+        timer = null;
+        document.getElementById('dialSound').pause();
+        document.getElementById('holdMusic').pause();
+        const log = document.getElementById('historialLog');
+        log.innerHTML = `<div class="list-group-item small"><b>LLAMADA FINALIZADA</b> (${sec}s) <div class="text-muted">Hoy - ${document.getElementById('callStatus').innerText}</div></div>` + log.innerHTML;
+        document.getElementById('callOverlay').style.display = 'none';
+        sec = 0; activeCall = false;
+        document.getElementById('timerDisplay').innerText = "00:00";
+    }
 
-        if (onHold) {
-            holdMusic.play();
-            btn.classList.replace('btn-outline-warning', 'btn-warning');
-            timerDisp.classList.add('on-hold');
-            anim.style.display = 'block';
+    function toggleHold() {
+        const music = document.getElementById('holdMusic');
+        const timerDisp = document.getElementById('timerDisplay');
+        if(music.paused) {
+            music.play();
+            timerDisp.style.color = "#f1c40f";
             document.getElementById('callStatus').innerText = "EN ESPERA";
         } else {
-            holdMusic.pause();
-            btn.classList.replace('btn-warning', 'btn-outline-warning');
-            timerDisp.classList.remove('on-hold');
-            anim.style.display = 'none';
+            music.pause();
+            timerDisp.style.color = "#2ecc71";
             document.getElementById('callStatus').innerText = "EN LÍNEA";
         }
-    }
-
-    function endCall() {
-        holdMusic.pause();
-        clearInterval(timer);
-        const log = document.getElementById('historialLog');
-        log.innerHTML = `<div class="list-group-item small"><b>LLAMADA FINALIZADA</b> (${sec}s) <div class="text-muted">Hoy - Centralita</div></div>` + log.innerHTML;
-        document.getElementById('callOverlay').style.display = 'none';
-        sec = 0; onHold = false;
-    }
-
-    function toggleTransfer() {
-        const p = document.getElementById('transferPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
     }
 
     function showTab(t) {
