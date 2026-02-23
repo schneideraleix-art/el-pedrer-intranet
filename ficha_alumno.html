@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha del Alumno - El Pedrer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card border-0 shadow-lg overflow-hidden">
+            <div class="row g-0">
+                <div class="col-md-4 bg-dark text-white p-5 text-center">
+                    <img src="https://ui-avatars.com/api/?name=Alumno&size=200&background=random" class="rounded-circle img-thumbnail mb-4" id="fotoAlumno">
+                    <h3 id="displayNombre">Nombre Alumno</h3>
+                    <p class="badge bg-primary" id="displayNIA">NIA: 0000000</p>
+                    <hr class="opacity-25">
+                    <div class="text-start small">
+                        <p><i class="bi bi-geo-alt me-2"></i> Calle del Centro, 12, Valencia</p>
+                        <p><i class="bi bi-telephone me-2"></i> +34 600 000 000</p>
+                    </div>
+                </div>
+                <div class="col-md-8 p-5 bg-white">
+                    <div class="d-flex justify-content-between mb-4">
+                        <h4 class="fw-bold">Historial Académico</h4>
+                        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary">Cerrar Ficha</a>
+                    </div>
+                    
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item"><a class="nav-link active" href="#">Calificaciones</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Asistencia</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Observaciones</a></li>
+                    </ul>
+
+                    <table class="table border">
+                        <thead class="table-light">
+                            <tr><th>Asignatura</th><th>1ª Eval</th><th>2ª Eval</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Lengua Castellana</td><td>8.5</td><td><span class="text-muted">Pend.</span></td></tr>
+                            <tr><td>Matemáticas</td><td>7.0</td><td><span class="text-muted">Pend.</span></td></tr>
+                            <tr><td>Educación Física</td><td>9.0</td><td><span class="text-muted">Pend.</span></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mt-4">
+                        <button class="btn btn-danger" onclick="window.print()"><i class="bi bi-file-pdf me-2"></i>Generar Certificado NIA</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Capturamos los datos de la URL para personalizar la ficha
+        const params = new URLSearchParams(window.location.search);
+        if(params.has('nombre')) {
+            document.getElementById('displayNombre').innerText = params.get('nombre') + " " + params.get('ape');
+            document.getElementById('displayNIA').innerText = "NIA: " + params.get('nia');
+            document.getElementById('fotoAlumno').src = `https://ui-avatars.com/api/?name=${params.get('nombre')}&size=200&background=random`;
+        }
+    </script>
+</body>
+</html>
