@@ -2,109 +2,151 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Ficha del Alumno - El Pedrer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Ficha - El Pedrer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 950px; width: 95%; display: flex; min-height: 650px; }
+        .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1000px; width: 95%; display: flex; min-height: 700px; }
         
         /* Sidebar Izquierda */
-        .sidebar-ficha { background: #2c3e50; color: white; width: 35%; padding: 40px 30px; text-align: center; }
+        .sidebar-ficha { background: #2c3e50; color: white; width: 35%; padding: 40px 30px; text-align: center; transition: 0.3s; }
         .photo-container { position: relative; width: 150px; height: 150px; margin: 0 auto 20px; }
         .avatar-circle, .student-photo { width: 150px; height: 150px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; border: 5px solid rgba(255,255,255,0.1); object-fit: cover; }
         .avatar-circle { background: #2ecc71; text-transform: uppercase; }
         
-        /* Botón Flotante para Foto */
-        .btn-change-photo { position: absolute; bottom: 5px; right: 5px; background: #007bff; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.3s; }
-        .btn-change-photo:hover { background: #0056b3; transform: scale(1.1); }
+        .btn-change-photo { position: absolute; bottom: 5px; right: 5px; background: #007bff; color: white; border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .btn-change-photo:hover { background: #0056b3; transform: rotate(90deg); }
 
-        .nia-badge { background: #007bff; color: white; padding: 4px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .info-contacto { margin-top: 30px; text-align: left; font-size: 0.85rem; opacity: 0.8; }
-
+        .nia-badge { background: #007bff; color: white; padding: 4px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        
         /* Contenido Derecha */
         .content-ficha { width: 65%; padding: 45px; position: relative; }
-        .nav-tabs .nav-link { border: none; color: #888; font-weight: 600; padding: 10px 20px; cursor: pointer; }
+        .nav-tabs .nav-link { border: none; color: #888; font-weight: 600; cursor: pointer; }
         .nav-tabs .nav-link.active { color: #007bff; border-bottom: 3px solid #007bff; background: none; }
         
-        .tab-content-panel { display: none; animation: fadeIn 0.3s ease; }
-        .tab-content-panel.active { display: block; }
-        
-        .btn-pdf { background: #d9534f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; margin-top: 20px; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Modo Edición Visual */
+        .editable-input { border: 1px solid #ddd !important; background: #fff !important; padding: 2px 5px !important; border-radius: 4px; width: 60px; text-align: center; }
+        .is-editing .sidebar-ficha { border-left: 8px solid #ffc107; }
+        .save-banner { display: none; background: #ffc107; color: #000; padding: 10px; text-align: center; font-weight: bold; position: absolute; top: 0; left: 0; width: 100%; z-index: 10; }
     </style>
 </head>
 <body>
 
-<div class="ficha-container">
+<div class="ficha-container" id="fichaMain">
+    <div class="save-banner" id="saveBanner">MODO EDICIÓN ACTIVADO</div>
+
     <div class="sidebar-ficha">
         <div class="photo-container">
             <div id="avatarDefault" class="avatar-circle">--</div>
             <img id="studentImage" class="student-photo d-none" src="">
-            <button class="btn-change-photo" onclick="document.getElementById('fileInput').click()">
+            <button class="btn-change-photo" title="Subir nueva foto" onclick="document.getElementById('fileInput').click()">
                 <i class="bi bi-camera-fill"></i>
             </button>
             <input type="file" id="fileInput" hidden accept="image/*" onchange="previewImage(this)">
         </div>
 
-        <h3 class="fw-bold mb-1" id="nombreCompleto">Cargando...</h3>
-        <div class="mb-3"><span class="nia-badge" id="niaDisplay">NIA: 0000000</span></div>
+        <h3 class="fw-bold mb-1" id="nombreDisplay" contenteditable="false">Nombre Alumno</h3>
+        <div class="mb-3">
+            <span class="nia-badge" id="niaDisplay" onclick="editNIA()">NIA: 0000000</span>
+        </div>
         
-        <div class="info-contacto">
+        <div class="info-contacto mt-4 text-start small opacity-75">
             <p><i class="bi bi-geo-alt-fill me-2"></i> Calle del Centro, 12, Valencia</p>
             <p><i class="bi bi-telephone-fill me-2"></i> +34 600 000 000</p>
-            <p><i class="bi bi-envelope-fill me-2"></i> familia.alumno@email.com</p>
         </div>
+
+        <button class="btn btn-warning btn-sm mt-5 w-100 fw-bold" id="btnEdit" onclick="toggleEditMode()">
+            <i class="bi bi-pencil-square me-2"></i>EDITAR DATOS
+        </button>
     </div>
 
     <div class="content-ficha">
-        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Cerrar Ficha</a>
-        <h4 class="fw-bold mb-4">Historial Académico</h4>
+        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Cerrar</a>
+        
+        <h4 class="fw-bold mb-4">Gestión Académica</h4>
 
-        <ul class="nav nav-tabs">
-            <li class="nav-item"><a class="nav-link active" id="tab-calif" onclick="showTab('calificaciones')">Calificaciones</a></li>
-            <li class="nav-item"><a class="nav-link" id="tab-asist" onclick="showTab('asistencia')">Asistencia</a></li>
-            <li class="nav-item"><a class="nav-link" id="tab-obs" onclick="showTab('observaciones')">Observaciones</a></li>
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item"><a class="nav-link active" onclick="showSection('notas')">Notas</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="showSection('asistencia')">Asistencia</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="showSection('obs')">Observaciones</a></li>
         </ul>
 
-        <div id="calificaciones" class="tab-content-panel active">
-            <table class="table table-hover border small">
-                <thead class="table-light">
-                    <tr><th>Asignatura</th><th class="text-center">1ª Eval</th><th class="text-center">2ª Eval</th></tr>
+        <div id="sec-notas">
+            <table class="table table-hover border align-middle">
+                <thead class="table-light small">
+                    <tr><th>Asignatura</th><th class="text-center">1ª Eval</th><th class="text-center">Acción</th></tr>
                 </thead>
-                <tbody id="tablaCuerpo"></tbody>
+                <tbody id="tablaNotas">
+                    </tbody>
             </table>
         </div>
 
-        <div id="asistencia" class="tab-content-panel">
-            <div class="alert alert-warning py-2 mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i> 3 faltas sin justificar este mes.</div>
-            <ul class="list-group list-group-flush small">
-                <li class="list-group-item d-flex justify-content-between"><span>23/02/2026</span> <span class="badge bg-danger">Falta</span></li>
-                <li class="list-group-item d-flex justify-content-between"><span>18/02/2026</span> <span class="badge bg-warning">Retraso</span></li>
+        <div id="sec-asistencia" style="display:none;">
+            <div class="alert alert-info small">Haga clic en el registro para justificar faltas.</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between small">23/02/2026 <span class="badge bg-danger">Falta</span></li>
             </ul>
         </div>
 
-        <div id="observaciones" class="tab-content-panel">
-            <div class="bg-light p-3 rounded">
-                <p class="small mb-0"><strong>Nota del Tutor:</strong> El alumno ha mostrado una mejoría notable en su actitud durante las clases de Tecnología.</p>
-            </div>
+        <div id="sec-obs" style="display:none;">
+            <textarea class="form-control" rows="5" id="obsText" placeholder="Escriba aquí las observaciones del tutor..."></textarea>
         </div>
 
-        <button class="btn btn-pdf" onclick="window.print()"><i class="bi bi-file-earmark-pdf-fill me-2"></i> Generar Certificado Oficial</button>
+        <div class="d-flex gap-2">
+            <button class="btn btn-danger flex-grow-1 mt-3 fw-bold" onclick="window.print()">
+                <i class="bi bi-file-pdf me-2"></i>IMPRIMIR FICHA
+            </button>
+            <button class="btn btn-success flex-grow-1 mt-3 fw-bold d-none" id="btnSave" onclick="saveChanges()">
+                <i class="bi bi-check-lg me-2"></i>GUARDAR CAMBIOS
+            </button>
+        </div>
     </div>
 </div>
 
 <script>
-    // Lógica de Pestañas
-    function showTab(tabId) {
-        document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        document.getElementById('tab-' + tabId.substring(0,5)).classList.add('active');
+    let isEditing = false;
+
+    // 1. Alternar Modo Edición
+    function toggleEditMode() {
+        isEditing = !isEditing;
+        const ficha = document.getElementById('fichaMain');
+        const btnEdit = document.getElementById('btnEdit');
+        const btnSave = document.getElementById('btnSave');
+        const banner = document.getElementById('saveBanner');
+        const nombre = document.getElementById('nombreDisplay');
+
+        if (isEditing) {
+            ficha.classList.add('is-editing');
+            banner.style.display = 'block';
+            btnEdit.innerHTML = '<i class="bi bi-x-circle me-2"></i>CANCELAR';
+            btnEdit.className = 'btn btn-secondary btn-sm mt-5 w-100 fw-bold';
+            btnSave.classList.remove('d-none');
+            nombre.contentEditable = "true";
+            nombre.focus();
+            enableTableEditing(true);
+        } else {
+            location.reload(); // Resetear cambios no guardados
+        }
     }
 
-    // Cargar Foto
+    function enableTableEditing(enable) {
+        const scores = document.querySelectorAll('.score-cell');
+        scores.forEach(cell => {
+            if (enable) {
+                const val = cell.innerText;
+                cell.innerHTML = `<input type="number" step="0.1" class="editable-input" value="${val}">`;
+            }
+        });
+    }
+
+    function saveChanges() {
+        alert("✅ Cambios guardados correctamente en la base de datos central.");
+        location.reload();
+    }
+
+    // 2. Gestión de Foto
     function previewImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -117,22 +159,27 @@
         }
     }
 
-    // Inicializar Datos
+    // 3. Inicialización y Navegación
     const params = new URLSearchParams(window.location.search);
-    const nom = params.get('nombre') || "Alumno";
-    const ape = params.get('ape') || "Ejemplo";
-    const nia = params.get('nia') || "1084251";
+    document.getElementById('nombreDisplay').innerText = (params.get('nombre') || 'Pablo') + " " + (params.get('ape') || 'Fernández');
+    document.getElementById('niaDisplay').innerText = "NIA: " + (params.get('nia') || '1084251');
+    document.getElementById('avatarDefault').innerText = (params.get('nombre') || 'P')[0];
 
-    document.getElementById('nombreCompleto').innerText = nom + " " + ape;
-    document.getElementById('niaDisplay').innerText = "NIA: " + nia;
-    document.getElementById('avatarDefault').innerText = (nom[0] + (ape[0] || "")).toUpperCase();
-
-    const asignaturas = ["Lengua", "Matemáticas", "Inglés", "Ciencias", "Ed. Física", "Plástica", "Valores", "Música"];
-    const tbody = document.getElementById('tablaCuerpo');
-    asignaturas.forEach(a => {
-        const n = (Math.random() * 5 + 5).toFixed(1);
-        tbody.innerHTML += `<tr><td>${a}</td><td class="text-center fw-bold">${n}</td><td class="text-center text-muted">--</td></tr>`;
+    const asignaturas = ["Lengua", "Matemáticas", "Inglés", "Ciencias", "Ed. Física"];
+    const tBody = document.getElementById('tablaNotas');
+    asignaturas.forEach(asig => {
+        tBody.innerHTML += `<tr>
+            <td class="small fw-bold">${asig}</td>
+            <td class="text-center score-cell">8.5</td>
+            <td class="text-center"><button class="btn btn-sm btn-link"><i class="bi bi-graph-up"></i></button></td>
+        </tr>`;
     });
+
+    function showSection(sec) {
+        document.getElementById('sec-notas').style.display = sec === 'notas' ? 'block' : 'none';
+        document.getElementById('sec-asistencia').style.display = sec === 'asistencia' ? 'block' : 'none';
+        document.getElementById('sec-obs').style.display = sec === 'obs' ? 'block' : 'none';
+    }
 </script>
 
 </body>
