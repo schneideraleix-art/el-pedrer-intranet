@@ -10,103 +10,84 @@
         body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
         .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1100px; width: 95%; display: flex; min-height: 850px; position: relative; }
         
-        /* Sidebar Mejorada */
+        /* Sidebar y Agenda */
         .sidebar-ficha { background: #2c3e50; color: white; width: 320px; padding: 30px 20px; text-align: center; display: flex; flex-direction: column; }
-        .avatar-circle { width: 120px; height: 120px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 15px; border: 4px solid rgba(255,255,255,0.1); text-transform: uppercase; }
-
-        /* Agenda de Contactos Rápidos */
-        .agenda-title { font-size: 0.7rem; font-weight: bold; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; margin-top: 30px; margin-bottom: 10px; text-align: left; }
-        .contact-pill { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; cursor: pointer; border: 1px solid transparent; }
+        .avatar-circle { width: 100px; height: 100px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 15px; border: 4px solid rgba(255,255,255,0.1); }
+        .contact-pill { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border: 1px solid transparent; }
         .contact-pill:hover { background: rgba(255,255,255,0.15); border-color: #2ecc71; }
-        .contact-info { text-align: left; line-height: 1.2; }
-        .contact-name { font-size: 0.85rem; font-weight: 600; display: block; }
-        .contact-role { font-size: 0.7rem; color: #bdc3c7; }
-        .status-dot { width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 5px #2ecc71; }
 
-        /* Centralita */
+        /* Centralita con Bot */
         #callOverlay { 
-            display: none; position: fixed; top: 20px; right: 20px; width: 320px; 
+            display: none; position: fixed; top: 20px; right: 20px; width: 340px; 
             background: #121212; color: white; border-radius: 15px; padding: 25px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 2000; text-align: center; border: 1px solid #333;
         }
-        .timer { font-family: 'Courier New', monospace; font-size: 1.5rem; color: #2ecc71; }
-        .btn-hangup { background: #ff4757; border: none; color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 1.3rem; }
 
-        /* Contenido */
+        /* Ondas de Voz del Bot */
+        .bot-waves { display: flex; justify-content: center; align-items: center; gap: 3px; height: 30px; margin: 15px 0; }
+        .wave { width: 4px; height: 10px; background: #00d2ff; border-radius: 2px; animation: waveAnim 1s infinite; }
+        @keyframes waveAnim { 0%, 100% { height: 5px; } 50% { height: 25px; } }
+
+        .bot-text { font-size: 0.85rem; color: #00d2ff; font-style: italic; background: rgba(0,210,255,0.1); padding: 8px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid #00d2ff; display: none; }
+
+        .timer { font-family: 'Courier New', monospace; font-size: 1.5rem; color: #2ecc71; }
+        .btn-hangup { background: #ff4757; border: none; color: white; width: 50px; height: 50px; border-radius: 50%; }
+
         .content-ficha { flex: 1; padding: 45px; position: relative; }
-        .nav-tabs .nav-link { border: none; color: #888; font-weight: 600; cursor: pointer; }
-        .nav-tabs .nav-link.active { color: #007bff; border-bottom: 3px solid #007bff; background: none; }
     </style>
 </head>
 <body>
 
+<audio id="botSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 <audio id="dialSound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" loop></audio>
-<audio id="holdMusic" src="https://www.chosic.com/wp-content/uploads/2021/04/Mozart-Turkish-March.mp3" loop></audio>
 
 <div id="callOverlay">
-    <div class="small opacity-50 mb-2" id="callType">Llamada Saliente</div>
-    <h6 id="callStatus" class="mb-1">Marcando...</h6>
+    <div class="small opacity-50 mb-2">SISTEMA INTELIGENTE IVR</div>
+    
+    <div id="botSection">
+        <div class="bot-waves">
+            <div class="wave"></div><div class="wave" style="animation-delay: 0.1s"></div><div class="wave" style="animation-delay: 0.2s"></div>
+            <div class="wave" style="animation-delay: 0.3s"></div><div class="wave" style="animation-delay: 0.4s"></div>
+        </div>
+        <div id="botSpeech" class="bot-text">"Hola, soy el asistente de El Pedrer. Analizando su solicitud..."</div>
+    </div>
+
+    <h6 id="callStatus" class="mb-1">Iniciando protocolo...</h6>
     <span class="timer" id="timerDisplay">00:00</span>
+
     <div class="d-flex justify-content-center gap-2 mt-3">
-        <button class="btn btn-outline-warning btn-sm rounded-circle" onclick="toggleHold()"><i class="bi bi-pause-fill"></i></button>
         <button class="btn-hangup shadow" onclick="endCall()"><i class="bi bi-telephone-x-fill"></i></button>
-        <button class="btn btn-outline-info btn-sm rounded-circle" onclick="alert('Teclado numérico activo')"><i class="bi bi-grid-3x3-gap-fill"></i></button>
     </div>
 </div>
 
 <div class="ficha-container">
     <div class="sidebar-ficha">
         <div class="avatar-circle" id="avatarLetra">--</div>
-        <h4 class="fw-bold mb-1" id="nombreAlumno">Estudiante</h4>
+        <h4 class="fw-bold mb-1" id="nombreAlumno">Alumno</h4>
         <p class="small text-info mb-4" id="niaAlumno">NIA: 0000000</p>
         
-        <button class="btn btn-success w-100 fw-bold py-3 shadow-sm mb-2" onclick="startCall('Familia')">
-            <i class="bi bi-telephone-outbound-fill me-2"></i> LLAMAR FAMILIA
+        <button class="btn btn-success w-100 fw-bold py-3 shadow-sm mb-4" onclick="startCallWithBot('Familia')">
+            <i class="bi bi-robot me-2"></i> LLAMAR CON ASISTENTE
         </button>
 
-        <div class="agenda-title">Agenda Interna</div>
-        
-        <div class="contact-pill" onclick="startCall('Secretaría (Ext. 101)')">
-            <div class="contact-info">
-                <span class="contact-name">Ana Belén</span>
-                <span class="contact-role">Secretaría</span>
-            </div>
-            <div class="status-dot"></div>
-        </div>
-
-        <div class="contact-pill" onclick="startCall('D. Julián (Ext. 102)')">
-            <div class="contact-info">
-                <span class="contact-name">D. Julián</span>
-                <span class="contact-role">Jefe Estudios</span>
-            </div>
-            <div class="status-dot"></div>
-        </div>
-
-        <div class="contact-pill" onclick="startCall('Lucía (Ext. 205)')">
-            <div class="contact-info">
-                <span class="contact-name">Lucía V.</span>
-                <span class="contact-role">Orientadora</span>
-            </div>
-            <div class="status-dot" style="background: #f1c40f; box-shadow: 0 0 5px #f1c40f;"></div>
+        <div class="contact-pill" onclick="startCallWithBot('Secretaría')">
+            <div class="small"><b>Interno:</b> Secretaría</div>
+            <i class="bi bi-arrow-right-short"></i>
         </div>
     </div>
 
     <div class="content-ficha">
-        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Volver</a>
-        <h4 class="fw-bold mb-4">Gestión Académica</h4>
-        
+        <h4 class="fw-bold mb-4">Expediente de Alumno</h4>
         <ul class="nav nav-tabs mb-4">
             <li class="nav-item"><a class="nav-link active" onclick="showTab('notas')">Resumen</a></li>
             <li class="nav-item"><a class="nav-link" onclick="showTab('historial')">Log Centralita</a></li>
         </ul>
-
         <div id="sec-notas">
             <table class="table table-hover border small">
-                <thead class="table-light"><tr><th>Materia</th><th class="text-center">Nota</th></tr></thead>
+                <thead class="table-light"><tr><th>Asignatura</th><th class="text-center">Nota</th></tr></thead>
                 <tbody id="notasCuerpo"></tbody>
             </table>
         </div>
-
         <div id="sec-historial" style="display:none;">
             <div id="historialLog" class="list-group list-group-flush"></div>
         </div>
@@ -115,31 +96,46 @@
 
 <script>
     const params = new URLSearchParams(window.location.search);
-    const nombre = params.get('nombre') || 'Alumno';
+    const nombre = params.get('nombre') || 'Estudiante';
     document.getElementById('nombreAlumno').innerText = nombre;
     document.getElementById('niaAlumno').innerText = "NIA: " + (params.get('nia') || '1084251');
     document.getElementById('avatarLetra').innerText = nombre[0].toUpperCase();
 
-    ["Mates", "Lengua", "Inglés", "Historia"].forEach(m => {
+    ["Mates", "Lengua", "Inglés"].forEach(m => {
         document.getElementById('notasCuerpo').innerHTML += `<tr><td>${m}</td><td class="text-center fw-bold">8.5</td></tr>`;
     });
 
-    let timer; let sec = 0; let activeCall = false;
+    let timer; let sec = 0;
+    const botSound = document.getElementById('botSound');
+    const dialSound = document.getElementById('dialSound');
 
-    function startCall(target) {
-        if(activeCall) {
-            if(!confirm("¿Desea poner en espera la llamada actual e iniciar multiconferencia con " + target + "?")) return;
-        }
-        
+    function startCallWithBot(target) {
         document.getElementById('callOverlay').style.display = 'block';
-        document.getElementById('dialSound').play();
-        document.getElementById('callStatus').innerText = "Llamando a " + target + "...";
-        activeCall = true;
+        document.getElementById('botSection').style.display = 'block';
+        document.getElementById('botSpeech').style.display = 'block';
+        botSound.play();
+
+        // Fase 1: El Bot habla
+        document.getElementById('callStatus').innerText = "BOT ASISTENTE ACTIVO";
+        document.getElementById('botSpeech').innerText = `"Hola, procesando llamada hacia ${target}..."`;
 
         setTimeout(() => {
-            document.getElementById('dialSound').pause();
-            document.getElementById('callStatus').innerText = "EN LÍNEA CON " + target.toUpperCase();
-            if(!timer) timer = setInterval(() => { sec++; updateTimer(); }, 1000);
+            document.getElementById('botSpeech').innerText = `"Protocolo verificado. Conectando ahora..."`;
+            
+            // Fase 2: El Bot termina y empieza el marcado real
+            setTimeout(() => {
+                document.getElementById('botSection').style.display = 'none';
+                document.getElementById('callStatus').innerText = "Marcando a " + target + "...";
+                dialSound.play();
+                
+                // Fase 3: Conexión establecida tras el marcado
+                setTimeout(() => {
+                    dialSound.pause();
+                    document.getElementById('callStatus').innerText = "EN LÍNEA CON " + target.toUpperCase();
+                    timer = setInterval(() => { sec++; updateTimer(); }, 1000);
+                }, 3000);
+
+            }, 2000);
         }, 3000);
     }
 
@@ -151,28 +147,11 @@
 
     function endCall() {
         clearInterval(timer);
-        timer = null;
-        document.getElementById('dialSound').pause();
-        document.getElementById('holdMusic').pause();
+        dialSound.pause();
         const log = document.getElementById('historialLog');
-        log.innerHTML = `<div class="list-group-item small"><b>LLAMADA FINALIZADA</b> (${sec}s) <div class="text-muted">Hoy - ${document.getElementById('callStatus').innerText}</div></div>` + log.innerHTML;
+        log.innerHTML = `<div class="list-group-item small"><i class="bi bi-robot me-2"></i><b>GESTIÓN BOT:</b> Llamada a familia finalizada (${sec}s) <div class="text-muted">Hoy - Filtrado por IA Colegio</div></div>` + log.innerHTML;
         document.getElementById('callOverlay').style.display = 'none';
-        sec = 0; activeCall = false;
-        document.getElementById('timerDisplay').innerText = "00:00";
-    }
-
-    function toggleHold() {
-        const music = document.getElementById('holdMusic');
-        const timerDisp = document.getElementById('timerDisplay');
-        if(music.paused) {
-            music.play();
-            timerDisp.style.color = "#f1c40f";
-            document.getElementById('callStatus').innerText = "EN ESPERA";
-        } else {
-            music.pause();
-            timerDisp.style.color = "#2ecc71";
-            document.getElementById('callStatus').innerText = "EN LÍNEA";
-        }
+        sec = 0;
     }
 
     function showTab(t) {
