@@ -3,173 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centralita El Pedrer - Ultra Pro</title>
+    <title>Centralita Inteligente - El Pedrer Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
+        :root { --primary: #2c3e50; --accent: #00d2ff; --danger: #ff4757; }
         body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1100px; width: 95%; display: flex; min-height: 850px; }
         
-        .sidebar-ficha { background: #1a252f; color: white; width: 320px; padding: 30px 20px; text-align: center; }
+        .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1100px; width: 95%; display: flex; min-height: 800px; }
         
-        /* Interfaz de Centralita Flotante */
+        /* Sidebar */
+        .sidebar { background: var(--primary); color: white; width: 320px; padding: 30px 20px; text-align: center; }
+        .avatar { width: 100px; height: 100px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 15px; border: 4px solid rgba(255,255,255,0.1); }
+
+        /* Centralita Flotante */
         #callOverlay { 
             display: none; position: fixed; top: 20px; right: 20px; width: 360px; 
-            background: #090909; color: white; border-radius: 20px; padding: 25px; 
-            box-shadow: 0 0 30px rgba(0,210,255,0.4); z-index: 9999; text-align: center; border: 1px solid #00d2ff;
+            background: #121212; color: white; border-radius: 20px; padding: 25px; 
+            box-shadow: 0 0 30px rgba(0,210,255,0.4); z-index: 9999; text-align: center; border: 1px solid var(--accent);
         }
 
-        /* Visualizador de Audio (Micro y Altavoz) */
-        .audio-viz { display: flex; justify-content: center; align-items: flex-end; gap: 4px; height: 50px; margin: 20px 0; }
-        .bar { width: 5px; background: #00d2ff; border-radius: 10px; transition: height 0.1s ease; }
-        .bar-mic { background: #ff4757; }
-        .animating { animation: barFlow 0.8s infinite ease-in-out; }
-        @keyframes barFlow { 0%, 100% { height: 10px; } 50% { height: 45px; } }
+        /* Visualizador de Audio */
+        .viz-container { display: flex; justify-content: center; align-items: flex-end; gap: 4px; height: 40px; margin: 15px 0; }
+        .bar { width: 5px; height: 8px; background: var(--accent); border-radius: 10px; transition: 0.1s; }
+        .bar.animating { animation: wave 0.8s infinite ease-in-out; }
+        @keyframes wave { 0%, 100% { height: 8px; } 50% { height: 35px; } }
 
-        .bot-bubble { font-size: 0.9rem; background: rgba(0,210,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #00d2ff; min-height: 80px; }
-        
-        .mic-active-badge { display: none; background: #ff4757; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .bot-bubble { font-size: 0.9rem; background: rgba(0,210,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--accent); min-height: 70px; display: flex; align-items: center; justify-content: center; font-style: italic; }
 
-        .btn-call-action { background: #ff4757; border: none; color: white; width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; transition: 0.3s; }
-        .btn-call-action:hover { background: #c0392b; transform: rotate(135deg); }
+        .mic-badge { display: none; background: var(--danger); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .btn-hangup { background: var(--danger); border: none; color: white; width: 55px; height: 55px; border-radius: 50%; font-size: 1.4rem; transition: 0.3s; }
+        .btn-hangup:hover { transform: scale(1.1) rotate(135deg); }
+
+        .main-content { flex: 1; padding: 45px; }
     </style>
 </head>
 <body>
 
+<audio id="waitingMusic" loop preload="auto">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
 <div id="callOverlay">
-    <div class="small opacity-50 mb-1">CENTRALITA INTELIGENTE VOZ/IP</div>
-    <div class="mic-active-badge" id="micBadge"><i class="bi bi-record-circle me-1"></i> Micrófono Abierto</div>
+    <div class="small opacity-50 mb-1">CENTRALITA INSTITUCIONAL</div>
+    <div class="mic-badge" id="micBadge"><i class="bi bi-mic-fill me-1"></i> ESCUCHANDO...</div>
     
-    <div class="audio-viz" id="viz">
-        <div class="bar animating"></div><div class="bar animating" style="animation-delay: 0.1s"></div>
-        <div class="bar animating" style="animation-delay: 0.2s"></div><div class="bar animating" style="animation-delay: 0.3s"></div>
-        <div class="bar animating" style="animation-delay: 0.4s"></div>
+    <div class="viz-container" id="viz">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
     </div>
 
-    <div id="botSpeech" class="bot-bubble">Iniciando protocolo de audio seguro...</div>
+    <div id="botSpeech" class="bot-bubble">Iniciando sistema...</div>
     
-    <div id="callInfo" class="mb-3">
-        <h5 class="mb-0" id="callStatus">Estado: Reposo</h5>
-        <span class="badge bg-dark" id="timer">00:00</span>
+    <div class="mb-3">
+        <h6 id="callStatus" class="mb-0 text-info">EN ESPERA</h6>
+        <span class="badge bg-dark" id="timerDisplay">00:00</span>
     </div>
 
-    <button class="btn-call-action" onclick="endCall()"><i class="bi bi-telephone-fill"></i></button>
+    <button class="btn-hangup shadow" onclick="endCall()"><i class="bi bi-telephone-fill"></i></button>
 </div>
 
 <div class="ficha-container">
-    <div class="sidebar-ficha">
-        <div class="mb-4">
-            <div class="rounded-circle bg-success d-inline-block p-3 mb-2"><i class="bi bi-person-fill fs-1"></i></div>
-            <h4 id="nombreAlumno">Estudiante</h4>
-            <p class="small text-muted">NIA: 1084251</p>
-        </div>
-        <button class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow" onclick="initCallFlow()">
-            <i class="bi bi-mic-fill me-2"></i> INICIAR GESTIÓN VOCAL
+    <div class="sidebar">
+        <div class="avatar">A</div>
+        <h4 id="nombreAlumno">Alumno Ejemplo</h4>
+        <p class="small opacity-75">Expediente Académico</p>
+        <hr class="my-4">
+        <button class="btn btn-info w-100 py-3 fw-bold text-white rounded-pill shadow-sm" onclick="startCallFlow()">
+            <i class="bi bi-robot me-2"></i> LLAMADA ASISTIDA
         </button>
+        <p class="mt-3 x-small opacity-50" style="font-size: 0.7rem;">Haga clic para iniciar el protocolo formal de voz.</p>
     </div>
-    <div class="p-5 flex-grow-1">
-        <h3>Historial de Mensajes de Voz</h3>
+
+    <div class="main-content">
+        <h3 class="fw-bold">Gestión de Dirección</h3>
+        <p class="text-muted">Centro Educativo El Pedrer</p>
         <hr>
-        <div id="voiceLog" class="list-group list-group-flush">
-            <div class="text-muted small">No hay mensajes recientes.</div>
+        <div class="card p-4 mt-4 bg-light border-0">
+            <h5>Log de Actividad</h5>
+            <div id="activityLog" class="small text-muted">Esperando inicio de sesión...</div>
         </div>
     </div>
 </div>
 
 <script>
-    // Configuración de Voz
+    // Configuración de Audio y Reconocimiento
+    const music = document.getElementById('waitingMusic');
     const synth = window.speechSynthesis;
     const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new Recognition();
-    recognition.lang = 'es-ES';
-    
-    let callTimer;
-    let seconds = 0;
+    const recognition = Recognition ? new Recognition() : null;
+    if(recognition) { recognition.lang = 'es-ES'; recognition.continuous = false; }
 
+    let selectedVoice = null;
+    let seconds = 0;
+    let callTimer;
+
+    // Cargar Voz Formal
+    function loadVoices() {
+        const voices = synth.getVoices();
+        selectedVoice = voices.find(v => v.lang.includes('es') && (v.name.includes('Google') || v.name.includes('Microsoft'))) || voices.find(v => v.lang.includes('es'));
+    }
+    synth.onvoiceschanged = loadVoices;
+    loadVoices();
+
+    // Función de Habla
     function botSpeak(text) {
         return new Promise((resolve) => {
             synth.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'es-ES';
-            utterance.rate = 1;
+            if (selectedVoice) utterance.voice = selectedVoice;
+            utterance.pitch = 0.85; 
+            utterance.rate = 0.9;
+            
             utterance.onstart = () => {
                 document.getElementById('botSpeech').innerText = text;
-                toggleViz(true, 'bot');
+                toggleVisualizer(true, 'bot');
             };
             utterance.onend = () => {
-                toggleViz(false);
+                toggleVisualizer(false);
                 resolve();
             };
             synth.speak(utterance);
         });
     }
 
+    // Función de Escucha
     function listenUser() {
         return new Promise((resolve) => {
+            if (!recognition) return resolve("si");
             document.getElementById('micBadge').style.display = 'inline-block';
-            toggleViz(true, 'mic');
+            toggleVisualizer(true, 'mic');
             recognition.start();
-            recognition.onresult = (event) => {
-                const result = event.results[0][0].transcript.toLowerCase();
+
+            recognition.onresult = (e) => {
+                const result = e.results[0][0].transcript.toLowerCase();
                 document.getElementById('micBadge').style.display = 'none';
-                toggleViz(false);
+                toggleVisualizer(false);
                 resolve(result);
             };
             recognition.onerror = () => {
                 document.getElementById('micBadge').style.display = 'none';
+                toggleVisualizer(false);
                 resolve("error");
             };
         });
     }
 
-    function toggleViz(active, mode) {
+    function toggleVisualizer(active, mode) {
         const bars = document.querySelectorAll('.bar');
         bars.forEach(b => {
             if (active) {
                 b.classList.add('animating');
-                b.style.background = mode === 'mic' ? '#ff4757' : '#00d2ff';
+                b.style.background = (mode === 'mic') ? '#ff4757' : '#00d2ff';
             } else {
                 b.classList.remove('animating');
-                b.style.height = '10px';
             }
         });
     }
 
-    async function initCallFlow() {
+    // FLUJO PRINCIPAL
+    async function startCallFlow() {
+        // Desbloqueo inicial para el navegador
+        music.play().then(() => { music.pause(); music.currentTime = 0; });
+        
         document.getElementById('callOverlay').style.display = 'block';
-        
-        await botSpeak("Bienvenido. Diga 'sí' para activar la grabación de seguridad o 'no' para continuar sin ella.");
-        const answer = await listenUser();
-        
-        if (answer.includes("sí") || answer.includes("si")) {
-            await botSpeak("Grabación activada. Seleccione departamento: uno para Secretaría, dos para Dirección.");
-        } else {
-            await botSpeak("Entendido. Sin grabación. Seleccione departamento: uno para Secretaría, dos para Dirección.");
-        }
+        document.getElementById('activityLog').innerText = "Iniciando protocolo vocal...";
 
-        const dept = await listenUser();
-        await botSpeak("Conectando. Por favor, disfrute de la música de espera.");
+        await botSpeak("Le damos la bienvenida a la centralita del Colegio El Pedrer. Por protocolo de calidad, ¿me autoriza usted a grabar esta gestión? Responda sí o no.");
+        const auth = await listenUser();
+
+        await botSpeak(auth.includes("sí") || auth.includes("si") ? 
+            "Le agradezco su autorización. Grabación iniciada. ¿Con qué departamento desea contactar? Uno, Secretaría. Dos, Jefatura." : 
+            "Entendido, no grabaremos la sesión. ¿Desea contactar con Secretaría marcando uno, o con Jefatura marcando dos?");
         
-        // Simulación de llamada en línea
-        document.getElementById('callStatus').innerText = "ESTADO: EN LÍNEA";
-        callTimer = setInterval(() => {
-            seconds++;
-            let m = Math.floor(seconds/60).toString().padStart(2,'0');
-            let s = (seconds%60).toString().padStart(2,'0');
-            document.getElementById('timer').innerText = `${m}:${s}`;
-        }, 1000);
+        const dept = await listenUser();
+        await botSpeak("Procesando su solicitud. Por favor, manténgase a la espera mientras establecemos la comunicación.");
+
+        // Música de Espera
+        document.getElementById('callStatus').innerText = "TRANSFERIENDO...";
+        music.volume = 0.2;
+        music.play();
+
+        setTimeout(() => {
+            music.pause();
+            document.getElementById('callStatus').innerText = "EN LÍNEA";
+            document.getElementById('callStatus').className = "mb-0 text-success";
+            callTimer = setInterval(updateTimer, 1000);
+        }, 5000);
     }
 
-    function endCall() {
+    function updateTimer() {
+        seconds++;
+        let m = Math.floor(seconds/60).toString().padStart(2,'0');
+        let s = (seconds%60).toString().padStart(2,'0');
+        document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+    }
+
+    async function endCall() {
         clearInterval(callTimer);
-        botSpeak(`Llamada finalizada. Duración: ${seconds} segundos. Se ha enviado un resumen por correo.`);
+        music.pause();
+        const finalSecs = seconds;
+        await botSpeak(`Le agradezco su tiempo. La comunicación ha finalizado tras ${finalSecs} segundos de gestión. Que tenga usted una excelente jornada.`);
+        
+        document.getElementById('activityLog').innerHTML = `<b>Última llamada:</b> Finalizada correctamente (${finalSecs}s).`;
         setTimeout(() => {
             document.getElementById('callOverlay').style.display = 'none';
-            const log = document.getElementById('voiceLog');
-            log.innerHTML = `<div class="list-group-item"><b>Llamada de voz:</b> ${seconds}s <span class="badge bg-info">Transcrita</span></div>` + log.innerHTML;
             seconds = 0;
-        }, 3000);
+            document.getElementById('timerDisplay').innerText = "00:00";
+        }, 2000);
     }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
