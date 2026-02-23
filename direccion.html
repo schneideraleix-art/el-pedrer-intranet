@@ -14,7 +14,7 @@
         }
         body { background-color: var(--bg-gray); font-family: 'Segoe UI', sans-serif; margin: 0; }
         
-        /* Sidebar */
+        /* Sidebar Estilo Captura */
         .sidebar { width: 240px; background-color: var(--sidebar-bg); min-height: 100vh; position: fixed; color: white; z-index: 1000; }
         .user-profile { padding: 30px 20px; text-align: center; }
         .user-avatar { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--active-red); margin-bottom: 10px; }
@@ -24,17 +24,17 @@
         .nav-link.active { background-color: var(--active-red) !important; color: white; font-weight: bold; border-bottom: none; }
         .nav-link.emergencia { color: #ffc107; font-weight: bold; }
         
-        /* Main Content */
+        /* Contenido Principal */
         .main-content { margin-left: 240px; width: calc(100% - 240px); padding: 40px; }
         
-        /* Dashboard Cards */
+        /* Tarjetas de Estadísticas */
         .stat-card { background: white; border-radius: 4px; padding: 20px; border-left: 5px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .stat-card.matricula { border-left-color: #d91e18; }
         .stat-card.absentismo { border-left-color: #f1c40f; }
         .stat-card.comedor { border-left-color: #3498db; }
         .stat-card.caja { border-left-color: #27ae60; }
         
-        /* Grid Tool Buttons */
+        /* Botones de Gestión (Grid) */
         .tool-btn { 
             background: white; border: 1px solid #eee; border-radius: 8px; 
             padding: 20px; text-decoration: none; color: #333; 
@@ -108,7 +108,7 @@
                 <p class="section-title"><i class="bi bi-gear-fill me-2"></i> GESTIÓN Y OPERACIONES</p>
                 <div class="row g-3">
                     <div class="col-6">
-                        <a href="administracion.html" class="tool-btn">
+                        <a href="contabilidad.html" class="tool-btn">
                             <i class="bi bi-calculator text-primary"></i>
                             <span class="fw-bold small">Contabilidad</span>
                         </a>
@@ -138,13 +138,13 @@
                 <p class="section-title text-danger"><i class="bi bi-shield-lock-fill me-2"></i> SEGURIDAD Y PERSONAL</p>
                 <div class="row g-3">
                     <div class="col-6">
-                        <a href="#" class="tool-btn">
+                        <a href="cctv.html" class="tool-btn">
                             <i class="bi bi-camera-reels text-danger"></i>
                             <span class="fw-bold small">Cámaras CCTV</span>
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="#" class="tool-btn">
+                        <a href="bajas.html" class="tool-btn">
                             <i class="bi bi-person-badge text-primary"></i>
                             <span class="fw-bold small">Control Bajas</span>
                         </a>
@@ -156,7 +156,7 @@
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="#" class="tool-btn" onclick="alert('Activando timbre manual...')">
+                        <a href="#" class="tool-btn" onclick="alert('Timbre manual activado.')">
                             <i class="bi bi-bell text-danger"></i>
                             <span class="fw-bold small">Timbre Manual</span>
                         </a>
@@ -168,6 +168,7 @@
 </div>
 
 <script>
+// Función de seguridad para expedientes
 function accesoExpedientes() {
     const password = prompt("Área Restringida. Introduzca la clave de acceso:");
     if (password === "pedrer2026") {
