@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salud y Control de Bajas - El Pedrer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root { --sidebar-bg: #1a1a1a; --active-red: #d91e18; --bg-gray: #f4f7f6; }
+        body { background-color: var(--bg-gray); font-family: 'Segoe UI', sans-serif; }
+        
+        .header-salud { background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 40px 0; margin-bottom: 30px; border-bottom: 5px solid #e74c3c; }
+        .role-card { 
+            background: white; border: none; border-radius: 15px; padding: 30px; 
+            transition: 0.3s; cursor: pointer; height: 100%; text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .role-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .role-icon { font-size: 3.5rem; margin-bottom: 15px; display: block; }
+        
+        .med-color { color: #e74c3c; } /* Médico - Rojo */
+        .enf-color { color: #3498db; } /* Enfermería - Azul */
+        .psi-color { color: #9b59b6; } /* Psicología - Morado */
+
+        #portal-especifico { display: none; }
+        .btn-volver { position: absolute; top: 20px; left: 20px; color: white; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div id="seleccion-rol">
+    <div class="header-salud text-center position-relative">
+        <a href="direccion.html" class="btn-volver"><i class="bi bi-arrow-left"></i> Panel Dirección</a>
+        <h1 class="fw-bold">CONTROL DE SALUD Y BAJAS</h1>
+        <p class="opacity-75">Seleccione su perfil profesional para acceder a la gestión</p>
+    </div>
+
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="role-card" onclick="abrirPortal('medico')">
+                    <i class="bi bi-person-heart role-icon med-color"></i>
+                    <h3 class="fw-bold">Servicio Médico</h3>
+                    <p class="text-muted">Gestión de bajas oficiales, informes clínicos y recetas.</p>
+                    <button class="btn btn-outline-danger w-100 mt-3">Acceder</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="role-card" onclick="abrirPortal('enfermeria')">
+                    <i class="bi bi-capsule role-icon enf-color"></i>
+                    <h3 class="fw-bold">Enfermería</h3>
+                    <p class="text-muted">Primeros auxilios, medicación diaria y control de alergias.</p>
+                    <button class="btn btn-outline-primary w-100 mt-3">Acceder</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="role-card" onclick="abrirPortal('psicologia')">
+                    <i class="bi bi-brain role-icon psi-color"></i>
+                    <h3 class="fw-bold">Gabinete Psicología</h3>
+                    <p class="text-muted">Apoyo emocional, protocolos de acoso y seguimiento NEE.</p>
+                    <button class="btn btn-outline-secondary w-100 mt-3" style="color: #9b59b6; border-color: #9b59b6;">Acceder</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="portal-especifico" class="container mt-4">
+    <button class="btn btn-dark mb-4" onclick="volverSeleccion()"><i class="bi bi-chevron-left"></i> Cambiar de Perfil</button>
+    <div id="contenido-dinamico"></div>
+</div>
+
+<script>
+    function abrirPortal(rol) {
+        document.getElementById('seleccion-rol').style.display = 'none';
+        document.getElementById('portal-especifico').style.display = 'block';
+        const contenedor = document.getElementById('contenido-dinamico');
+
+        let html = '';
+
+        if (rol === 'medico') {
+            html = `
+                <div class="card border-0 shadow-sm p-4">
+                    <h2 class="med-color fw-bold"><i class="bi bi-clipboard2-pulse"></i> Panel Médico</h2>
+                    <hr>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="list-group">
+                                <label class="list-group-item fw-bold bg-light">Gestiones Pendientes</label>
+                                <button class="list-group-item list-group-item-action" onclick="alert('Generando parte de baja...')">Emitir Parte de Baja Oficial</button>
+                                <button class="list-group-item list-group-item-action">Validar Justificantes Médicos</button>
+                                <button class="list-group-item list-group-item-action">Historial de Incidencias Graves</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-danger">
+                                <h5><i class="bi bi-exclamation-triangle"></i> Alertas Sanitarias</h5>
+                                <p class="small">3 alumnos en cuarentena preventiva por protocolo 2026.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        } else if (rol === 'enfermeria') {
+            html = `
+                <div class="card border-0 shadow-sm p-4 text-primary">
+                    <h2 class="fw-bold"><i class="bi bi-bandaid"></i> Control de Enfermería</h2>
+                    <hr>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card text-center p-3 border-primary">
+                                <i class="bi bi-calendar-check fs-1"></i>
+                                <h5 class="mt-2">Medicación Hoy</h5>
+                                <span class="badge bg-primary">12 Alumnos</span>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <table class="table table-sm">
+                                <thead><tr><th>Alumno</th><th>Aula</th><th>Dosis</th><th>Estado</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Sánchez, Julia</td><td>P5-B</td><td>Ventolín</td><td><button class="btn btn-xs btn-success py-0">Suministrado</button></td></tr>
+                                    <tr><td>Martínez, Marc</td><td>1º ESO</td><td>Insulina</td><td><button class="btn btn-xs btn-warning py-0">Pendiente</button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>`;
+        } else if (rol === 'psicologia') {
+            html = `
+                <div class="card border-0 shadow-sm p-4">
+                    <h2 class="psi-color fw-bold"><i class="bi bi-chat-heart"></i> Gabinete Psicopedagógico</h2>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="p-3 border-start border-4 border-info bg-light mb-3">
+                                <strong>Sesión actual:</strong> Seguimiento grupal 3º Primaria (Prevención Acoso)
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-secondary">Agenda de Citas</button>
+                                <button class="btn btn-secondary">Protocolos Activos (4)</button>
+                                <button class="btn btn-secondary">Informes Confidenciales</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+        contenedor.innerHTML = html;
+    }
+
+    function volverSeleccion() {
+        document.getElementById('seleccion-rol').style.display = 'block';
+        document.getElementById('portal-especifico').style.display = 'none';
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
