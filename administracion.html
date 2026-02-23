@@ -18,7 +18,7 @@
         .header-admin { 
             background: var(--admin-blue); 
             color: white; 
-            padding: 30px 0; 
+            padding: 25px 0; 
             margin-bottom: 40px;
         }
         .card-tool { 
@@ -32,12 +32,12 @@
             align-items: center;
             justify-content: center;
             min-height: 220px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             color: inherit;
         }
         .card-tool:hover { 
             transform: translateY(-8px); 
-            box-shadow: 0 12px 20px rgba(0,0,0,0.08); 
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1); 
             border-bottom: 4px solid var(--accent-blue);
         }
         .icon-box { 
@@ -45,7 +45,7 @@
             color: var(--accent-blue); 
             margin-bottom: 15px; 
         }
-        h5 { font-weight: 700; color: #2c3e50; }
+        h5 { font-weight: 700; color: #2c3e50; margin-bottom: 8px; }
         .text-muted { font-size: 0.85rem; }
     </style>
 </head>
@@ -80,7 +80,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Abriendo sistema de pedidos a proveedores...')">
+            <a href="pedidos.html" class="card card-tool p-4 text-center">
                 <div class="icon-box"><i class="bi bi-cart-check"></i></div>
                 <h5>Pedidos</h5>
                 <p class="text-muted">Compras y proveedores.</p>
@@ -88,7 +88,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Módulo de mantenimiento técnico')">
+            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Módulo de mantenimiento y avisos')">
                 <div class="icon-box"><i class="bi bi-exclamation-triangle"></i></div>
                 <h5>Incidencias</h5>
                 <p class="text-muted">Mantenimiento y avisos.</p>
@@ -96,7 +96,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Cargando repositorio de plantillas...')">
+            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Abriendo archivo de documentos y normativa')">
                 <div class="icon-box"><i class="bi bi-file-earmark-text"></i></div>
                 <h5>Documentos</h5>
                 <p class="text-muted">Plantillas y normativa.</p>
@@ -104,7 +104,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Generando balances mensuales...')">
+            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Generando memorias y balances')">
                 <div class="icon-box"><i class="bi bi-graph-up-arrow"></i></div>
                 <h5>Informes</h5>
                 <p class="text-muted">Memorias y balances.</p>
@@ -112,48 +112,4 @@
         </div>
 
         <div class="col-md-3">
-            <a href="#" class="card card-tool p-4 text-center" onclick="alert('Accediendo al archivo histórico')">
-                <div class="icon-box"><i class="bi bi-folder2-open"></i></div>
-                <h5>Expedientes</h5>
-                <p class="text-muted">Archivo histórico.</p>
-            </a>
-        </div>
-
-        <div class="col-md-3">
-            <a href="email.html" class="card card-tool p-4 text-center">
-                <div class="icon-box"><i class="bi bi-envelope-at"></i></div>
-                <h5>E-mail</h5>
-                <p class="text-muted">Correo institucional.</p>
-            </a>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalSeguridad" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-body text-center p-4">
-                <i class="bi bi-shield-lock text-primary display-4 mb-3"></i>
-                <h5 class="fw-bold">Acceso Seguro</h5>
-                <input type="password" id="pass-banco" class="form-control text-center mb-3" placeholder="Contraseña">
-                <button onclick="validarAcceso()" class="btn btn-primary w-100">Ingresar al Banco</button>
-                <div id="error-msg" class="text-danger mt-2 small" style="display:none;">❌ Contraseña incorrecta</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function validarAcceso() {
-        const pass = document.getElementById('pass-banco').value;
-        if (pass === "adminbank2026") {
-            window.location.href = "banco.html";
-        } else {
-            document.getElementById('error-msg').style.display = 'block';
-            document.getElementById('pass-banco').value = "";
-        }
-    }
-</script>
-</body>
-</html>
+            <a href="#" class="card card-tool p-4
