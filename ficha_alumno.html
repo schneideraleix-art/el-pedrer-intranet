@@ -16,23 +16,27 @@
         .avatar-circle, .student-photo { width: 150px; height: 150px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; border: 5px solid rgba(255,255,255,0.1); object-fit: cover; }
         .avatar-circle { background: #2ecc71; text-transform: uppercase; }
 
-        /* Botón de Llamada IP */
-        .btn-call { background: #27ae60; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; transition: 0.3s; }
-        .btn-call:hover { background: #219150; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
+        /* Centralita VoIP */
+        .btn-call { background: #27ae60; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; transition: 0.3s; box-shadow: 0 4px 0 #1e8449; }
+        .btn-call:active { transform: translateY(2px); box-shadow: none; }
 
-        /* Portal de Llamada Flotante */
         #callOverlay { 
             display: none; position: fixed; top: 20px; right: 20px; width: 300px; 
-            background: #1a1a1a; color: white; border-radius: 15px; padding: 25px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 2000; text-align: center;
-            border: 1px solid #27ae60; animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #121212; color: white; border-radius: 15px; padding: 25px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 2000; text-align: center;
+            border: 1px solid #333; animation: slideIn 0.4s ease;
         }
-        .call-avatar { width: 80px; height: 80px; background: #27ae60; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 0 20px rgba(39, 174, 96, 0.4); }
-        .timer { font-family: 'Courier New', monospace; font-size: 1.4rem; color: #27ae60; margin-bottom: 20px; display: block; font-weight: bold; }
-        .btn-hangup { background: #e74c3c; border: none; color: white; width: 55px; height: 55px; border-radius: 50%; font-size: 1.6rem; transition: 0.2s; }
-        .btn-hangup:hover { transform: scale(1.1); background: #c0392b; }
+        
+        /* Indicador de Grabación */
+        .rec-indicator { display: none; color: #ff4757; font-size: 0.7rem; font-weight: bold; position: absolute; top: 15px; left: 20px; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
 
-        /* Contenido */
+        .timer { font-family: 'Courier New', monospace; font-size: 1.5rem; color: #2ecc71; margin-bottom: 20px; display: block; }
+        .btn-hangup { background: #ff4757; border: none; color: white; width: 55px; height: 55px; border-radius: 50%; font-size: 1.5rem; }
+        .btn-rec { background: transparent; border: 1px solid #555; color: #aaa; width: 40px; height: 40px; border-radius: 50%; }
+        .btn-rec.active { border-color: #ff4757; color: #ff4757; }
+
+        /* Estilos Contenido */
         .content-ficha { width: 65%; padding: 45px; position: relative; }
         .nav-tabs .nav-link { border: none; color: #888; font-weight: 600; cursor: pointer; }
         .nav-tabs .nav-link.active { color: #007bff; border-bottom: 3px solid #007bff; background: none; }
@@ -42,18 +46,26 @@
 </head>
 <body>
 
-<audio id="dialTone" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" loop></audio>
-<audio id="hangupTone" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
+<audio id="dialSound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" loop></audio>
+<audio id="hangupSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
 
 <div id="callOverlay">
-    <div class="small text-uppercase opacity-50 mb-2" style="letter-spacing: 1px;">Centralita VoIP</div>
-    <div class="call-avatar" id="callAvatarIcon">--</div>
-    <h5 id="callName" class="mb-1">Conectando...</h5>
-    <span class="timer" id="callTimer">00:00</span>
-    <div class="d-flex justify-content-center gap-3">
-        <button class="btn btn-outline-light btn-sm rounded-circle p-2"><i class="bi bi-mic-mute-fill"></i></button>
-        <button class="btn-hangup shadow" onclick="endCall()"><i class="bi bi-telephone-x-fill"></i></button>
-        <button class="btn btn-outline-light btn-sm rounded-circle p-2"><i class="bi bi-record-circle"></i></button>
+    <div class="rec-indicator" id="recIcon"><i class="bi bi-circle-fill me-1"></i> REC</div>
+    <div class="small opacity-50 mb-3">CONEXIÓN CIFRADA IP</div>
+    <div class="avatar-circle mx-auto mb-3" id="miniAvatar" style="width: 70px; height: 70px; font-size: 1.8rem;">--</div>
+    <h6 id="callStatus">Marcando...</h6>
+    <span class="timer" id="timerDisplay">00:00</span>
+    
+    <div class="d-flex justify-content-center align-items-center gap-3">
+        <button class="btn-rec" id="btnRec" onclick="toggleRecording()" title="Grabar llamada">
+            <i class="bi bi-record-circle-fill"></i>
+        </button>
+        <button class="btn-hangup" onclick="endCall()">
+            <i class="bi bi-telephone-x-fill"></i>
+        </button>
+        <button class="btn-rec" title="Silenciar">
+            <i class="bi bi-mic-mute-fill"></i>
+        </button>
     </div>
 </div>
 
@@ -62,125 +74,118 @@
         <div class="photo-container">
             <div id="avatarDefault" class="avatar-circle">--</div>
             <img id="studentImage" class="student-photo d-none" src="">
-            <button class="btn btn-sm btn-primary position-absolute bottom-0 start-50 translate-middle-x rounded-circle" onclick="document.getElementById('fileInput').click()"><i class="bi bi-camera"></i></button>
+            <button class="btn btn-primary btn-sm position-absolute bottom-0 start-50 translate-middle-x rounded-circle" onclick="document.getElementById('fileInput').click()"><i class="bi bi-plus-lg"></i></button>
             <input type="file" id="fileInput" hidden onchange="previewImage(this)">
         </div>
+        <h3 class="fw-bold mb-1" id="nombreAlumno">Nombre</h3>
+        <span class="badge bg-primary mb-4" id="niaAlumno">NIA: 0000000</span>
         
-        <h3 class="fw-bold mb-1" id="nombreDisplay">Nombre</h3>
-        <span class="badge bg-primary mb-3 px-3 py-2" id="niaDisplay">NIA: 0000000</span>
-        
-        <div class="text-start small opacity-75 mb-4 px-2">
-            <p class="mb-2"><i class="bi bi-person-fill-check me-2"></i> Tutor: Elena Rodríguez</p>
-            <p class="mb-2"><i class="bi bi-telephone-fill me-2"></i> +34 655 443 322</p>
-            <p class="mb-2"><i class="bi bi-shield-check me-2"></i> Nivel de Acceso: 3</p>
+        <button class="btn-call mb-3" onclick="startCall()">
+            <i class="bi bi-telephone-outbound-fill me-2"></i> LLAMAR A FAMILIA
+        </button>
+
+        <div class="text-start opacity-75 small border-top pt-3 mt-2">
+            <p><i class="bi bi-person-badge me-2"></i> Tutor: D. Martínez</p>
+            <p><i class="bi bi-phone-vibrate me-2"></i> +34 611 223 344</p>
         </div>
-
-        <button class="btn-call shadow-sm" onclick="startCall()">
-            <i class="bi bi-headset me-2"></i> LLAMADA CENTRALITA IP
-        </button>
-
-        <button class="btn btn-warning btn-sm mt-3 w-100 fw-bold" onclick="alert('Abriendo editor de campos...')">
-            <i class="bi bi-pencil-square me-2"></i>EDITAR EXPEDIENTE
-        </button>
     </div>
 
     <div class="content-ficha">
-        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Volver</a>
-        <h4 class="fw-bold mb-4">Registro de Alumno</h4>
+        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Cerrar</a>
+        <h4 class="fw-bold mb-4">Expediente Digital</h4>
 
         <ul class="nav nav-tabs mb-4">
-            <li class="nav-item"><a class="nav-link active" onclick="showSection('notas')">Académico</a></li>
-            <li class="nav-item"><a class="nav-link" onclick="showSection('historial')">Comunicaciones</a></li>
+            <li class="nav-item"><a class="nav-link active" onclick="showTab('notas')">Académico</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="showTab('historial')">Comunicaciones</a></li>
         </ul>
 
         <div id="sec-notas">
-            <table class="table table-hover border">
-                <thead class="table-light"><tr><th>Materia</th><th class="text-center">Estado</th><th class="text-center">Nota</th></tr></thead>
-                <tbody id="tablaNotas"></tbody>
+            <table class="table table-hover border small">
+                <thead class="table-light"><tr><th>Asignatura</th><th class="text-center">Nota</th></tr></thead>
+                <tbody id="notasCuerpo"></tbody>
             </table>
         </div>
 
         <div id="sec-historial" style="display:none;">
-            <div class="p-3 bg-light rounded" id="logComunicaciones" style="max-height: 300px; overflow-y: auto;">
-                <div class="border-bottom py-2 small"><i class="bi bi-info-circle me-2"></i> No hay registros previos de hoy.</div>
-            </div>
+            <div class="list-group list-group-flush" id="historialLog">
+                </div>
         </div>
 
-        <div class="d-flex gap-2 mt-4">
-            <button class="btn btn-primary flex-grow-1 fw-bold p-3" onclick="alert('Abriendo redactor de correo...')">
-                <i class="bi bi-envelope-at-fill me-2"></i>ENVIAR CORREO
-            </button>
-            <button class="btn btn-dark flex-grow-1 fw-bold p-3" onclick="window.print()">
-                <i class="bi bi-file-earmark-pdf-fill me-2"></i>EXPEDIENTE PDF
-            </button>
+        <div class="action-bar d-flex gap-2 mt-4">
+            <button class="btn btn-outline-primary flex-grow-1 fw-bold"><i class="bi bi-envelope-at me-2"></i>CORREO</button>
+            <button class="btn btn-danger flex-grow-1 fw-bold" onclick="window.print()"><i class="bi bi-file-earmark-pdf me-2"></i>IMPRIMIR PDF</button>
         </div>
     </div>
 </div>
 
 <script>
+    // Configuración Inicial
     const params = new URLSearchParams(window.location.search);
-    const nombre = params.get('nombre') || 'Alumno';
-    document.getElementById('nombreDisplay').innerText = nombre + " " + (params.get('ape') || 'Ejemplo');
-    document.getElementById('niaDisplay').innerText = "NIA: " + (params.get('nia') || '1084251');
+    const nombre = params.get('nombre') || 'Estudiante';
+    document.getElementById('nombreAlumno').innerText = nombre + " " + (params.get('ape') || '');
+    document.getElementById('niaAlumno').innerText = "NIA: " + (params.get('nia') || '1084251');
     document.getElementById('avatarDefault').innerText = nombre[0].toUpperCase();
-    document.getElementById('callAvatarIcon').innerText = nombre[0].toUpperCase();
+    document.getElementById('miniAvatar').innerText = nombre[0].toUpperCase();
 
-    const tBody = document.getElementById('tablaNotas');
-    ["Matemáticas", "Lengua", "Inglés", "Historia", "Tecnología"].forEach(a => {
-        tBody.innerHTML += `<tr><td class="fw-bold small">${a}</td><td class="text-center small text-success">Evaluado</td><td class="text-center fw-bold">8.5</td></tr>`;
+    // Notas
+    const materias = ["Lengua", "Matemáticas", "Física", "Química", "Inglés"];
+    materias.forEach(m => {
+        document.getElementById('notasCuerpo').innerHTML += `<tr><td class="fw-bold">${m}</td><td class="text-center">8.7</td></tr>`;
     });
 
-    function showSection(s) {
-        document.getElementById('sec-notas').style.display = s === 'notas' ? 'block' : 'none';
-        document.getElementById('sec-historial').style.display = s === 'historial' ? 'block' : 'none';
-    }
-
-    // LÓGICA DE LLAMADA CON SONIDO
-    let seconds = 0;
-    let timerInterval;
-    const dialSound = document.getElementById('dialTone');
-    const hangupSound = document.getElementById('hangupTone');
+    // Lógica Llamada
+    let timer;
+    let sec = 0;
+    let isRecording = false;
 
     function startCall() {
         document.getElementById('callOverlay').style.display = 'block';
-        document.getElementById('callName').innerText = "Marcando...";
-        document.getElementById('callTimer').innerText = "Conectando...";
-        
-        // Reproducir sonido de marcado
-        dialSound.play();
+        document.getElementById('dialSound').play();
         
         setTimeout(() => {
-            dialSound.pause();
-            dialSound.currentTime = 0;
-            document.getElementById('callName').innerText = "En Llamada: Familia de " + nombre;
-            document.getElementById('callTimer').innerText = "00:00";
-            
-            timerInterval = setInterval(() => {
-                seconds++;
-                let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-                let s = (seconds % 60).toString().padStart(2, '0');
-                document.getElementById('callTimer').innerText = `${m}:${s}`;
+            document.getElementById('dialSound').pause();
+            document.getElementById('callStatus').innerText = "CONECTADO";
+            timer = setInterval(() => {
+                sec++;
+                let m = Math.floor(sec/60).toString().padStart(2,'0');
+                let s = (sec%60).toString().padStart(2,'0');
+                document.getElementById('timerDisplay').innerText = `${m}:${s}`;
             }, 1000);
-        }, 3000); // 3 segundos de marcado
+        }, 3000);
+    }
+
+    function toggleRecording() {
+        isRecording = !isRecording;
+        document.getElementById('btnRec').classList.toggle('active');
+        document.getElementById('recIcon').style.display = isRecording ? 'block' : 'none';
     }
 
     function endCall() {
-        clearInterval(timerInterval);
-        dialSound.pause();
-        hangupSound.play(); // Sonido de colgar
+        clearInterval(timer);
+        document.getElementById('dialSound').pause();
+        document.getElementById('hangupSound').play();
         
-        document.getElementById('callName').innerText = "Finalizada";
-        document.getElementById('callTimer').innerText = "Desconectando...";
-        
-        // Registrar en el historial
-        const log = document.getElementById('logComunicaciones');
-        const tiempoTotal = document.getElementById('callTimer').innerText;
-        log.innerHTML = `<div class="border-bottom py-2 text-success small"><i class="bi bi-telephone-outbound-fill me-2"></i> Llamada VoIP - Duración: ${seconds}s - Hoy</div>` + log.innerHTML;
-        
+        // Registrar en Historial
+        const log = document.getElementById('historialLog');
+        const recordTag = isRecording ? '<span class="badge bg-danger ms-2">GRABACIÓN GUARDADA</span>' : '';
+        log.innerHTML = `<div class="list-group-item small d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-telephone-outbound text-success me-2"></i>Llamada finalizada (${sec}s) ${recordTag}</span>
+            <span class="text-muted">Hoy</span>
+        </div>` + log.innerHTML;
+
+        document.getElementById('callStatus').innerText = "Colgando...";
         setTimeout(() => {
             document.getElementById('callOverlay').style.display = 'none';
-            seconds = 0;
-        }, 1200);
+            sec = 0;
+            isRecording = false;
+            document.getElementById('recIcon').style.display = 'none';
+            document.getElementById('btnRec').classList.remove('active');
+        }, 1500);
+    }
+
+    function showTab(t) {
+        document.getElementById('sec-notas').style.display = t === 'notas' ? 'block' : 'none';
+        document.getElementById('sec-historial').style.display = t === 'historial' ? 'block' : 'none';
     }
 
     function previewImage(i) {
