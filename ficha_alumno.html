@@ -10,7 +10,6 @@
         body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
         .ficha-container { background: white; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; max-width: 1000px; width: 95%; display: flex; min-height: 780px; position: relative; }
         
-        /* Sidebar */
         .sidebar-ficha { background: #2c3e50; color: white; width: 35%; padding: 40px 30px; text-align: center; }
         .avatar-circle { width: 150px; height: 150px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; margin: 0 auto 20px; border: 5px solid rgba(255,255,255,0.1); text-transform: uppercase; }
 
@@ -22,23 +21,22 @@
             border: 1px solid #333; animation: slideIn 0.4s ease;
         }
         .timer { font-family: 'Courier New', monospace; font-size: 1.5rem; color: #2ecc71; margin-bottom: 10px; display: block; }
+        .timer.on-hold { color: #f1c40f; }
+
+        /* Animación Música de Espera */
+        #holdMusicAnim { display: none; margin: 10px 0; }
+        .bar { display: inline-block; width: 3px; height: 15px; background: #f1c40f; margin: 0 2px; animation: music 1s infinite; }
+        @keyframes music { 0%, 100% { height: 5px; } 50% { height: 20px; } }
+
         .btn-hangup { background: #ff4757; border: none; color: white; width: 55px; height: 55px; border-radius: 50%; font-size: 1.5rem; transition: 0.3s; }
         
-        /* Panel Transferencia */
         #transferPanel { display: none; background: #222; border-radius: 10px; padding: 10px; margin-top: 15px; border: 1px dashed #555; }
         .btn-ext { background: #444; color: white; border: none; font-size: 0.75rem; margin: 2px; padding: 5px 10px; border-radius: 4px; width: 100%; text-align: left; }
-        .btn-ext:hover { background: #007bff; }
-
-        #contestadorMsg { 
-            display: none; background: #2d3436; border-radius: 10px; padding: 10px; 
-            font-size: 0.8rem; margin-bottom: 15px; border-left: 3px solid #f1c40f; color: #f1c40f; font-style: italic;
-        }
 
         .rec-indicator { display: none; color: #ff4757; font-size: 0.7rem; font-weight: bold; position: absolute; top: 15px; left: 20px; animation: blink 1s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
         @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
 
-        /* Contenido */
         .content-ficha { width: 65%; padding: 45px; position: relative; }
         .nav-tabs .nav-link { border: none; color: #888; font-weight: 600; cursor: pointer; }
         .nav-tabs .nav-link.active { color: #007bff; border-bottom: 3px solid #007bff; background: none; }
@@ -47,28 +45,29 @@
 <body>
 
 <audio id="dialSound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" loop></audio>
-<audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2355/2354-preview.mp3"></audio>
+<audio id="holdMusic" src="https://www.chosic.com/wp-content/uploads/2021/04/Mozart-Turkish-March.mp3" loop></audio>
 
 <div id="callOverlay">
     <div class="rec-indicator" id="recIcon"><i class="bi bi-circle-fill me-1"></i> REC</div>
-    <div class="small opacity-50 mb-2">EXTENSIÓN DIRECCIÓN</div>
+    <div class="small opacity-50 mb-2">VOIP DIRECCIÓN</div>
     
-    <div id="contestadorMsg">"Colegio El Pedrer, dígame..."</div>
+    <div id="holdMusicAnim">
+        <div class="bar"></div><div class="bar" style="animation-delay: 0.2s"></div><div class="bar" style="animation-delay: 0.4s"></div>
+        <div class="small text-warning mt-1">Música de espera activa...</div>
+    </div>
 
     <h6 id="callStatus" class="mb-1">Marcando...</h6>
     <span class="timer" id="timerDisplay">00:00</span>
     
     <div class="d-flex justify-content-center align-items-center gap-2">
-        <button class="btn btn-outline-warning btn-sm rounded-circle" id="btnRec" onclick="toggleRecording()"><i class="bi bi-record-circle"></i></button>
+        <button class="btn btn-outline-warning btn-sm rounded-circle" id="btnHold" onclick="toggleHold()" title="Poner en espera"><i class="bi bi-pause-fill"></i></button>
         <button class="btn-hangup shadow" onclick="endCall()"><i class="bi bi-telephone-x-fill"></i></button>
         <button class="btn btn-outline-info btn-sm rounded-circle" onclick="toggleTransfer()"><i class="bi bi-arrow-right-short"></i></button>
     </div>
 
     <div id="transferPanel">
-        <div class="small mb-2 opacity-50">Transferir a:</div>
-        <button class="btn-ext" onclick="transferTo('Secretaría')"><i class="bi bi-building me-2"></i> Secretaría (Ext. 101)</button>
-        <button class="btn-ext" onclick="transferTo('Jefatura de Estudios')"><i class="bi bi-person-workspace me-2"></i> Jefatura (Ext. 102)</button>
-        <button class="btn-ext" onclick="transferTo('Comedor')"><i class="bi bi-egg-fried me-2"></i> Comedor (Ext. 105)</button>
+        <button class="btn-ext" onclick="transferTo('Secretaría')">Secretaría (Ext. 101)</button>
+        <button class="btn-ext" onclick="transferTo('Jefatura')">Jefatura (Ext. 102)</button>
     </div>
 </div>
 
@@ -79,21 +78,15 @@
         <span class="badge bg-primary mb-4" id="niaAlumno">NIA: 0000000</span>
         
         <button class="btn btn-success w-100 fw-bold py-3 mb-3" onclick="startCall()">
-            <i class="bi bi-telephone-plus-fill me-2"></i> CENTRALITA IP
+            <i class="bi bi-telephone-plus-fill me-2"></i> LLAMADA PC
         </button>
-
-        <div class="text-start opacity-75 small border-top pt-3 mt-2">
-            <p><i class="bi bi-telephone me-2"></i> Familia: +34 600 000 000</p>
-        </div>
     </div>
 
     <div class="content-ficha">
-        <a href="exp_alumnado.html" class="btn btn-sm btn-outline-secondary position-absolute" style="top: 25px; right: 25px;">Cerrar</a>
-        <h4 class="fw-bold mb-4">Gestión de Expediente</h4>
-
+        <h4 class="fw-bold mb-4">Panel Académico</h4>
         <ul class="nav nav-tabs mb-4">
             <li class="nav-item"><a class="nav-link active" onclick="showTab('notas')">Calificaciones</a></li>
-            <li class="nav-item"><a class="nav-link" onclick="showTab('historial')">Log de Llamadas</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="showTab('historial')">Log Centralita</a></li>
         </ul>
 
         <div id="sec-notas">
@@ -104,9 +97,7 @@
         </div>
 
         <div id="sec-historial" style="display:none;">
-            <div id="historialLog" class="list-group list-group-flush">
-                <div class="list-group-item small text-muted text-center">Sin registros hoy</div>
-            </div>
+            <div id="historialLog" class="list-group list-group-flush"></div>
         </div>
     </div>
 </div>
@@ -118,27 +109,24 @@
     document.getElementById('niaAlumno').innerText = "NIA: " + (params.get('nia') || '1084251');
     document.getElementById('avatarLetra').innerText = nombre[0].toUpperCase();
 
-    // Notas
-    ["Lengua", "Matemáticas", "Inglés", "Ciencias", "Ed. Física"].forEach(m => {
-        document.getElementById('notasCuerpo').innerHTML += `<tr><td>${m}</td><td class="text-center fw-bold">8.0</td></tr>`;
+    ["Lengua", "Matemáticas", "Inglés"].forEach(m => {
+        document.getElementById('notasCuerpo').innerHTML += `<tr><td>${m}</td><td class="text-center fw-bold">8.5</td></tr>`;
     });
 
-    let timer; let sec = 0; let isRecording = false;
+    let timer; let sec = 0; let onHold = false;
+    const dialSound = document.getElementById('dialSound');
+    const holdMusic = document.getElementById('holdMusic');
 
     function startCall() {
         document.getElementById('callOverlay').style.display = 'block';
-        document.getElementById('dialSound').play();
+        dialSound.play();
         document.getElementById('callStatus').innerText = "Llamando...";
         
         setTimeout(() => {
-            if (document.getElementById('callOverlay').style.display === 'block') {
-                document.getElementById('dialSound').pause();
-                document.getElementById('contestadorMsg').style.display = 'block';
-                document.getElementById('callStatus').innerText = "CONTESTADOR";
-                document.getElementById('beepSound').play();
-                timer = setInterval(() => { sec++; updateTimer(); }, 1000);
-            }
-        }, 4000);
+            dialSound.pause();
+            document.getElementById('callStatus').innerText = "EN LÍNEA";
+            timer = setInterval(() => { sec++; updateTimer(); }, 1000);
+        }, 3000);
     }
 
     function updateTimer() {
@@ -147,46 +135,39 @@
         document.getElementById('timerDisplay').innerText = `${m}:${s}`;
     }
 
-    function toggleTransfer() {
-        const p = document.getElementById('transferPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
-    }
+    function toggleHold() {
+        onHold = !onHold;
+        const btn = document.getElementById('btnHold');
+        const timerDisp = document.getElementById('timerDisplay');
+        const anim = document.getElementById('holdMusicAnim');
 
-    function transferTo(dept) {
-        alert("Transfiriendo llamada a: " + dept);
-        addToLog("LLAMADA DESVIADA A " + dept.toUpperCase());
-        closeCall();
-    }
-
-    function toggleRecording() {
-        isRecording = !isRecording;
-        document.getElementById('btnRec').classList.toggle('btn-warning');
-        document.getElementById('recIcon').style.display = isRecording ? 'block' : 'none';
+        if (onHold) {
+            holdMusic.play();
+            btn.classList.replace('btn-outline-warning', 'btn-warning');
+            timerDisp.classList.add('on-hold');
+            anim.style.display = 'block';
+            document.getElementById('callStatus').innerText = "EN ESPERA";
+        } else {
+            holdMusic.pause();
+            btn.classList.replace('btn-warning', 'btn-outline-warning');
+            timerDisp.classList.remove('on-hold');
+            anim.style.display = 'none';
+            document.getElementById('callStatus').innerText = "EN LÍNEA";
+        }
     }
 
     function endCall() {
-        addToLog(sec > 0 ? "LLAMADA FINALIZADA ("+sec+"s)" : "LLAMADA PERDIDA");
-        closeCall();
-    }
-
-    function closeCall() {
+        holdMusic.pause();
         clearInterval(timer);
-        document.getElementById('dialSound').pause();
-        document.getElementById('callStatus').innerText = "Cerrando...";
-        setTimeout(() => {
-            document.getElementById('callOverlay').style.display = 'none';
-            document.getElementById('transferPanel').style.display = 'none';
-            document.getElementById('contestadorMsg').style.display = 'none';
-            sec = 0;
-            document.getElementById('timerDisplay').innerText = "00:00";
-        }, 1000);
+        const log = document.getElementById('historialLog');
+        log.innerHTML = `<div class="list-group-item small"><b>LLAMADA FINALIZADA</b> (${sec}s) <div class="text-muted">Hoy - Centralita</div></div>` + log.innerHTML;
+        document.getElementById('callOverlay').style.display = 'none';
+        sec = 0; onHold = false;
     }
 
-    function addToLog(msg) {
-        const log = document.getElementById('historialLog');
-        if (log.innerHTML.includes("Sin registros")) log.innerHTML = "";
-        const recTag = isRecording ? ' <span class="badge bg-danger small">REC</span>' : '';
-        log.innerHTML = `<div class="list-group-item small"><b>${msg}</b>${recTag}<div class="text-muted">Hoy - Centralita El Pedrer</div></div>` + log.innerHTML;
+    function toggleTransfer() {
+        const p = document.getElementById('transferPanel');
+        p.style.display = p.style.display === 'none' ? 'block' : 'none';
     }
 
     function showTab(t) {
