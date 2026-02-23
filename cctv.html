@@ -7,45 +7,107 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        body { background-color: #121212; color: #eee; font-family: 'Segoe UI', sans-serif; }
-        .cam-grid { background: #1a1a1a; border: 2px solid #333; aspect-ratio: 16/9; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .cam-label { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; }
-        .rec-dot { width: 8px; height: 8px; background: red; border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
+        body { background-color: #121212; color: #eee; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        
+        /* Grid de Cámaras */
+        .cam-grid { 
+            background: #1a1a1a; border: 2px solid #333; aspect-ratio: 16/9; 
+            position: relative; overflow: hidden; display: flex; 
+            align-items: center; justify-content: center; border-radius: 4px;
+        }
+        .cam-label { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 2px 8px; font-size: 0.65rem; border-radius: 4px; z-index: 5; }
+        .rec-dot { width: 8px; height: 8px; background: #ff0000; border-radius: 50%; display: inline-block; margin-right: 5px; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
-        .sidebar-cctv { background: #1e1e1e; height: 100vh; padding: 20px; border-left: 1px solid #333; }
+
+        /* Mapa Interactivo */
+        .map-container {
+            background: #252525; border: 1px solid #444; border-radius: 8px;
+            position: relative; width: 100%; height: 300px; margin-top: 20px;
+            background-image: radial-gradient(#333 1px, transparent 1px); background-size: 20px 20px;
+        }
+        .map-label { position: absolute; font-size: 0.6rem; font-weight: bold; color: #666; text-transform: uppercase; }
+        
+        .cam-point {
+            position: absolute; width: 24px; height: 24px; background: rgba(220, 53, 69, 0.2);
+            border: 2px solid #dc3545; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; color: #dc3545;
+            transition: 0.3s; z-index: 10;
+        }
+        .cam-point:hover { background: #dc3545; color: white; transform: scale(1.2); box-shadow: 0 0 15px #dc3545; }
+        .cam-point.active { background: #28a745; border-color: #28a745; color: white; box-shadow: 0 0 15px #28a745; }
+
+        .sidebar-cctv { background: #1a1a1a; min-height: 100vh; border-left: 1px solid #333; padding: 25px; }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-9 p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-bold m-0 text-danger"><i class="bi bi-eye-fill"></i> MONITORIZACIÓN EN VIVO</h3>
-                    <a href="direccion.html" class="btn btn-sm btn-outline-light">Cerrar Monitor</a>
-                </div>
-                
-                <div class="row g-2">
-                    <div class="col-6"><div class="cam-grid"><span class="cam-label text-warning"><span class="rec-dot"></span> CAM 01 - ENTRADA PRINCIPAL</span><i class="bi bi-camera-video fs-1 opacity-25"></i></div></div>
-                    <div class="col-6"><div class="cam-grid"><span class="cam-label"><span class="rec-dot"></span> CAM 02 - PATIO SUR</span><i class="bi bi-camera-video fs-1 opacity-25"></i></div></div>
-                    <div class="col-6"><div class="cam-grid"><span class="cam-label"><span class="rec-dot"></span> CAM 03 - PASILLO PLANTA 1</span><i class="bi bi-camera-video fs-1 opacity-25"></i></div></div>
-                    <div class="col-6"><div class="cam-grid"><span class="cam-label"><span class="rec-dot"></span> CAM 04 - SECRETARÍA</span><i class="bi bi-camera-video fs-1 opacity-25"></i></div></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-9 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0"><i class="bi bi-shield-shaded text-danger me-2"></i>CENTRO DE CONTROL CCTV</h3>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-dark border border-secondary pt-2">SISTEMA: OPERATIVO</span>
+                    <a href="direccion.html" class="btn btn-sm btn-outline-light"><i class="bi bi-x-lg"></i></a>
                 </div>
             </div>
 
-            <div class="col-md-3 sidebar-cctv">
-                <h6 class="fw-bold mb-4 border-bottom pb-2">CONTROLES</h6>
-                <div class="d-grid gap-2 mb-4">
-                    <button class="btn btn-dark btn-sm text-start"><i class="bi bi-record-circle me-2 text-danger"></i> Iniciar Grabación Todo</button>
-                    <button class="btn btn-dark btn-sm text-start"><i class="bi bi-grid-3x3-gap me-2"></i> Cambiar Cuadrícula</button>
-                </div>
-                <h6 class="fw-bold mb-3 border-bottom pb-2">HISTORIAL LOG</h6>
-                <div class="small opacity-50" style="font-family: monospace;">
-                    [10:38] Movimiento detectado CAM 01<br>
-                    [10:35] Sistema de backup verificado<br>
-                    [10:00] Inicio de monitoreo diario
-                </div>
+            <div class="row g-2 mb-4">
+                <div class="col-6"><div class="cam-grid" id="view-1"><span class="cam-label"><span class="rec-dot"></span>CAM 01: ENTRADA</span><i class="bi bi-camera-video fs-1 opacity-10"></i></div></div>
+                <div class="col-6"><div class="cam-grid" id="view-2"><span class="cam-label"><span class="rec-dot"></span>CAM 02: PATIO</span><i class="bi bi-camera-video fs-1 opacity-10"></i></div></div>
+                <div class="col-6"><div class="cam-grid" id="view-3"><span class="cam-label"><span class="rec-dot"></span>CAM 03: PASILLO A</span><i class="bi bi-camera-video fs-1 opacity-10"></i></div></div>
+                <div class="col-6"><div class="cam-grid" id="view-4"><span class="cam-label"><span class="rec-dot"></span>CAM 04: COMEDOR</span><i class="bi bi-camera-video fs-1 opacity-10"></i></div></div>
+            </div>
+
+            <h6 class="text-uppercase small fw-bold text-muted mb-3">Plano de Ubicación Geográfica</h6>
+            <div class="map-container">
+                <div class="map-label" style="top: 10%; left: 10%;">Edificio Primaria</div>
+                <div class="map-label" style="bottom: 10%; right: 10%;">Zona Deportiva</div>
+                
+                <div class="cam-point" style="top: 20%; left: 45%;" onclick="focusCam(1, 'ENTRADA')" title="Cámara 1">1</div>
+                <div class="cam-point" style="bottom: 30%; right: 20%;" onclick="focusCam(2, 'PATIO')" title="Cámara 2">2</div>
+                <div class="cam-point" style="top: 50%; left: 30%;" onclick="focusCam(3, 'PASILLO A')" title="Cámara 3">3</div>
+                <div class="cam-point" style="top: 40%; right: 40%;" onclick="focusCam(4, 'COMEDOR')" title="Cámara 4">4</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 sidebar-cctv">
+            <h6 class="fw-bold mb-4 border-bottom border-secondary pb-2">HERRAMIENTAS</h6>
+            <div class="d-grid gap-2 mb-4">
+                <button class="btn btn-danger btn-sm fw-bold" onclick="alert('Grabación de emergencia iniciada en nube.')"><i class="bi bi-record-circle me-2"></i>REC. EMERGENCIA</button>
+                <button class="btn btn-outline-light btn-sm text-start"><i class="bi bi-download me-2"></i>Exportar Grabaciones</button>
+                <button class="btn btn-outline-light btn-sm text-start"><i class="bi bi-Brightness-high me-2"></i>Ajuste Infrarrojos</button>
+            </div>
+
+            <h6 class="fw-bold mb-3 border-bottom border-secondary pb-2">ALERTAS RECIENTES</h6>
+            <div class="small" id="log-cctv" style="font-family: monospace; color: #888; height: 200px; overflow-y: auto;">
+                <div>[10:39] <span class="text-success">OK</span> Link Cam 01 restablecido.</div>
+                <div>[10:30] <span class="text-warning">WARN</span> Movimiento detección Cam 02.</div>
+                <div>[09:00] <span class="text-info">INFO</span> Inicio secuencia monitoreo.</div>
             </div>
         </div>
     </div>
+</div>
+
+<script>
+    function focusCam(id, nombre) {
+        // Quitamos clase activa de todos
+        document.querySelectorAll('.cam-point').forEach(p => p.classList.remove('active'));
+        // Añadimos al seleccionado (el punto en el mapa)
+        event.target.classList.add('active');
+        
+        // Efecto visual en el grid
+        const grid = document.getElementById('view-' + id);
+        grid.style.borderColor = '#28a745';
+        setTimeout(() => { grid.style.borderColor = '#333'; }, 2000);
+
+        // Añadir al log
+        const log = document.getElementById('log-cctv');
+        const entry = document.createElement('div');
+        entry.innerHTML = `[${new Date().toLocaleTimeString()}] <span class="text-info">FOCUS</span> Acceso a manual CAM 0${id} (${nombre})`;
+        log.prepend(entry);
+    }
+</script>
+
 </body>
 </html>
