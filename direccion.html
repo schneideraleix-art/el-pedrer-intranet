@@ -3,148 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Maestro - El Pedrer</title>
+    <title>Sistema Maestro - El Pedrer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    
     <style>
-        :root { --admin-red: #e63946; --sidebar-dark: #0f0f0f; --accent-blue: #38bdf8; }
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; display: flex; margin: 0; overflow: hidden; }
-        .sidebar { width: 260px; background: var(--sidebar-dark); color: white; position: fixed; height: 100vh; padding: 25px; z-index: 1000; }
-        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 40px; height: 100vh; overflow-y: auto; }
-        
-        /* PE-PHONE UI */
-        .pe-phone-wrapper { display: none; position: fixed; bottom: 30px; right: 30px; width: 310px; height: 620px; z-index: 9999; }
-        .pe-phone-container { width: 100%; height: 100%; background: #000; border-radius: 50px; border: 12px solid #1a1a1a; box-shadow: 0 30px 60px rgba(0,0,0,0.6); overflow: hidden; position: relative; }
-        .phone-ringing { animation: phoneVibrate 0.1s infinite; }
-        @keyframes phoneVibrate { 0% { transform: translate(0,0); } 25% { transform: translate(2px,2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0,0); } }
-        .phone-screen { height: 100%; background: linear-gradient(180deg, #1e293b 0%, #000 100%); display: flex; flex-direction: column; align-items: center; padding-top: 50px; color: white; }
-        .btn-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: none; color: white; cursor: pointer; }
+        :root {
+            --bg-main: #f8fafc;
+            --sidebar-bg: #111827;
+            --accent-red: #ef4444;
+            --accent-green: #22c55e;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
 
-        /* Analizador de Audio */
-        .audio-bars { display: flex; gap: 3px; align-items: flex-end; height: 30px; margin-top: 15px; }
-        .bar { width: 4px; background: var(--accent-blue); height: 5px; transition: 0.1s; border-radius: 2px; }
+        body { background-color: var(--bg-main); font-family: 'Inter', system-ui, sans-serif; display: flex; margin: 0; height: 100vh; overflow: hidden; }
+
+        /* SIDEBAR ESTILO DARK */
+        .sidebar { width: 280px; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 30px 20px; transition: 0.3s; }
+        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-left: 10px; }
+        .nav-menu { flex-grow: 1; }
+        .nav-item { 
+            display: flex; align-items: center; gap: 15px; padding: 14px 20px; 
+            color: #9ca3af; text-decoration: none; border-radius: 12px; margin-bottom: 8px; transition: 0.2s;
+        }
+        .nav-item:hover, .nav-item.active { background: var(--accent-red); color: white; }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-view { flex-grow: 1; padding: 40px; overflow-y: auto; position: relative; }
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        
+        /* TARJETAS DE ESTADO */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: white; padding: 25px; border-radius: 24px; box-shadow: var(--card-shadow); text-align: center; }
+        .stat-card h3 { font-size: 2rem; font-weight: 800; margin: 10px 0; }
+        .stat-label { color: #64748b; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* PANEL DE ACCIONES */
+        .actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+        .action-card { 
+            background: white; border-radius: 28px; padding: 35px 20px; text-align: center; 
+            border: none; box-shadow: var(--card-shadow); transition: 0.3s; cursor: pointer;
+        }
+        .action-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+        .action-card i { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+
+        /* PE-PHONE (FLOTANTE ESTILO REAL) */
+        .pe-phone-wrapper { 
+            display: none; position: fixed; bottom: 30px; right: 30px; width: 320px; height: 640px; 
+            z-index: 10000; animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .phone-body { 
+            width: 100%; height: 100%; background: #000; border-radius: 50px; 
+            border: 10px solid #1a1a1a; box-shadow: 0 40px 100px rgba(0,0,0,0.5); overflow: hidden; position: relative;
+        }
+        .phone-screen { height: 100%; background: linear-gradient(180deg, #0f172a 0%, #000 100%); display: flex; flex-direction: column; align-items: center; padding-top: 60px; color: white; }
+        .phone-ringing { animation: ring 0.15s infinite; }
+        @keyframes ring { 0% { transform: rotate(0); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } 100% { transform: rotate(0); } }
+
+        .btn-call { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; }
+
+        /* ANALIZADOR DE AUDIO */
+        .visualizer { display: flex; gap: 4px; height: 30px; align-items: center; margin: 20px 0; }
+        .v-bar { width: 4px; background: #38bdf8; height: 4px; border-radius: 10px; transition: 0.1s; }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <h4 class="fw-bold text-center mb-5">EL PEDRER</h4>
-    <div class="mt-5 p-3 bg-dark rounded-4 small">
-        <span class="opacity-50">Estado VoIP:</span><br>
-        <span id="statusBadge" class="text-danger fw-bold">Desconectado</span>
-    </div>
-</div>
-
-<div class="main-content">
-    <h2 class="fw-bold mb-5">Panel Directivo</h2>
-    <div class="row g-4">
-        <div class="col-md-3">
-            <button class="btn btn-dark w-100 p-4 rounded-4" onclick="initAudioContext()">
-                <i class="bi bi-unlock-fill"></i> Activar Audio Navegador
-            </button>
+    <div class="sidebar">
+        <div class="brand">
+            <i class="bi bi-building-fill fs-3 text-white"></i>
+            <h4 class="m-0 fw-bold">EL PEDRER</h4>
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active"><i class="bi bi-grid-fill"></i> Dashboard</a>
+            <a href="#" class="nav-item"><i class="bi bi-people-fill"></i> Claustro</a>
+            <a href="#" class="nav-item"><i class="bi bi-calendar3"></i> Horarios</a>
+        </nav>
+        <div class="p-3 bg-white bg-opacity-10 rounded-4 mt-auto">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span id="status-dot" class="badge rounded-circle bg-danger p-1" style="width:10px; height:10px;"> </span>
+                <small id="status-text" class="fw-bold">VoIP Offline</small>
+            </div>
+            <button class="btn btn-sm btn-outline-light w-100" onclick="activarAudio()">Activar Audio</button>
         </div>
     </div>
-</div>
 
-<div id="pePhone" class="pe-phone-wrapper">
-    <div id="phoneContainer" class="pe-phone-container">
-        <div class="phone-screen">
-            <div style="width: 80px; height: 80px; background: #334155; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-top: 40px; border: 2px solid #38bdf8;">
-                <i class="bi bi-person-fill"></i>
+    <div class="main-view">
+        <div class="header-section">
+            <h1 class="fw-bold text-dark">Panel Directivo</h1>
+            <div class="badge bg-success bg-opacity-10 text-success p-3 px-4 rounded-pill border border-success border-opacity-25">
+                Centralita Online: elpedrer-direccion
             </div>
-            <h3 id="callerIdDisplay" class="fw-bold mt-3">ENTRANTE</h3>
-            <p id="ivr-status" class="text-info small">Llamada de Triaje</p>
+        </div>
 
-            <div class="audio-bars" id="visualizer">
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">Alumnos</div><h3 class="text-danger">842</h3></div>
+            <div class="stat-card"><div class="stat-label">Profesores</div><h3 class="text-primary">137</h3></div>
+            <div class="stat-card"><div class="stat-label">Bajas Hoy</div><h3 class="text-warning">4</h3></div>
+            <div class="stat-card"><div class="stat-label">Comedor</div><h3 class="text-success">315</h3></div>
+        </div>
+
+        <div class="actions-grid">
+            <div class="action-card" onclick="sonarTimbre()">
+                <i class="bi bi-bell-fill text-warning"></i>
+                <h5 class="fw-bold mb-1">Timbre Manual</h5>
+                <p class="text-muted small m-0">Activar sirena del centro</p>
             </div>
+            <div class="action-card">
+                <i class="bi bi-telephone-outbound text-success"></i>
+                <h5 class="fw-bold mb-1">Marcador Manual</h5>
+                <p class="text-muted small m-0">Llamada externa VoIP</p>
+            </div>
+            <div class="action-card">
+                <i class="bi bi-camera-video text-dark"></i>
+                <h5 class="fw-bold mb-1">Cámaras CCTV</h5>
+                <p class="text-muted small m-0">Acceso a vigilancia</p>
+            </div>
+            <div class="action-card">
+                <i class="bi bi-person-x text-danger"></i>
+                <h5 class="fw-bold mb-1">Control Bajas</h5>
+                <p class="text-muted small m-0">Gestión de ausencias</p>
+            </div>
+        </div>
+    </div>
 
-            <div id="extensionesUI" class="px-3 w-100 mt-4" style="display:none;">
-                <div class="row g-2">
-                    <div class="col-6"><button onclick="derivar('Secretaría')" class="btn btn-outline-info btn-sm w-100">EXT 01</button></div>
-                    <div class="col-6"><button onclick="derivar('Admin')" class="btn btn-outline-info btn-sm w-100">EXT 02</button></div>
+    <div id="pePhone" class="pe-phone-wrapper">
+        <div id="phoneContainer" class="phone-body">
+            <div class="phone-screen">
+                <div style="width: 100px; height: 100px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; border: 2px solid #38bdf8;">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <h2 id="callerName" class="mt-4 fw-bold">ENTRANTE</h2>
+                <p id="callStatus" class="text-info opacity-75">Llamada de Triaje...</p>
+
+                <div class="visualizer" id="audioBars">
+                    <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
+                </div>
+
+                <div id="extensions" class="px-4 w-100 mt-3" style="display:none;">
+                    <p class="text-center small opacity-50 mb-3">DERIVAR LLAMADA:</p>
+                    <button class="btn btn-outline-info w-100 mb-2 rounded-4" onclick="derivar('Secretaría')">EXT 01 - Secretaría</button>
+                    <button class="btn btn-outline-info w-100 rounded-4" onclick="derivar('Administración')">EXT 02 - Admin</button>
+                </div>
+
+                <div style="position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: space-around;">
+                    <button class="btn-call bg-danger" onclick="colgar()"><i class="bi bi-telephone-x-fill"></i></button>
+                    <button id="btnAccept" class="btn-call bg-success" onclick="aceptar()"><i class="bi bi-telephone-fill"></i></button>
                 </div>
             </div>
-
-            <div style="position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: space-around;">
-                <button class="btn-circle bg-danger" onclick="colgar()"><i class="bi bi-telephone-x-fill"></i></button>
-                <button id="btn-aceptar" class="btn-circle bg-success" onclick="aceptar()"><i class="bi bi-telephone-fill"></i></button>
-            </div>
         </div>
     </div>
-</div>
 
-<script>
-    const sndRingtone = new Audio('https://serverside-docs.github.io/sounds/ringtone.mp3');
-    const peer = new Peer('elpedrer-direccion');
-    let callActiva = null;
+    <script>
+        const sndRingtone = new Audio('https://serverside-docs.github.io/sounds/ringtone.mp3');
+        const peer = new Peer('elpedrer-direccion');
+        let callActiva = null;
 
-    function initAudioContext() { // Necesario para Chrome
-        window.speechSynthesis.speak(new SpeechSynthesisUtterance("Audio activado"));
-        document.querySelector('.btn-dark').classList.replace('btn-dark', 'btn-success');
-    }
-
-    peer.on('open', () => {
-        document.getElementById('statusBadge').innerText = "ONLINE";
-        document.getElementById('statusBadge').className = "text-success fw-bold";
-    });
-
-    peer.on('call', (call) => {
-        callActiva = call;
-        document.getElementById('pePhone').style.display = 'block';
-        document.getElementById('phoneContainer').classList.add('phone-ringing');
-        document.getElementById('callerIdDisplay').innerText = (call.metadata.depto || "ENTRANTE").toUpperCase();
-        sndRingtone.play(); sndRingtone.loop = true;
-    });
-
-    function aceptar() {
-        sndRingtone.pause();
-        document.getElementById('phoneContainer').classList.remove('phone-ringing');
-        document.getElementById('extensionesUI').style.display = 'block';
-        document.getElementById('btn-aceptar').style.display = 'none';
-
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-            callActiva.answer(stream); // Envía tu voz
-            startVisualizer(stream); // Activa barritas
-
-            callActiva.on('stream', remoteStream => { // Recibe voz del padre
-                const audio = document.createElement('audio');
-                audio.srcObject = remoteStream;
-                audio.play();
-                document.getElementById('ivr-status').innerText = "EN LÍNEA";
-            });
-        });
-    }
-
-    function colgar() {
-        sndRingtone.pause();
-        if(callActiva) callActiva.close();
-        document.getElementById('pePhone').style.display = 'none';
-        location.reload(); 
-    }
-
-    function derivar(ext) {
-        const tts = new SpeechSynthesisUtterance("Transfiriendo a " + ext);
-        window.speechSynthesis.speak(tts);
-        setTimeout(colgar, 3000);
-    }
-
-    function startVisualizer(stream) {
-        const ctx = new AudioContext();
-        const src = ctx.createMediaStreamSource(stream);
-        const ana = ctx.createAnalyser();
-        src.connect(ana);
-        const data = new Uint8Array(ana.frequencyBinCount);
-        function loop() {
-            ana.getByteFrequencyData(data);
-            document.querySelectorAll('.bar').forEach((b, i) => {
-                b.style.height = (data[i * 10] / 2.5) + 'px';
-            });
-            requestAnimationFrame(loop);
+        // ACTIVAR AUDIO (IMPORTANTE PARA CHROME)
+        function activarAudio() {
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sistema de audio activado"));
+            document.getElementById('status-dot').className = "badge rounded-circle bg-success p-1";
+            document.getElementById('status-text').innerText = "VoIP Online";
         }
-        loop();
-    }
-</script>
+
+        peer.on('open', (id) => console.log('Peer ID:', id));
+
+        peer.on('call', (call) => {
+            callActiva = call;
+            document.getElementById('pePhone').style.display = 'block';
+            document.getElementById('phoneContainer').classList.add('phone-ringing');
+            document.getElementById('callerName').innerText = (call.metadata.depto || "ENTRANTE").toUpperCase();
+            sndRingtone.play(); sndRingtone.loop = true;
+        });
+
+        function aceptar() {
+            sndRingtone.pause();
+            document.getElementById('phoneContainer').classList.remove('phone-ringing');
+            document.getElementById('extensions').style.display = 'block';
+            document.getElementById('btnAccept').style.display = 'none';
+
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                callActiva.answer(stream);
+                startVisualizer(stream); // Activa las barritas visuales de tu voz
+
+                callActiva.on('stream', remoteStream => {
+                    const audio = document.createElement('audio');
+                    audio.srcObject = remoteStream;
+                    audio.play();
+                    document.getElementById('callStatus').innerText = "CONVERSACIÓN ACTIVA";
+                });
+            });
+        }
+
+        function colgar() {
+            sndRingtone.pause();
+            if(callActiva) callActiva.close();
+            document.getElementById('pePhone').style.display = 'none';
+            location.reload(); 
+        }
+
+        function derivar(ext) {
+            const tts = new SpeechSynthesisUtterance("Transfiriendo llamada a " + ext);
+            tts.lang = 'es-ES';
+            window.speechSynthesis.speak(tts);
+            setTimeout(colgar, 3000);
+        }
+
+        function sonarTimbre() {
+            new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3').play();
+        }
+
+        // ANIMACIÓN DE BARRITAS DE AUDIO
+        function startVisualizer(stream) {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const analyser = audioCtx.createAnalyser();
+            const source = audioCtx.createMediaStreamSource(stream);
+            source.connect(analyser);
+            analyser.fftSize = 32;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            const bars = document.querySelectorAll('.v-bar');
+
+            function animate() {
+                analyser.getByteFrequencyData(dataArray);
+                bars.forEach((bar, i) => {
+                    let height = dataArray[i] / 4;
+                    bar.style.height = (height < 4 ? 4 : height) + 'px';
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
 </body>
 </html>
