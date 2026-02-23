@@ -3,200 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Directivo - El Pedrer (pe-phone Edition)</title>
+    <title>Panel Maestro - El Pedrer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    
     <style>
         :root { --admin-red: #e63946; --sidebar-dark: #0f0f0f; --accent-blue: #38bdf8; }
         body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; display: flex; margin: 0; overflow: hidden; }
-
-        /* Sidebar mejorado */
         .sidebar { width: 260px; background: var(--sidebar-dark); color: white; position: fixed; height: 100vh; padding: 25px; z-index: 1000; }
-        .nav-link { color: rgba(255,255,255,0.6); padding: 12px 15px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; text-decoration: none; transition: 0.3s; }
-        .nav-link:hover, .nav-link.active { background: var(--admin-red); color: white; }
-
-        /* Dashboard */
         .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 40px; height: 100vh; overflow-y: auto; }
-        .stat-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); border-left: 5px solid var(--admin-red); }
         .app-tile { background: white; border-radius: 20px; padding: 30px; text-align: center; border: none; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.03); width: 100%; }
-        .app-tile:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
-
-        /* --- INTERFAZ PE-PHONE PREMIUM --- */
-        .pe-phone-wrapper {
-            display: none; position: fixed; bottom: 30px; right: 30px; width: 310px; height: 620px; 
-            z-index: 9999; perspective: 1000px;
-        }
-        .pe-phone-container {
-            width: 100%; height: 100%; background: #000; border-radius: 50px; border: 12px solid #1a1a1a;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6); overflow: hidden; position: relative;
-        }
+        
+        /* PE-PHONE UI */
+        .pe-phone-wrapper { display: none; position: fixed; bottom: 30px; right: 30px; width: 310px; height: 620px; z-index: 9999; }
+        .pe-phone-container { width: 100%; height: 100%; background: #000; border-radius: 50px; border: 12px solid #1a1a1a; box-shadow: 0 30px 60px rgba(0,0,0,0.6); overflow: hidden; position: relative; }
         .phone-ringing { animation: phoneVibrate 0.1s infinite; }
-        @keyframes phoneVibrate { 
-            0% { transform: translate(0,0); } 25% { transform: translate(2px,2px); } 
-            50% { transform: translate(-2px, -2px); } 100% { transform: translate(0,0); } 
-        }
-
+        @keyframes phoneVibrate { 0% { transform: translate(0,0); } 25% { transform: translate(2px,2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0,0); } }
         .phone-screen { height: 100%; background: linear-gradient(180deg, #1e293b 0%, #000 100%); display: flex; flex-direction: column; align-items: center; padding-top: 50px; color: white; }
-        .phone-header { width: 100%; padding: 0 20px; display: flex; justify-content: space-between; font-size: 0.7rem; opacity: 0.8; }
-        
-        .caller-avatar { width: 110px; height: 110px; background: #334155; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; margin: 40px 0 20px; border: 2px solid var(--accent-blue); }
-        
-        .ivr-waves { display: flex; gap: 4px; height: 20px; align-items: center; margin: 15px 0; }
-        .wave { width: 3px; height: 100%; background: var(--accent-blue); border-radius: 10px; animation: waveAnim 1s infinite; }
-        @keyframes waveAnim { 0%, 100% { height: 5px; } 50% { height: 20px; } }
-
-        .phone-footer { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: space-around; }
-        .btn-circle { width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; cursor: pointer; border: none; color: white; }
-        .btn-accept { background: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
-        .btn-reject { background: #ef4444; }
+        .caller-avatar { width: 100px; height: 100px; background: #334155; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 30px 0 10px; border: 2px solid var(--accent-blue); }
+        .btn-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: none; color: white; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <div class="text-center mb-5">
-        <h4 class="fw-bold m-0">EL PEDRER</h4>
-        <small class="opacity-50">Administración Central</small>
-    </div>
+    <h4 class="fw-bold text-center mb-5">EL PEDRER</h4>
     <nav>
-        <a href="#" class="nav-link active"><i class="bi bi-speedometer2 me-3"></i> Dashboard</a>
-        <a href="claustro.html" class="nav-link"><i class="bi bi-people me-3"></i> Claustro</a>
-        <a href="#" class="nav-link text-warning"><i class="bi bi-exclamation-triangle me-3"></i> EMERGENCIA</a>
+        <a href="#" class="nav-link active text-white mb-3 text-decoration-none"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
         <div class="mt-5 p-3 bg-dark rounded-4 small">
-            <span class="d-block opacity-50">ID Centralita:</span>
-            <span class="text-info fw-bold">elpedrer-direccion</span>
+            <span class="opacity-50">Centralita:</span><br>
+            <span id="statusBadge" class="text-danger fw-bold">Desconectado</span>
         </div>
     </nav>
 </div>
 
 <div class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <h2 class="fw-bold">Panel de Control Directivo</h2>
-        <div id="statusBadge" class="badge bg-secondary p-2 px-3 rounded-pill">Sincronizando VoIP...</div>
-    </div>
-
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="stat-card">
-                <small class="text-muted">MATRÍCULA</small>
-                <h2 class="fw-bold">842</h2>
-                <span class="text-success small"><i class="bi bi-arrow-up"></i> 2.4%</span>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="border-left-color: #f59e0b;">
-                <small class="text-muted">ABSENTISMO</small>
-                <h2 class="fw-bold">12</h2>
-                <span class="text-danger small">Hoy</span>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="border-left-color: #3b82f6;">
-                <small class="text-muted">COMEDOR</small>
-                <h2 class="fw-bold">315</h2>
-                <span class="text-muted small">Menús servidos</span>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="border-left-color: #10b981;">
-                <small class="text-muted">CAJA CENTRO</small>
-                <h2 class="fw-bold">1.250€</h2>
-                <span class="text-muted small">Saldo conciliado</span>
-            </div>
-        </div>
-    </div>
-
-    <h5 class="fw-bold mb-4">Gestión y Operaciones</h5>
+    <h2 class="fw-bold mb-5">Panel Directivo</h2>
     <div class="row g-4">
-        <div class="col-md-3"><button class="app-tile" onclick="lanzarTimbre()"><i class="bi bi-bell-fill fs-1 text-danger mb-2 d-block"></i><b>Timbre Manual</b></button></div>
-        <div class="col-md-3"><button class="app-tile"><i class="bi bi-telephone-outbound fs-1 text-success mb-2 d-block"></i><b>Marcador VoIP</b></button></div>
-        <div class="col-md-3"><button class="app-tile"><i class="bi bi-camera-video fs-1 text-dark mb-2 d-block"></i><b>Cámaras CCTV</b></button></div>
-        <div class="col-md-3"><button class="app-tile"><i class="bi bi-file-earmark-person fs-1 text-primary mb-2 d-block"></i><b>Expedientes</b></button></div>
+        <div class="col-md-3"><button class="app-tile" onclick="new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3').play()"><i class="bi bi-bell-fill fs-1 text-danger"></i><br><b>Timbre</b></button></div>
     </div>
 </div>
 
 <div id="pePhone" class="pe-phone-wrapper">
     <div id="phoneContainer" class="pe-phone-container">
         <div class="phone-screen">
-            <div class="phone-header">
-                <span id="p-time">00:00</span>
-                <span><i class="bi bi-reception-4"></i> <i class="bi bi-battery-full"></i></span>
-            </div>
-            
-            <div class="caller-avatar"><i class="bi bi-person-fill"></i></div>
-            <h3 class="fw-bold mb-0">EL PEDRER</h3>
-            <p class="text-info small">LLAMADA ENTRANTE</p>
+            <div class="caller-avatar"><i class="bi bi-person-bounding-box"></i></div>
+            <h3 id="callerIdDisplay" class="fw-bold">ENTRANTE</h3>
+            <p id="ivr-status" class="text-info small">Llamada de Triaje</p>
 
-            <div class="ivr-waves">
-                <div class="wave" style="animation-delay: 0.1s"></div>
-                <div class="wave" style="animation-delay: 0.2s"></div>
-                <div class="wave" style="animation-delay: 0.3s"></div>
+            <div id="extensionesUI" class="px-3 w-100 mt-4" style="display:none;">
+                <p class="text-center x-small opacity-50 mb-2">DERIVAR A:</p>
+                <div class="row g-2">
+                    <div class="col-6"><button onclick="derivarLlamada('Secretaría')" class="btn btn-outline-info btn-sm w-100">EXT 01</button></div>
+                    <div class="col-6"><button onclick="derivarLlamada('Administración')" class="btn btn-outline-info btn-sm w-100">EXT 02</button></div>
+                </div>
             </div>
-            <small id="ivr-status" class="opacity-50">Filtrando por asistente...</small>
 
-            <div class="phone-footer">
-                <button class="btn-circle btn-reject" onclick="colgar()"><i class="bi bi-telephone-x-fill"></i></button>
-                <button class="btn-circle btn-accept" onclick="aceptar()"><i class="bi bi-telephone-fill"></i></button>
+            <div style="position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: space-around;">
+                <button class="btn-circle bg-danger" onclick="colgar()"><i class="bi bi-telephone-x-fill"></i></button>
+                <button id="btn-aceptar" class="btn-circle bg-success" onclick="aceptar()"><i class="bi bi-telephone-fill"></i></button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- Configuración PeerJS (Llamadas Reales) ---
+    const sndRingtone = new Audio('https://serverside-docs.github.io/sounds/ringtone.mp3');
+    const sndHangup = new Audio('https://www.soundjay.com/phone/sounds/phone-hang-up-1.mp3');
     const peer = new Peer('elpedrer-direccion');
     let callActiva = null;
-    const ringtone = new Audio('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Xylo-Ziko/Phase/Xylo-Ziko_-_03_-_Phase.mp3');
+    let timeoutLlamada;
 
-    peer.on('open', (id) => {
-        document.getElementById('statusBadge').innerText = "Centralita Online";
-        document.getElementById('statusBadge').className = "badge bg-success p-2 px-3 rounded-pill";
+    peer.on('open', () => {
+        const b = document.getElementById('statusBadge');
+        b.innerText = "ONLINE: elpedrer-direccion"; b.className = "text-success fw-bold";
     });
 
-    // Detectar llamada entrante
     peer.on('call', (call) => {
         callActiva = call;
+        const depto = call.metadata.depto || "General";
         document.getElementById('pePhone').style.display = 'block';
         document.getElementById('phoneContainer').classList.add('phone-ringing');
-        ringtone.play();
-        ringtone.loop = true;
-
-        // Asistente IVR habla con el llamante
-        const tts = new SpeechSynthesisUtterance("Bienvenido a la centralita de El Pedrer. Un momento por favor, conectamos con Dirección.");
-        tts.lang = 'es-ES';
-        window.speechSynthesis.speak(tts);
+        document.getElementById('callerIdDisplay').innerText = depto.toUpperCase();
+        
+        sndRingtone.play(); sndRingtone.loop = true;
+        
+        // Auto-cuelgue a los 20 seg si no respondes
+        timeoutLlamada = setTimeout(() => {
+            if (document.getElementById('pePhone').style.display === 'block') {
+                const tts = new SpeechSynthesisUtterance("Lo sentimos, no hay nadie disponible. Llame más tarde.");
+                tts.lang = 'es-ES'; window.speechSynthesis.speak(tts);
+                colgar();
+            }
+        }, 20000);
     });
 
     function aceptar() {
-        ringtone.pause();
+        clearTimeout(timeoutLlamada);
+        sndRingtone.pause();
         document.getElementById('phoneContainer').classList.remove('phone-ringing');
-        document.getElementById('ivr-status').innerText = "CONECTADO";
-        document.getElementById('ivr-status').classList.add('text-success');
-
-        navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
-            callActiva.answer(stream); // Contestar con el audio de tu PC
-        });
+        document.getElementById('extensionesUI').style.display = 'block';
+        document.getElementById('btn-aceptar').style.display = 'none';
+        navigator.mediaDevices.getUserMedia({audio: true}).then(s => callActiva.answer(s));
     }
 
     function colgar() {
-        ringtone.pause();
+        sndRingtone.pause(); sndHangup.play();
         if(callActiva) callActiva.close();
         document.getElementById('pePhone').style.display = 'none';
+        document.getElementById('extensionesUI').style.display = 'none';
+        document.getElementById('btn-aceptar').style.display = 'flex';
         window.speechSynthesis.cancel();
     }
 
-    function lanzarTimbre() {
-        new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3').play();
+    function derivarLlamada(ext) {
+        const tts = new SpeechSynthesisUtterance("Transfiriendo a " + ext);
+        tts.lang = 'es-ES'; window.speechSynthesis.speak(tts);
+        setTimeout(colgar, 3000);
     }
-
-    // Reloj del teléfono
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('p-time').innerText = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-    }, 1000);
 </script>
-
 </body>
 </html>
