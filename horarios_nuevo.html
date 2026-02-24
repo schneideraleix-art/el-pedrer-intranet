@@ -6,47 +6,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --accent-blue: #4285f4; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; animation: fadeIn 0.5s ease; }
-
-        /* 1. Barra de Carga Progresiva */
-        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-red); width: 100%; animation: load 0.8s forwards; z-index: 1000; }
-        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
-
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; overflow: hidden; }
+        
+        /* Sidebar y Botón Centralita (Mantenido de tus capturas) */
         .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; }
         .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #aeb2b9; text-decoration: none; }
         .nav-item.active { background: var(--accent-red); color: white; }
+        .btn-centralita { position: fixed; bottom: 20px; left: 20px; width: 200px; background: var(--accent-blue); color: white; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 5px 15px rgba(66,133,244,0.3); }
 
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; }
-        .form-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 900px; margin: 0 auto; }
+        .form-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 950px; margin: 0 auto; }
         
-        /* 2. Grid de Formulario Optimizado */
         .grid-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .full-width { grid-column: span 3; }
 
-        .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #555; }
-        .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; }
+        .form-group select, .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.9rem; }
 
-        /* 3. Estilo de Alertas de Conflicto */
-        .conflict-badge { background: #fff5f5; border: 1px solid #feb2b2; color: #c53030; padding: 10px; border-radius: 8px; font-size: 0.8rem; display: none; margin-top: 10px; align-items: center; gap: 8px; }
-
-        /* 4. Vista Previa Estilo Captura */
-        .preview-box { border: 2px dashed #e2e8f0; padding: 15px; border-radius: 12px; margin-top: 25px; position: relative; background: #f8fbff; }
-        .preview-tag { position: absolute; top: -10px; left: 15px; background: var(--accent-blue); color: white; padding: 2px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-
-        /* Botón Guardar */
-        .btn-save { background: var(--accent-red); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1rem; transition: 0.2s; }
-        .btn-save:hover { filter: brightness(1.1); transform: translateY(-1px); }
-
-        /* Botón Centralita Flotante */
-        .btn-centralita { position: fixed; bottom: 20px; left: 20px; width: 200px; background: var(--accent-blue); color: white; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 5px 15px rgba(66,133,244,0.3); }
+        /* Estilos de información y alertas */
+        .preview-box { border: 2px dashed #e2e8f0; padding: 15px; border-radius: 12px; margin-top: 25px; background: #f8fbff; }
+        .btn-save { background: var(--accent-red); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1rem; }
     </style>
 </head>
 <body>
-    <div class="loading-bar"></div>
-    
+
     <div class="sidebar">
         <div class="logo">🏛️ EL PEDRER</div>
         <a href="horarios.html" class="nav-item"><i class="fas fa-arrow-left"></i> Volver a Gestión</a>
@@ -60,36 +44,28 @@
         <div class="form-card">
             <div class="grid-form">
                 <div class="form-group full-width">
-                    <label>Asignatura / Materia (Autocompletar)</label>
-                    <input type="text" placeholder="Escribe para buscar asignatura..." list="materias">
-                    <datalist id="materias">
-                        <option value="Matemáticas I">
-                        <option value="Lengua Castellana">
-                        <option value="Física y Química">
-                    </datalist>
+                    <label>Asignatura / Materia (30 lecciones disponibles)</label>
+                    <select id="selectMateria"></select>
                 </div>
 
                 <div class="form-group">
-                    <label>Docente</label>
-                    <select id="docente"><option>García, Alberto</option><option>Martínez, Elena</option></select>
+                    <label>Docente Responsable (150 profes)</label>
+                    <select id="selectDocente"></select>
                 </div>
 
                 <div class="form-group">
                     <label>Tipo de Sesión</label>
-                    <select><option>📖 Lectiva</option><option>🛡️ Guardia</option><option>🧪 Laboratorio</option></select>
+                    <select><option>Lectiva Estándar</option><option>Guardia</option><option>Taller</option></select>
                 </div>
 
                 <div class="form-group">
-                    <label>Aula (Capacidad)</label>
-                    <select id="aula">
-                        <option value="204">Aula 204 (30 p.)</option>
-                        <option value="Lab1">Laboratorio (20 p.)</option>
-                    </select>
+                    <label>Aula Asignada (58 espacios)</label>
+                    <select id="selectAula"></select>
                 </div>
 
                 <div class="form-group">
                     <label>Día</label>
-                    <select><option>Lunes</option><option>Martes</option></select>
+                    <select><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option></select>
                 </div>
 
                 <div class="form-group">
@@ -103,21 +79,46 @@
                 </div>
             </div>
 
-            <div id="alertConflict" class="conflict-badge" style="display: flex;">
-                <i class="fas fa-exclamation-circle"></i>
-                <span>Aviso: Alberto García tiene clase de 2º ESO a esta misma hora.</span>
-            </div>
-
             <div class="preview-box">
-                <span class="preview-tag">VISTA PREVIA</span>
-                <p id="previewText" style="margin: 0; color: #4a5568;">
-                    <strong>Matemáticas</strong> con Alberto García en el <strong>Aula 204</strong>.
-                    <br><small style="color: #a0aec0;"><i class="fas fa-bell"></i> Se notificará al docente automáticamente.</small>
-                </p>
+                <p id="preview" style="margin: 0; color: #4a5568;"><i class="fas fa-info-circle"></i> Complete los campos para previsualizar la sesión.</p>
             </div>
 
             <button class="btn-save"><i class="fas fa-save"></i> GUARDAR EN HORARIO</button>
         </div>
     </div>
+
+    <script>
+        // Función para cargar datos masivos
+        function cargarDatos() {
+            const materias = ["Matemáticas", "Lengua", "Inglés", "Física", "Química", "Biología", "Historia", "Geografía", "Arte", "Filosofía", "E. Física", "Música", "Tecnología", "Informática", "Latín", "Griego", "Cultura Clásica", "Valores", "Religión", "Economía", "Dibujo Técnico", "Plástica", "Francés", "Alemán", "Robótica", "Oratoria", "Laboratorio", "Teatro", "Tutoría", "Guardia"];
+            
+            const docenteSelect = document.getElementById('selectDocente');
+            const aulaSelect = document.getElementById('selectAula');
+            const materiaSelect = document.getElementById('selectMateria');
+
+            // Cargar 30 Materias
+            materias.forEach(m => {
+                let opt = document.createElement('option');
+                opt.value = m; opt.innerHTML = m;
+                materiaSelect.appendChild(opt);
+            });
+
+            // Cargar 150 Docentes (Simulados por ID)
+            for(let i=1; i<=150; i++) {
+                let opt = document.createElement('option');
+                opt.value = i; opt.innerHTML = `Profesor/a ${i} (ID: 0${i})`;
+                docenteSelect.appendChild(opt);
+            }
+
+            // Cargar 58 Aulas
+            for(let j=1; j<=58; j++) {
+                let opt = document.createElement('option');
+                opt.value = j; opt.innerHTML = `Aula ${j < 10 ? '0'+j : j} (Edificio ${j < 30 ? 'A' : 'B'})`;
+                aulaSelect.appendChild(opt);
+            }
+        }
+
+        window.onload = cargarDatos;
+    </script>
 </body>
 </html>
