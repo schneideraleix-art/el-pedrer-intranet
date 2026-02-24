@@ -3,137 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claustro - El Pedrer</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <title>Portal Claustro - El Pedrer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --sidebar-bg: #1a1a1a; --active-red: #d91e18; --bg-gray: #f4f7f6; }
-        body { background-color: var(--bg-gray); font-family: 'Segoe UI', sans-serif; }
-        .sidebar { width: 240px; background-color: var(--sidebar-bg); min-height: 100vh; position: fixed; color: white; z-index: 100;}
-        .main-content { margin-left: 240px; padding: 30px; width: calc(100% - 240px); }
-        .nav-link { color: #ccc; padding: 15px 20px; text-decoration: none; display: block; border-bottom: 1px solid #2a2a2a; }
-        .nav-link.active { background-color: var(--active-red) !important; color: white; font-weight: bold; }
-        .card-table { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
-        .status-pill { font-size: 0.7rem; padding: 4px 10px; border-radius: 50px; font-weight: bold; }
-        .avatar-sm { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem; }
-        .btn-action { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; }
-        thead { position: sticky; top: 0; background: white; z-index: 10; }
+        :root {
+            --sidebar-bg: #1a1d2b;
+            --accent-red: #ff4d4d;
+            --bg-light: #f4f7f9;
+            --text-main: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: var(--bg-light);
+        }
+
+        /* Sidebar (Mismo estilo que Dirección) */
+        .sidebar {
+            width: 240px;
+            background-color: var(--sidebar-bg);
+            height: 100vh;
+            color: white;
+            padding: 20px;
+            position: fixed;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+        
+        .nav-link { text-decoration: none; color: inherit; display: block; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .nav-item.active { background-color: var(--accent-red); }
+        .nav-item:hover:not(.active) { background-color: rgba(255,255,255,0.1); }
+
+        /* Main Content */
+        .main-content { margin-left: 280px; padding: 30px; width: calc(100% - 320px); }
+
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
+        /* Filtros y Buscador */
+        .search-bar {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 300px;
+        }
+        .search-bar input { border: none; outline: none; width: 100%; }
+
+        /* Grid de Profesores */
+        .profesores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .profe-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            background: #eee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #777;
+        }
+
+        .profe-info h3 { margin: 0; font-size: 1rem; }
+        .profe-info p { margin: 2px 0; font-size: 0.85rem; color: #777; }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .online { background: #4caf50; }
+        .offline { background: #f44336; }
+
+        .btn-msg {
+            margin-top: 10px;
+            background: #f0f0f0;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="d-flex">
-    <div class="sidebar d-flex flex-column">
-        <div class="p-4 text-center">
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="60" class="rounded-circle mb-2 border border-2 border-danger">
-            <h6 class="fw-bold m-0">Admin Dirección</h6>
-        </div>
-        <nav class="nav flex-column">
-            <a href="direccion.html" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-            <a href="claustro.html" class="nav-link active"><i class="bi bi-people me-2"></i> Claustro</a>
-            <a href="#" class="nav-link text-warning fw-bold"><i class="bi bi-broadcast me-2"></i> EMERGENCIA</a>
-            <a href="index.html" class="nav-link mt-5 border-top border-secondary"><i class="bi bi-box-arrow-left me-2"></i> Salir</a>
-        </nav>
+    <div class="sidebar">
+        <div class="logo"><i class="fas fa-university"></i> EL PEDRER</div>
+        
+        <a href="direccion.html" class="nav-link">
+            <div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div>
+        </a>
+
+        <a href="claustro.html" class="nav-link">
+            <div class="nav-item active"><i class="fas fa-users"></i> Claustro</div>
+        </a>
+
+        <div class="nav-item"><i class="fas fa-clock"></i> Horarios</div>
+        <div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div>
+        <div class="nav-item"><i class="fas fa-comment-dots"></i> Mensajería</div>
     </div>
 
     <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold m-0">Gestión del Claustro <span class="badge bg-secondary ms-2" id="contador">133</span></h2>
-            <button class="btn btn-dark" onclick="abrirCreador()"><i class="bi bi-person-plus me-2"></i> Añadir Docente</button>
+        <div class="header-flex">
+            <h1>Panel del Claustro</h1>
+            <div class="search-bar">
+                <i class="fas fa-search" style="color:#aaa"></i>
+                <input type="text" placeholder="Buscar profesor...">
+            </div>
         </div>
 
-        <div class="card p-3 mb-4 border-0 shadow-sm">
-            <div class="row g-2">
-                <div class="col-md-12">
-                    <input type="text" id="buscador" class="form-control bg-light border-0" placeholder="Buscar por nombre, departamento o especialidad..." onkeyup="filtrarTabla()">
+        <div class="profesores-grid">
+            <div class="profe-card">
+                <div class="status-dot online"></div>
+                <div class="avatar"><i class="fas fa-user-tie"></i></div>
+                <div class="profe-info">
+                    <h3>García, Alberto</h3>
+                    <p>Matemáticas - 2º ESO</p>
+                    <button class="btn-msg"><i class="fas fa-envelope"></i> Mensaje</button>
                 </div>
             </div>
-        </div>
 
-        <div class="card-table">
-            <table class="table table-hover align-middle mb-0" id="tablaDocentes">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-4">Docente</th>
-                        <th>Departamento</th>
-                        <th>Especialidad</th>
-                        <th>Estado</th>
-                        <th class="text-end pe-4">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="cuerpo-tabla"></tbody>
-            </table>
+            <div class="profe-card">
+                <div class="status-dot online"></div>
+                <div class="avatar"><i class="fas fa-user-graduate"></i></div>
+                <div class="profe-info">
+                    <h3>Martínez, Elena</h3>
+                    <p>Lengua y Lit. - Bachillerato</p>
+                    <button class="btn-msg"><i class="fas fa-envelope"></i> Mensaje</button>
+                </div>
+            </div>
+
+            <div class="profe-card">
+                <div class="status-dot offline"></div>
+                <div class="avatar"><i class="fas fa-user"></i></div>
+                <div class="profe-info">
+                    <h3>Rodríguez, Marc</h3>
+                    <p>Educación Física</p>
+                    <button class="btn-msg"><i class="fas fa-envelope"></i> Mensaje</button>
+                </div>
+            </div>
+
+            </div>
+
+        <div style="margin-top: 40px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <h2><i class="fas fa-bullhorn"></i> Últimos comunicados internos</h2>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <p><strong>[Ayer]</strong> Se recuerda que las actas de evaluación deben estar subidas antes del viernes.</p>
+            <p><strong>[24/02]</strong> Nueva normativa sobre el uso de la sala de profesores disponible en Reportes.</p>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="modalAñadir" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered border-0">
-        <div class="modal-content shadow-lg border-0">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title fw-bold">Nuevo Registro Docente</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="n-nom" class="form-control"></div>
-                <div class="row"><div class="col-6 mb-3"><label class="form-label small fw-bold">Dpto.</label><select id="n-dep" class="form-select"><option>Primaria</option><option>Secundaria</option><option>Infantil</option></select></div><div class="col-6 mb-3"><label class="form-label small fw-bold">Especialidad</label><input type="text" id="n-esp" class="form-control"></div></div>
-            </div>
-            <div class="modal-footer border-0"><button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-success px-4" onclick="guardarNuevo()">Registrar</button></div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalChat" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow"><div class="modal-header bg-dark text-white"><h5 class="modal-title" id="chatNom">Chat</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="form-control" rows="3" placeholder="Mensaje..."></textarea></div><div class="modal-footer"><button class="btn btn-primary w-100" onclick="alert('Enviado')">Enviar Mensaje</button></div></div></div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const apellidos = ["García", "Rodríguez", "López", "Sánchez", "Pérez", "Gómez", "Martín", "Ruiz"];
-    const nombres = ["Maria", "Jose", "Antonio", "Carmen", "David", "Lucía", "Elena", "Juan"];
-    const deptos = ["Primaria", "Secundaria", "Infantil"];
-    const esps = ["Matemáticas", "Lengua", "Inglés", "Música", "E. Física"];
-
-    function generar() {
-        const tbody = document.getElementById('cuerpo-tabla');
-        let html = '';
-        for (let i = 0; i < 133; i++) {
-            const nom = `${apellidos[Math.floor(Math.random()*8)]}, ${nombres[Math.floor(Math.random()*8)]}`;
-            const dep = deptos[Math.floor(Math.random()*3)];
-            const esp = esps[Math.floor(Math.random()*5)];
-            html += `<tr>
-                <td class="ps-4"><strong>${nom}</strong></td>
-                <td>${dep}</td>
-                <td>${esp}</td>
-                <td><span class="badge bg-success status-pill">En el centro</span></td>
-                <td class="text-end pe-4">
-                    <button class="btn btn-action btn-outline-secondary me-1" onclick="abrirChat('${nom}')"><i class="bi bi-chat-dots"></i></button>
-                    <button class="btn btn-action btn-outline-dark" onclick="alert('Abriendo editor para: ${nom}')"><i class="bi bi-pencil"></i></button>
-                </td>
-            </tr>`;
-        }
-        tbody.innerHTML = html;
-    }
-
-    function filtrarTabla() {
-        let input = document.getElementById("buscador").value.toLowerCase();
-        let filas = document.getElementById("cuerpo-tabla").getElementsByTagName("tr");
-        for (let i = 0; i < filas.length; i++) {
-            let texto = filas[i].innerText.toLowerCase();
-            filas[i].style.display = texto.includes(input) ? "" : "none";
-        }
-    }
-
-    function abrirCreador() { new bootstrap.Modal(document.getElementById('modalAñadir')).show(); }
-    function abrirChat(n) { document.getElementById('chatNom').innerText = "Chat con " + n; new bootstrap.Modal(document.getElementById('modalChat')).show(); }
-    
-    function guardarNuevo() {
-        const n = document.getElementById('n-nom').value;
-        if(n) { alert('✅ Docente '+n+' registrado.'); bootstrap.Modal.getInstance(document.getElementById('modalAñadir')).hide(); }
-        else { alert('Introduce un nombre'); }
-    }
-
-    window.onload = generar;
-</script>
 </body>
 </html>
