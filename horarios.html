@@ -3,233 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Horarios - El Pedrer</title>
+    <title>Horarios - El Pedrer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --sidebar-bg: #1a1d2b;
-            --accent-red: #ff4d4d;
-            --bg-light: #f4f7f9;
-            --text-main: #333;
-            --accent-blue: #4285f4;
-            --accent-green: #34a853;
-            --accent-orange: #ea4335;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            display: flex;
-            background-color: var(--bg-light);
-            color: var(--text-main);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background-color: var(--sidebar-bg);
-            height: 100vh;
-            color: white;
-            padding: 20px;
-            position: fixed;
-        }
-
+        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); }
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); height: 100vh; color: white; padding: 20px; position: fixed; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
         .nav-link { text-decoration: none; color: inherit; display: block; }
-        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; }
         .nav-item.active { background-color: var(--accent-red); }
-        .nav-item:hover:not(.active) { background-color: rgba(255,255,255,0.1); }
-
-        /* Main Content */
         .main-content { margin-left: 280px; padding: 30px; width: calc(100% - 320px); }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-
-        /* Controles Superiores */
-        .controls {
-            display: flex;
-            gap: 12px;
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        select, .btn-action {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-family: inherit;
-            font-size: 0.9rem;
-            outline: none;
-        }
-
-        .btn-primary { background: var(--sidebar-bg); color: white; border: none; cursor: pointer; }
-        .btn-primary:hover { background: #2a2e3f; }
-
-        /* Tabla de Horarios */
-        .timetable-container {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 8px;
-        }
-
-        th {
-            padding: 15px;
-            color: #888;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid #f4f7f9;
-        }
-
-        .hour-col {
-            background: #f8f9fa;
-            width: 120px;
-            text-align: center;
-            font-weight: bold;
-            border-radius: 8px;
-            color: #555;
-            font-size: 0.85rem;
-        }
-
-        /* Tarjetas de Asignatura */
-        .cell-content {
-            padding: 12px;
-            border-radius: 10px;
-            min-height: 70px;
-            border-left: 5px solid #dfe4ea;
-            background: #fcfcfc;
-            transition: 0.2s;
-        }
-
-        .cell-content:hover { transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-
-        .cell-content b { display: block; font-size: 0.9rem; color: #333; margin-bottom: 4px; }
-        .cell-content span { display: block; font-size: 0.75rem; color: #777; }
-
-        /* Colores Dinámicos */
-        .cat-eso { border-left-color: var(--accent-blue); background: #ebf3ff; }
-        .cat-bach { border-left-color: var(--accent-green); background: #eef9f1; }
-        .cat-guardia { border-left-color: var(--accent-orange); background: #fff1f0; }
-        
-        .recreo-row {
-            text-align: center;
-            background: #fffbe6;
-            color: #d4a017;
-            font-weight: bold;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            border-radius: 8px;
-            padding: 8px;
-        }
-
-        /* Leyenda */
-        .legend {
-            margin-top: 20px;
-            display: flex;
-            gap: 20px;
-            font-size: 0.8rem;
-            color: #666;
-        }
-        .legend-item { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
-
+        .timetable-container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: separate; border-spacing: 5px; }
+        th { color: #888; font-size: 0.8rem; padding: 10px; }
+        .subject-card { padding: 10px; border-radius: 8px; font-size: 0.8rem; border-left: 4px solid #4285f4; background: #f8fbff; }
+        .guardia { border-left-color: #ea4335; background: #fff5f5; }
     </style>
 </head>
 <body>
-
     <div class="sidebar">
         <div class="logo"><i class="fas fa-university"></i> EL PEDRER</div>
-        
-        <a href="direccion.html" class="nav-link">
-            <div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div>
-        </a>
-
-        <a href="claustro.html" class="nav-link">
-            <div class="nav-item"><i class="fas fa-users"></i> Claustro</div>
-        </a>
-
-        <a href="horarios.html" class="nav-link">
-            <div class="nav-item active"><i class="fas fa-clock"></i> Horarios</div>
-        </a>
-
+        <a href="direccion.html" class="nav-link"><div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div></a>
+        <a href="claustro.html" class="nav-link"><div class="nav-item"><i class="fas fa-users"></i> Claustro</div></a>
+        <a href="horarios.html" class="nav-link"><div class="nav-item active"><i class="fas fa-clock"></i> Horarios</div></a>
         <div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div>
         <div class="nav-item"><i class="fas fa-comment-dots"></i> Mensajería</div>
     </div>
-
     <div class="main-content">
-        <div class="header-flex">
-            <h1>Gestión de Horarios</h1>
-            <div class="controls">
-                <select>
-                    <option>Filtrar por Grupo...</option>
-                    <option>1º ESO A</option>
-                    <option>2º ESO B</option>
-                    <option selected>Vista General Centro</option>
-                </select>
-                <button class="btn-primary"><i class="fas fa-download"></i> Exportar</button>
-            </div>
-        </div>
-
+        <h1>Gestión de Horarios</h1>
         <div class="timetable-container">
             <table>
-                <thead>
-                    <tr>
-                        <th>Hora</th>
-                        <th>Lunes</th>
-                        <th>Martes</th>
-                        <th>Miércoles</th>
-                        <th>Jueves</th>
-                        <th>Viernes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="hour-col">08:00 - 09:00</td>
-                        <td><div class="cell-content cat-eso"><b>Matemáticas</b><span>Aula 204</span></div></td>
-                        <td><div class="cell-content cat-bach"><b>Física I</b><span>Lab. Ciencias</span></div></td>
-                        <td><div class="cell-content cat-eso"><b>Geografía</b><span>Aula 105</span></div></td>
-                        <td><div class="cell-content cat-guardia"><b>GUARDIA</b><span>Pasillo Planta 1</span></div></td>
-                        <td><div class="cell-content cat-eso"><b>Matemáticas</b><span>Aula 204</span></div></td>
-                    </tr>
-                    <tr>
-                        <td class="hour-col">09:00 - 10:00</td>
-                        <td><div class="cell-content cat-eso"><b>Lengua</b><span>Aula 204</span></div></td>
-                        <td><div class="cell-content cat-eso"><b>Inglés</b><span>Aula Idiomas</span></div></td>
-                        <td><div class="cell-content cat-bach"><b>Historia</b><span>Aula 302</span></div></td>
-                        <td><div class="cell-content cat-eso"><b>Lengua</b><span>Aula 204</span></div></td>
-                        <td><div class="cell-content cat-guardia"><b>GUARDIA</b><span>Biblioteca</span></div></td>
-                    </tr>
-                    <tr>
-                        <td colspan="6" class="recreo-row">DESCANSO / RECREO</td>
-                    </tr>
-                    <tr>
-                        <td class="hour-col">10:30 - 11:30</td>
-                        <td><div class="cell-content cat-guardia"><b>GUARDIA</b><span>Patio Central</span></div></td>
-                        <td><div class="cell-content cat-eso"><b>Ed. Física</b><span>Pabellón</span></div></td>
-                        <td><div class="cell-content cat-eso"><b>Inglés</b><span>Aula Idiomas</span></div></td>
-                        <td><div class="cell-content cat-bach"><b>Física I</b><span>Lab. Ciencias</span></div></td>
-                        <td><div class="cell-content cat-eso"><b>Plástica</b><span>Taller Arte</span></div></td>
-                    </tr>
-                </tbody>
+                <tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th></tr>
+                <tr><td>08:00</td><td><div class="subject-card"><b>Matemáticas</b><br>Aula 204</div></td><td><div class="subject-card"><b>Inglés</b><br>Aula 102</div></td><td><div class="subject-card guardia"><b>GUARDIA</b><br>Pasillo</div></td></tr>
+                <tr><td>09:00</td><td><div class="subject-card"><b>Lengua</b><br>Aula 204</div></td><td><div class="subject-card guardia"><b>GUARDIA</b><br>Patio</div></td><td><div class="subject-card"><b>Historia</b><br>Aula 301</div></td></tr>
             </table>
-
-            <div class="legend">
-                <div class="legend-item"><div class="dot" style="background:var(--accent-blue)"></div> ESO</div>
-                <div class="legend-item"><div class="dot" style="background:var(--accent-green)"></div> Bachillerato</div>
-                <div class="legend-item"><div class="dot" style="background:var(--accent-orange)"></div> Guardias</div>
-            </div>
         </div>
     </div>
-
 </body>
 </html>
