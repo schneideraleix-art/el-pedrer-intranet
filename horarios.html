@@ -2,93 +2,41 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horarios - El Pedrer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --sidebar-bg: #1a1d2b;
-            --accent-red: #ff4d4d;
-            --bg-light: #f4f7f9;
-            --text-main: #333;
-            --accent-blue: #4285f4;
-            --accent-green: #34a853;
-        }
-
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); color: var(--text-main); }
-
-        /* Sidebar */
+        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; }
+        
+        /* Animación de entrada */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); animation: fadeIn 0.5s ease-out; }
+        
         .sidebar { width: 240px; background-color: var(--sidebar-bg); height: 100vh; color: white; padding: 20px; position: fixed; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
-        .nav-link { text-decoration: none; color: inherit; display: block; }
-        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .nav-link { text-decoration: none; color: inherit; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; transition: 0.3s; cursor: pointer; }
         .nav-item.active { background-color: var(--accent-red); }
         .nav-item:hover:not(.active) { background-color: rgba(255,255,255,0.1); }
 
-        /* Main Content */
         .main-content { margin-left: 280px; padding: 30px; width: calc(100% - 320px); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-
-        /* PANEL DE 10 FUNCIONES (6 previas + 4 nuevas) */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .action-card {
-            background: white;
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid transparent;
-        }
-
-        .action-card:hover { transform: translateY(-3px); border-color: var(--accent-blue); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .action-card i { font-size: 1.2rem; color: var(--accent-blue); margin-bottom: 6px; display: block; }
-        .action-card span { font-size: 0.75rem; font-weight: 600; }
         
-        /* Estilo para destacar las nuevas funciones */
-        .new-feat { border-bottom: 2px solid var(--accent-green); }
+        /* Barra de carga superior */
+        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-red); width: 100%; animation: load 0.8s ease-in-out forwards; z-index: 1000; }
+        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
 
-        /* HORARIO MÁS AMPLIO */
-        .timetable-container {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            overflow-x: auto;
-        }
+        .actions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 30px; }
+        .action-card { background: white; padding: 12px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
+        .action-card:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .action-card i { color: #4285f4; margin-bottom: 5px; display: block; }
 
-        table { width: 100%; border-collapse: separate; border-spacing: 8px; }
-        th { color: #888; font-size: 0.75rem; text-transform: uppercase; padding: 10px; }
-        
-        .hour-cell { width: 70px; font-size: 0.8rem; font-weight: bold; color: #777; text-align: center; }
-
-        .subject-card {
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            border-left: 4px solid #4285f4;
-            background: #f8fbff;
-            min-height: 45px;
-        }
-
-        .guardia { border-left-color: #ea4335; background: #fff5f5; }
-        .recreo { background: #fffbe6; border-left: none; text-align: center; color: #d4a017; font-weight: bold; font-size: 0.7rem; letter-spacing: 2px; }
-        .comida { background: #f1f3f5; border-left: none; text-align: center; color: #999; font-size: 0.7rem; }
-
-        .subject-card b { display: block; margin-bottom: 2px; color: #333; }
-        .subject-card span { font-size: 0.7rem; color: #888; }
-
+        table { width: 100%; border-collapse: separate; border-spacing: 10px; background: white; padding: 20px; border-radius: 15px; }
+        .subject-card { padding: 10px; border-radius: 8px; font-size: 0.8rem; border-left: 4px solid #4285f4; background: #f8fbff; }
+        .guardia { border-left-color: #ff4d4d; background: #fff5f5; }
     </style>
 </head>
 <body>
-
+    <div class="loading-bar"></div>
     <div class="sidebar">
         <div class="logo"><i class="fas fa-university"></i> EL PEDRER</div>
         <a href="direccion.html" class="nav-link"><div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div></a>
@@ -99,91 +47,33 @@
     </div>
 
     <div class="main-content">
-        <div class="header-flex">
-            <h1>Gestión de Horarios Ampliada</h1>
-        </div>
-
+        <h1>Gestión de Horarios</h1>
         <div class="actions-grid">
-            <div class="action-card"><span>Nuevo Horario</span></div>
-            <div class="action-card"><span>Cambiar Guardia</span></div>
-            <div class="action-card"><span>Imprimir Grupo</span></div>
-            <div class="action-card"><span>Permisos/Ausencias</span></div>
-            <div class="action-card"><span>Histórico</span></div>
-            <div class="action-card"><span>Config. Tramos</span></div>
-            
-            <div class="action-card new-feat"><i class="fas fa-users-viewfinder"></i><span>Carga Lectiva</span></div>
-            <div class="action-card new-feat"><i class="fas fa-door-closed"></i><span>Disponibilidad Aulas</span></div>
-            <div class="action-card new-feat"><i class="fas fa-sync-alt"></i><span>Optimizar Huecos</span></div>
-            <div class="action-card new-feat"><i class="fas fa-file-export"></i><span>Exportar XML/CSV</span></div>
+            <div class="action-card"><i class="fas fa-plus"></i><span>Nuevo</span></div>
+            <div class="action-card"><i class="fas fa-exchange-alt"></i><span>Cambios</span></div>
+            <div class="action-card"><i class="fas fa-print"></i><span>Imprimir</span></div>
+            <div class="action-card"><i class="fas fa-user-clock"></i><span>Permisos</span></div>
+            <div class="action-card"><i class="fas fa-history"></i><span>Histórico</span></div>
+            <div class="action-card"><i class="fas fa-cog"></i><span>Tramos</span></div>
+            <div class="action-card"><i class="fas fa-users-viewfinder"></i><span>Carga</span></div>
+            <div class="action-card"><i class="fas fa-door-closed"></i><span>Aulas</span></div>
+            <div class="action-card"><i class="fas fa-sync"></i><span>Optimizar</span></div>
+            <div class="action-card"><i class="fas fa-file-export"></i><span>Exportar</span></div>
         </div>
 
-        <div class="timetable-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hora</th>
-                        <th>Lunes</th>
-                        <th>Martes</th>
-                        <th>Miércoles</th>
-                        <th>Jueves</th>
-                        <th>Viernes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="hour-cell">08:00</td>
-                        <td><div class="subject-card"><b>Matemáticas</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card"><b>Inglés</b><span>Aula 102</span></div></td>
-                        <td><div class="subject-card guardia"><b>GUARDIA</b><span>Pasillo</span></div></td>
-                        <td><div class="subject-card"><b>Matemáticas</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card"><b>Historia</b><span>Aula 301</span></div></td>
-                    </tr>
-                    <tr>
-                        <td class="hour-cell">09:00</td>
-                        <td><div class="subject-card"><b>Lengua</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card guardia"><b>GUARDIA</b><span>Patio</span></div></td>
-                        <td><div class="subject-card"><b>Historia</b><span>Aula 301</span></div></td>
-                        <td><div class="subject-card"><b>Francés</b><span>Aula 105</span></div></td>
-                        <td><div class="subject-card"><b>Lengua</b><span>Aula 204</span></div></td>
-                    </tr>
-                    <tr><td class="hour-cell">10:00</td><td colspan="5" class="recreo">RECREO</td></tr>
-                    <tr>
-                        <td class="hour-cell">10:30</td>
-                        <td><div class="subject-card"><b>Física</b><span>Lab 1</span></div></td>
-                        <td><div class="subject-card"><b>Matemáticas</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card"><b>Ed. Física</b><span>Pabellón</span></div></td>
-                        <td><div class="subject-card guardia"><b>GUARDIA</b><span>Biblioteca</span></div></td>
-                        <td><div class="subject-card"><b>Física</b><span>Lab 1</span></div></td>
-                    </tr>
-                    <tr>
-                        <td class="hour-cell">11:30</td>
-                        <td><div class="subject-card guardia"><b>GUARDIA</b><span>Cafetería</span></div></td>
-                        <td><div class="subject-card"><b>Plástica</b><span>Taller 2</span></div></td>
-                        <td><div class="subject-card"><b>Lengua</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card"><b>Biología</b><span>Lab 2</span></div></td>
-                        <td><div class="subject-card"><b>Tutoría</b><span>Aula 204</span></div></td>
-                    </tr>
-                    <tr><td class="hour-cell">12:30</td><td colspan="5" class="comida">COMEDOR / ALMUERZO</td></tr>
-                    <tr>
-                        <td class="hour-cell">14:00</td>
-                        <td><div class="subject-card"><b>Informática</b><span>Aula TIC</span></div></td>
-                        <td><div class="subject-card"><b>Refuerzo</b><span>Aula 101</span></div></td>
-                        <td><div class="subject-card"><b>Música</b><span>Aula Música</span></div></td>
-                        <td><div class="subject-card"><b>Informática</b><span>Aula TIC</span></div></td>
-                        <td><div class="subject-card"><b>PROYECTO</b><span>Salón Actos</span></div></td>
-                    </tr>
-                    <tr>
-                        <td class="hour-cell">15:00</td>
-                        <td><div class="subject-card"><b>Extraescolar</b><span>Varios</span></div></td>
-                        <td><div class="subject-card"><b>Reunión Dept.</b><span>Sala Prof.</span></div></td>
-                        <td><div class="subject-card"><b>Extraescolar</b><span>Varios</span></div></td>
-                        <td><div class="subject-card"><b>Formación</b><span>Online</span></div></td>
-                        <td><div class="subject-card"><b>CIERRE</b><span>-</span></div></td>
-                    </tr>
+        <table>
+            <thead><tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>08:00</td>
+                    <td><div class="subject-card"><b>Matemáticas</b><span>204</span></div></td>
+                    <td><div class="subject-card"><b>Inglés</b><span>102</span></div></td>
+                    <td><div class="subject-card guardia"><b>GUARDIA</b><span>Pasillo</span></div></td>
+                    <td><div class="subject-card"><b>Matemáticas</b><span>204</span></div></td>
+                    <td><div class="subject-card"><b>Historia</b><span>301</span></div></td>
+                </tr>
                 </tbody>
-            </table>
-        </div>
+        </table>
     </div>
-
 </body>
 </html>
