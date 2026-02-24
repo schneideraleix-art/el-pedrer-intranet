@@ -2,54 +2,58 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mensajería Pro - El Pedrer</title>
+    <title>Mensajería Central - El Pedrer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --accent-blue: #4285f4; --whatsapp-green: #25d366; --check-blue: #34b7f1; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: #d1d7db; height: 100vh; overflow: hidden; }
         
-        /* Sidebar */
+        /* Barra Lateral Izquierda */
         .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; }
-        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #aeb2b9; text-decoration: none; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #aeb2b9; text-decoration: none; transition: 0.3s; }
         .nav-item.active { background: var(--accent-red); color: white; }
+        .btn-centralita-nav { background: var(--accent-blue); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; text-align: center; margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 10px; }
 
-        /* Messenger Layout */
-        .messenger-container { flex-grow: 1; display: grid; grid-template-columns: 350px 1fr; background: white; margin: 0; height: 100vh; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        /* Contenedor Principal */
+        .messenger-container { flex-grow: 1; display: grid; grid-template-columns: 350px 1fr; background: white; margin: 0; height: 100vh; }
         
-        /* Contacts */
+        /* Lista de Contactos */
         .chat-sidebar { border-right: 1px solid #ddd; display: flex; flex-direction: column; }
         .search-container { padding: 10px; background: #f0f2f5; }
-        .search-container input { width: 100%; padding: 8px 15px; border: none; border-radius: 8px; background: white; outline: none; box-sizing: border-box; }
+        .search-container input { width: 100%; padding: 10px 15px; border: none; border-radius: 8px; background: white; outline: none; box-sizing: border-box; }
+        
         .contact-list { overflow-y: auto; flex-grow: 1; }
-        .contact { padding: 12px 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #f0f2f5; cursor: pointer; }
+        .contact { padding: 12px 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #f0f2f5; cursor: pointer; position: relative; }
         .contact:hover { background: #f5f6f6; }
+        .avatar-container { position: relative; }
         .avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        
+        /* Punto de Estado (Disponible/Ocupado) */
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; position: absolute; bottom: 2px; right: 2px; }
+        .status-online { background: var(--whatsapp-green); }
+        .status-busy { background: var(--accent-red); }
 
-        /* Chat Window */
+        /* Ventana de Chat */
         .chat-window { display: flex; flex-direction: column; background: #efeae2; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
         .chat-header { padding: 10px 20px; background: #f0f2f5; display: flex; align-items: center; justify-content: space-between; border-left: 1px solid #ddd; }
         .header-left { display: flex; align-items: center; gap: 12px; }
         .header-actions { display: flex; gap: 20px; color: #54656f; font-size: 1.2rem; }
-        .header-actions i { cursor: pointer; }
 
-        .chat-messages { flex-grow: 1; padding: 20px 7%; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+        .chat-messages { flex-grow: 1; padding: 20px 7%; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
         
         /* Burbujas */
-        .msg { max-width: 65%; padding: 8px 10px; border-radius: 8px; font-size: 0.95rem; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); margin-bottom: 2px; }
+        .msg { max-width: 65%; padding: 8px 10px; border-radius: 8px; font-size: 0.95rem; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); margin-bottom: 4px; }
         .msg.sent { align-self: flex-end; background: #d9fdd3; }
         .msg.received { align-self: flex-start; background: white; }
         
         .msg-info { display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-size: 0.7rem; color: #667781; margin-top: 2px; }
         .fa-check-double { color: var(--check-blue); }
 
-        /* Indicador Escribiendo */
         .typing { font-style: italic; color: var(--whatsapp-green); font-size: 0.8rem; display: none; }
 
         .chat-input-area { padding: 10px 20px; background: #f0f2f5; display: flex; align-items: center; gap: 15px; }
-        .chat-input-area input { flex-grow: 1; padding: 10px 15px; border: none; border-radius: 8px; outline: none; font-size: 0.95rem; }
-
-        .btn-centralita-nav { background: var(--accent-blue); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; text-align: center; margin-top: auto; }
+        .chat-input-area input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 8px; outline: none; }
     </style>
 </head>
 <body>
@@ -65,16 +69,16 @@
     <div class="messenger-container">
         <div class="chat-sidebar">
             <div class="search-container">
-                <input type="text" placeholder="Buscar docente o personal..." onkeyup="filterContacts(this.value)">
+                <input type="text" id="searchBox" placeholder="Buscar docente o personal..." onkeyup="filterContacts()">
             </div>
             <div class="contact-list" id="contactList">
                 <div class="contact" onclick="openChat('Secretaría', 'SEC', '#ff9800')">
-                    <div class="avatar" style="background: #ff9800;">SEC</div>
+                    <div class="avatar-container"><div class="avatar" style="background: #ff9800;">SEC</div><div class="status-dot status-online"></div></div>
                     <div><strong>Secretaría</strong><br><small>Oficina central</small></div>
                 </div>
                 <div class="contact" onclick="openChat('Cocina', 'COC', '#4caf50')">
-                    <div class="avatar" style="background: #4caf50;">COC</div>
-                    <div><strong>Cocina</strong><br><small>Servicio de comedor</small></div>
+                    <div class="avatar-container"><div class="avatar" style="background: #4caf50;">COC</div><div class="status-dot status-online"></div></div>
+                    <div><strong>Cocina</strong><br><small>Comedor escolar</small></div>
                 </div>
                 </div>
         </div>
@@ -89,100 +93,106 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <a href="centralita.html" style="color: inherit;"><i class="fas fa-phone-alt"></i></a>
-                    <i class="fas fa-video"></i>
+                    <i class="fas fa-search"></i>
+                    <i class="fas fa-paperclip"></i>
                     <i class="fas fa-ellipsis-v"></i>
                 </div>
             </div>
 
             <div class="chat-messages" id="chatBox">
-                </div>
+                <div class="msg received" style="align-self: center; background: #fff9c4;">Bienvenido a la central de mensajería de El Pedrer.</div>
+            </div>
 
             <div class="chat-input-area">
-                <i class="far fa-smile fa-lg" style="color: #54656f;"></i>
-                <i class="fas fa-paperclip fa-lg" style="color: #54656f;"></i>
-                <input type="text" id="msgInput" placeholder="Escribe un mensaje" onkeypress="handleKey(event)">
-                <i class="fas fa-microphone fa-lg" style="color: #54656f;"></i>
+                <i class="far fa-smile fa-lg" style="color: #54656f; cursor:pointer;"></i>
+                <input type="text" id="msgInput" placeholder="Escribe un mensaje" onkeypress="checkEnter(event)">
+                <button onclick="sendMessage()" style="background:none; border:none; color:#54656f; cursor:pointer;">
+                    <i class="fas fa-paper-plane fa-lg"></i>
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Cargar 150 profesores + Personal
-        function init() {
-            const list = document.getElementById('contactList');
-            const extras = ["Administración", "Mantenimiento", "Limpieza", "Conserjería"];
-            
-            extras.forEach(e => {
-                list.innerHTML += `<div class="contact" onclick="openChat('${e}', '${e[0]}', '#9c27b0')"><div class="avatar" style="background: #9c27b0;">${e[0]}</div><div><strong>${e}</strong><br><small>Personal no docente</small></div></div>`;
-            });
+        const contactList = document.getElementById('contactList');
+        const chatBox = document.getElementById('chatBox');
+        
+        // Inicializar 150 Profesores
+        function initContacts() {
+            // Obtener sesiones para marcar quién está en clase
+            const sesiones = JSON.parse(localStorage.getItem('sesionesHorario')) || [];
 
             for(let i=1; i<=150; i++) {
-                list.innerHTML += `
-                    <div class="contact" onclick="openChat('Profesor/a ${i}', 'P', '#607d8b')">
-                        <div class="avatar" style="background: #607d8b;">P</div>
-                        <div><strong>Profesor/a ${i}</strong><br><small>Docente (ID: ${i})</small></div>
+                const nombre = `Profesor/a ${i}`;
+                const enClase = sesiones.some(s => s.docente === nombre);
+                const statusClass = enClase ? 'status-busy' : 'status-online';
+
+                contactList.innerHTML += `
+                    <div class="contact" data-name="${nombre.toLowerCase()}" onclick="openChat('${nombre}', 'P', '#607d8b')">
+                        <div class="avatar-container">
+                            <div class="avatar" style="background: #607d8b;">P</div>
+                            <div class="status-dot ${statusClass}"></div>
+                        </div>
+                        <div><strong>${nombre}</strong><br><small>${enClase ? 'En Clase' : 'Disponible'}</small></div>
                     </div>`;
             }
         }
 
-        function openChat(name, init, color) {
+        function openChat(name, initial, color) {
             document.getElementById('activeName').innerText = name;
-            document.getElementById('activeAvatar').innerText = init;
+            document.getElementById('activeAvatar').innerText = initial;
             document.getElementById('activeAvatar').style.background = color;
-            document.getElementById('chatBox').innerHTML = ''; // Limpiar chat
-        }
-
-        function handleKey(e) {
-            if(e.key === 'Enter') sendMessage();
+            chatBox.innerHTML = `<div class="msg received" style="align-self:center; font-size:0.8rem;">Chat con ${name} iniciado</div>`;
         }
 
         function sendMessage() {
             const input = document.getElementById('msgInput');
-            const box = document.getElementById('chatBox');
             if(!input.value.trim()) return;
 
-            // Crear burbuja enviada
             const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const msgHtml = `
+            chatBox.innerHTML += `
                 <div class="msg sent">
                     ${input.value}
                     <div class="msg-info">${time} <i class="fas fa-check-double"></i></div>
                 </div>`;
             
-            box.innerHTML += msgHtml;
             input.value = '';
-            box.scrollTop = box.scrollHeight;
-
-            // Simular "Escribiendo..." y respuesta
-            showTyping();
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        function showTyping() {
-            const indicator = document.getElementById('typingIndicator');
-            indicator.style.display = 'inline';
-            
-            setTimeout(() => {
-                indicator.style.display = 'none';
-                const box = document.getElementById('chatBox');
-                box.innerHTML += `
-                    <div class="msg received">
-                        Recibido. Me pongo con ello ahora mismo.
-                        <div class="msg-info">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    </div>`;
-                box.scrollTop = box.scrollHeight;
-            }, 2000);
-        }
+        function checkEnter(e) { if(e.key === 'Enter') sendMessage(); }
 
-        function filterContacts(val) {
+        // BUSCADOR: Filtra los 150 docentes
+        function filterContacts() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
             const contacts = document.querySelectorAll('.contact');
             contacts.forEach(c => {
-                const name = c.innerText.toLowerCase();
-                c.style.display = name.includes(val.toLowerCase()) ? 'flex' : 'none';
+                c.style.display = c.getAttribute('data-name').includes(query) ? 'flex' : 'none';
             });
         }
 
-        window.onload = init;
+        // ESCUCHA ACTIVA: Recibir mensajes de los profesores desde la otra web
+        function recibirDeProfesores() {
+            const cola = JSON.parse(localStorage.getItem('mensajesParaDireccion')) || [];
+            if(cola.length > 0) {
+                cola.forEach(m => {
+                    document.getElementById('typingIndicator').style.display = 'inline';
+                    setTimeout(() => {
+                        document.getElementById('typingIndicator').style.display = 'none';
+                        chatBox.innerHTML += `
+                            <div class="msg received">
+                                <strong>${m.profe}:</strong><br>${m.texto}
+                                <div class="msg-info">${m.hora}</div>
+                            </div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }, 1000);
+                });
+                localStorage.removeItem('mensajesParaDireccion');
+            }
+        }
+
+        setInterval(recibirDeProfesores, 1500);
+        window.onload = initContacts;
     </script>
 </body>
 </html>
