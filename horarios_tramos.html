@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración de Tramos - El Pedrer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); height: 100vh; color: white; padding: 20px; position: fixed; display: flex; flex-direction: column; }
+        .main-content { margin-left: 280px; padding: 30px; width: calc(100% - 320px); }
+        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-red); width: 100%; animation: load 0.8s forwards; }
+        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
+        .tramo-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .btn-add { background: #34a853; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="loading-bar"></div>
+    <div class="sidebar">
+        <div class="logo">EL PEDRER</div>
+        <a href="horarios.html" style="color:white; text-decoration:none;"><p><i class="fas fa-arrow-left"></i> Volver a Horarios</p></a>
+    </div>
+    <div class="main-content">
+        <h1>Configuración de Tramos Horarios</h1>
+        <button class="btn-add"><i class="fas fa-plus"></i> Añadir Tramo</button>
+        <div style="margin-top:20px;">
+            <div class="tramo-card"><span><b>1ª Hora:</b> 08:00 - 09:00</span><i class="fas fa-edit"></i></div>
+            <div class="tramo-card"><span><b>2ª Hora:</b> 09:00 - 10:00</span><i class="fas fa-edit"></i></div>
+            <div class="tramo-card" style="background: #fff9c4;"><span><b>RECREO:</b> 10:00 - 10:30</span><i class="fas fa-edit"></i></div>
+            <div class="tramo-card"><span><b>3ª Hora:</b> 10:30 - 11:30</span><i class="fas fa-edit"></i></div>
+        </div>
+    </div>
+</body>
+</html>
