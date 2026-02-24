@@ -2,41 +2,62 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Horarios - El Pedrer</title>
+    <title>Gestión de Horarios - El Pedrer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; }
+        :root { 
+            --sidebar-bg: #1a1d2b; 
+            --accent-red: #ff4d4d; 
+            --bg-light: #f4f7f9; 
+            --accent-blue: #4285f4; 
+        }
         
-        /* Animación de entrada */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); animation: fadeIn 0.5s ease-out; }
-        
-        .sidebar { width: 240px; background-color: var(--sidebar-bg); height: 100vh; color: white; padding: 20px; position: fixed; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; animation: fadeIn 0.5s ease-out; overflow: hidden; }
+
+        /* Barra de carga superior */
+        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-red); width: 100%; animation: load 0.8s forwards; z-index: 1000; }
+        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
+
+        /* Sidebar */
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; z-index: 100; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
         .nav-link { text-decoration: none; color: inherit; }
         .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; transition: 0.3s; cursor: pointer; }
         .nav-item.active { background-color: var(--accent-red); }
         .nav-item:hover:not(.active) { background-color: rgba(255,255,255,0.1); }
 
-        .main-content { margin-left: 280px; padding: 30px; width: calc(100% - 320px); }
+        /* Botón Centralita */
+        .btn-centralita { margin-top: auto; background: var(--accent-blue); color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .btn-centralita:hover { background: #3367d6; transform: scale(1.05); }
+
+        /* Contenido Principal */
+        .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; }
         
-        /* Barra de carga superior */
-        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-red); width: 100%; animation: load 0.8s ease-in-out forwards; z-index: 1000; }
-        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
+        /* Grid de Botones Superiores */
+        .actions-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 10px; margin-bottom: 30px; }
+        .action-card { background: white; padding: 15px 5px; border-radius: 12px; text-align: center; text-decoration: none; color: #555; font-size: 0.8rem; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.2s; border: 1px solid #eee; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .action-card i { font-size: 1.2rem; color: var(--accent-blue); }
+        .action-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); border-color: var(--accent-blue); }
 
-        .actions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 30px; }
-        .action-card { background: white; padding: 12px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
-        .action-card:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .action-card i { color: #4285f4; margin-bottom: 5px; display: block; }
-
-        table { width: 100%; border-collapse: separate; border-spacing: 10px; background: white; padding: 20px; border-radius: 15px; }
-        .subject-card { padding: 10px; border-radius: 8px; font-size: 0.8rem; border-left: 4px solid #4285f4; background: #f8fbff; }
-        .guardia { border-left-color: #ff4d4d; background: #fff5f5; }
+        /* Tabla de Horarios */
+        .schedule-container { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .schedule-table { width: 100%; border-collapse: separate; border-spacing: 15px; table-layout: fixed; }
+        .schedule-table th { color: #888; font-weight: 500; padding-bottom: 10px; text-align: center; }
+        .time-col { width: 80px; font-weight: bold; color: #444; text-align: center; vertical-align: middle; }
+        
+        .class-box { background: #f8fbff; border-left: 4px solid var(--accent-blue); padding: 12px; border-radius: 10px; position: relative; min-height: 50px; }
+        .class-box b { display: block; font-size: 0.9rem; color: #222; }
+        .class-box span { font-size: 0.75rem; color: #777; }
+        .guardia { background: #fff5f5; border-left-color: var(--accent-red); }
+        
+        .recreo-row td { background: #fffdf0; text-align: center; padding: 10px; border-radius: 10px; color: #d4a017; font-weight: bold; font-size: 0.8rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
     <div class="loading-bar"></div>
+
     <div class="sidebar">
         <div class="logo"><i class="fas fa-university"></i> EL PEDRER</div>
         <a href="direccion.html" class="nav-link"><div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div></a>
@@ -44,36 +65,71 @@
         <a href="horarios.html" class="nav-link"><div class="nav-item active"><i class="fas fa-clock"></i> Horarios</div></a>
         <a href="reportes.html" class="nav-link"><div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div></a>
         <a href="mensajeria.html" class="nav-link"><div class="nav-item"><i class="fas fa-comment-dots"></i> Mensajería</div></a>
+        
+        <a href="centralita.html" class="btn-centralita">
+            <i class="fas fa-headset"></i> CENTRALITA IP
+        </a>
     </div>
 
     <div class="main-content">
         <h1>Gestión de Horarios</h1>
+
         <div class="actions-grid">
-            <div class="action-card"><i class="fas fa-plus"></i><span>Nuevo</span></div>
-            <div class="action-card"><i class="fas fa-exchange-alt"></i><span>Cambios</span></div>
-            <div class="action-card"><i class="fas fa-print"></i><span>Imprimir</span></div>
-            <div class="action-card"><i class="fas fa-user-clock"></i><span>Permisos</span></div>
-            <div class="action-card"><i class="fas fa-history"></i><span>Histórico</span></div>
-            <div class="action-card"><i class="fas fa-cog"></i><span>Tramos</span></div>
-            <div class="action-card"><i class="fas fa-users-viewfinder"></i><span>Carga</span></div>
-            <div class="action-card"><i class="fas fa-door-closed"></i><span>Aulas</span></div>
-            <div class="action-card"><i class="fas fa-sync"></i><span>Optimizar</span></div>
-            <div class="action-card"><i class="fas fa-file-export"></i><span>Exportar</span></div>
+            <a href="horarios_nuevo.html" class="action-card"><i class="fas fa-plus"></i><span>Nuevo</span></a>
+            <a href="horarios_cambios.html" class="action-card"><i class="fas fa-exchange-alt"></i><span>Cambios</span></a>
+            <a href="horarios_imprimir.html" class="action-card"><i class="fas fa-print"></i><span>Imprimir</span></a>
+            <a href="horarios_permisos.html" class="action-card"><i class="fas fa-user-clock"></i><span>Permisos</span></a>
+            <a href="horarios_historico.html" class="action-card"><i class="fas fa-history"></i><span>Histórico</span></a>
+            <a href="horarios_tramos.html" class="action-card"><i class="fas fa-cog"></i><span>Tramos</span></a>
+            <a href="horarios_carga.html" class="action-card"><i class="fas fa-users-viewfinder"></i><span>Carga</span></a>
+            <a href="horarios_aulas.html" class="action-card"><i class="fas fa-door-closed"></i><span>Aulas</span></a>
+            <a href="horarios_optimizar.html" class="action-card"><i class="fas fa-sync"></i><span>Optimizar</span></a>
         </div>
 
-        <table>
-            <thead><tr><th>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></tr></thead>
-            <tbody>
-                <tr>
-                    <td>08:00</td>
-                    <td><div class="subject-card"><b>Matemáticas</b><span>204</span></div></td>
-                    <td><div class="subject-card"><b>Inglés</b><span>102</span></div></td>
-                    <td><div class="subject-card guardia"><b>GUARDIA</b><span>Pasillo</span></div></td>
-                    <td><div class="subject-card"><b>Matemáticas</b><span>204</span></div></td>
-                    <td><div class="subject-card"><b>Historia</b><span>301</span></div></td>
-                </tr>
+        <div class="schedule-container">
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Hora</th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="time-col">08:00</td>
+                        <td><div class="class-box"><b>Matemáticas</b><span>Aula 204</span></div></td>
+                        <td><div class="class-box"><b>Inglés</b><span>Aula 102</span></div></td>
+                        <td><div class="class-box guardia"><b>GUARDIA</b><span>Pasillo</span></div></td>
+                        <td><div class="class-box"><b>Matemáticas</b><span>Aula 204</span></div></td>
+                        <td><div class="class-box"><b>Historia</b><span>Aula 301</span></div></td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">09:00</td>
+                        <td><div class="class-box"><b>Lengua</b><span>Aula 204</span></div></td>
+                        <td><div class="class-box guardia"><b>GUARDIA</b><span>Patio</span></div></td>
+                        <td><div class="class-box"><b>Historia</b><span>Aula 301</span></div></td>
+                        <td><div class="class-box"><b>Francés</b><span>Aula 105</span></div></td>
+                        <td><div class="class-box"><b>Lengua</b><span>Aula 204</span></div></td>
+                    </tr>
+                    <tr class="recreo-row">
+                        <td class="time-col">-</td>
+                        <td colspan="5">R E C R E O</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">10:30</td>
+                        <td><div class="class-box"><b>Física</b><span>Lab 1</span></div></td>
+                        <td><div class="class-box"><b>Matemáticas</b><span>Aula 204</span></div></td>
+                        <td><div class="class-box"><b>Educación Física</b><span>Pabellón</span></div></td>
+                        <td><div class="class-box guardia"><b>GUARDIA</b><span>Biblioteca</span></div></td>
+                        <td><div class="class-box"><b>Física</b><span>Lab 1</span></div></td>
+                    </tr>
                 </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 </body>
 </html>
