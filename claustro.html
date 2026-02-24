@@ -2,29 +2,22 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Claustro - El Pedrer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); }
-        
         .sidebar { width: 240px; background-color: var(--sidebar-bg); height: 100vh; color: white; padding: 20px; position: fixed; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
-        .nav-link { text-decoration: none; color: inherit; display: block; }
-        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .nav-link { text-decoration: none; color: inherit; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; transition: 0.3s; cursor: pointer; }
         .nav-item.active { background-color: var(--accent-red); }
-
         .main-content { margin-left: 280px; padding: 30px; width: calc(100% - 320px); }
-        
-        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .tool-box { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; }
+        .tools-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 30px; }
+        .tool-box { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; }
         .tool-box i { font-size: 1.5rem; color: #4285f4; margin-bottom: 10px; display: block; }
-        .tool-box span { font-size: 0.8rem; font-weight: 600; }
-
         .profe-card { background: white; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
         .avatar { width: 45px; height: 45px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #34a853; margin-left: auto; }
     </style>
 </head>
 <body>
@@ -36,14 +29,12 @@
         <a href="reportes.html" class="nav-link"><div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div></a>
         <a href="mensajeria.html" class="nav-link"><div class="nav-item"><i class="fas fa-comment-dots"></i> Mensajería</div></a>
     </div>
-
     <div class="main-content">
         <h1>Panel del Claustro</h1>
-        
         <div class="tools-grid">
             <div class="tool-box"><i class="fas fa-edit"></i><span>Pasar Lista</span></div>
             <div class="tool-box"><i class="fas fa-laptop"></i><span>Reservar TIC</span></div>
-            <div class="tool-box"><i class="fas fa-file-invoice"></i><span>Parte Incid.</span></div>
+            <div class="tool-box"><i class="fas fa-file-invoice"></i><span>Incidencias</span></div>
             <div class="tool-box"><i class="fas fa-book"></i><span>Biblioteca</span></div>
             <div class="tool-box"><i class="fas fa-lightbulb"></i><span>Sugerencias</span></div>
             <div class="tool-box"><i class="fas fa-graduation-cap"></i><span>Notas</span></div>
@@ -52,11 +43,10 @@
             <div class="tool-box"><i class="fas fa-users-cog"></i><span>Tutorías</span></div>
             <div class="tool-box"><i class="fas fa-star"></i><span>Actas Eval.</span></div>
         </div>
-
-        <div class="info-section" style="background:white; padding:20px; border-radius:15px;">
-            <h3>Compañeros en el Centro</h3>
-            <div class="profe-card"><div class="avatar">GA</div><div><b>García, Alberto</b><p style="margin:0; font-size:0.8rem; color:#777;">Matemáticas</p></div><div class="status-dot"></div></div>
-            <div class="profe-card"><div class="avatar">ME</div><div><b>Martínez, Elena</b><p style="margin:0; font-size:0.8rem; color:#777;">Lengua</p></div><div class="status-dot"></div></div>
+        <div style="background:white; padding:20px; border-radius:15px;">
+            <h3>Docentes Conectados</h3>
+            <div class="profe-card"><div class="avatar">GA</div><div><b>García, Alberto</b><p style="margin:0; font-size:0.8rem; color:#777;">Matemáticas</p></div></div>
+            <div class="profe-card"><div class="avatar">ME</div><div><b>Martínez, Elena</b><p style="margin:0; font-size:0.8rem; color:#777;">Lengua</p></div></div>
         </div>
     </div>
 </body>
