@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Docente - El Pedrer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --whatsapp-green: #25d366; --accent-blue: #00a884; --bg-chat: #efeae2; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #d1d7db; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        
+        .prof-container { width: 95%; height: 90vh; background: white; display: grid; grid-template-columns: 300px 1fr; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        
+        /* Panel Izquierdo: Perfil y Estado */
+        .prof-sidebar { background: #f0f2f5; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+        .prof-header { padding: 20px; background: #00a884; color: white; text-align: center; }
+        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; margin-top: 10px; font-weight: bold; }
+        .status-online { background: #dcf8c6; color: #075e54; }
+        .status-busy { background: #ffebee; color: #c62828; }
+
+        /* Chat */
+        .chat-area { display: flex; flex-direction: column; background: var(--bg-chat); background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
+        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        
+        .msg { max-width: 70%; padding: 10px; border-radius: 8px; font-size: 0.9rem; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .msg.sent { align-self: flex-end; background: #d9fdd3; }
+        .msg.received { align-self: flex-start; background: white; }
+
+        .chat-input { padding: 15px; background: #f0f2f5; display: flex; gap: 10px; }
+        .chat-input input { flex-grow: 1; padding: 12px; border: none; border-radius: 20px; outline: none; }
+        .btn-send { background: #00a884; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="prof-container">
+        <div class="prof-sidebar">
+            <div class="prof-header">
+                <div style="font-size: 3rem;"><i class="fas fa-user-circle"></i></div>
+                <select id="selectYo" onchange="actualizarPerfil()" style="width: 100%; margin-top: 10px; border-radius: 5px; padding: 5px;">
+                    <option value="">¿Quién eres?</option>
+                </select>
+                <div id="miEstado" class="status-badge status-online">Disponible</div>
+            </div>
+            <div style="padding: 15px; font-weight: bold;">Contactos Rápidos</div>
+            <div style="padding: 0 15px;">
+                <button onclick="setTarget('Dirección')" style="width: 100%; padding: 10px; margin-bottom: 5px; cursor: pointer; border: 1px solid #ccc; border-radius: 5px;">🏛️ Dirección</button>
+                <button onclick="setTarget('Secretaría')" style="width: 100%; padding: 10px; cursor: pointer; border: 1px solid #ccc; border-radius: 5px;">📂 Secretaría</button>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            <div style="padding: 15px; background: #f0f2f5; border-bottom: 1px solid #ddd;">
+                Chat con: <strong id="chatCon">Dirección</strong>
+            </div>
+            <div class="chat-messages" id="boxMensajes">
+                <div class="msg received">Bienvenido al portal docente. Puedes enviar avisos a Dirección desde aquí.</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="inputMsg" placeholder="Escribe un mensaje a dirección...">
+                <button class="btn-send" onclick="enviar()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargar los 150 profesores en el selector de login
+        const select = document.getElementById('selectYo');
+        for(let i=1; i<=150; i++) {
+            select.innerHTML += `<option value="${i}">Profesor/a ${i}</option>`;
+        }
+
+        function actualizarPerfil() {
+            const id = select.value;
+            // Comprobar si el profesor tiene clase ahora según el horario guardado
+            const sesiones = JSON.parse(localStorage.getItem('sesionesHorario')) || [];
+            const tieneClase = sesiones.some(s => s.docente === `Profesor/a ${id}`); // Simplificado para el ejemplo
+            
+            const badge = document.getElementById('miEstado');
+            if(tieneClase) {
+                badge.innerText = "En Clase";
+                badge.className = "status-badge status-busy";
+            } else {
+                badge.innerText = "Disponible";
+                badge.className = "status-badge status-online";
+            }
+        }
+
+        function enviar() {
+            const texto = document.getElementById('inputMsg').value;
+            const profe = select.options[select.selectedIndex].text;
+            if(!texto || !select.value) return alert("Selecciona tu nombre y escribe algo");
+
+            // Guardar mensaje para que lo vea Dirección
+            const mensajes = JSON.parse(localStorage.getItem('mensajesParaDireccion')) || [];
+            mensajes.push({
+                profe: profe,
+                texto: texto,
+                hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            });
+            localStorage.setItem('mensajesParaDireccion', JSON.stringify(mensajes));
+
+            // Dibujar en mi pantalla
+            document.getElementById('boxMensajes').innerHTML += `<div class="msg sent">${texto}</div>`;
+            document.getElementById('inputMsg').value = '';
+        }
+    </script>
+</body>
+</html>
