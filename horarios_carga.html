@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Carga Lectiva - El Pedrer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --accent-blue: #4285f4; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); animation: fadeIn 0.6s; }
+        
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; position: fixed; height: 100vh; display: flex; flex-direction: column; }
+        .main-content { margin-left: 280px; padding: 40px; flex-grow: 1; }
+        
+        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: #34a853; width: 100%; animation: load 0.8s forwards; }
+        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
+
+        .teacher-load-card { background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .load-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .progress-bar-bg { background: #eee; height: 12px; border-radius: 6px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--accent-blue); border-radius: 6px; transition: width 1.5s ease-in-out; }
+        
+        .warning { color: var(--accent-red); font-weight: bold; }
+        .ok { color: #34a853; font-weight: bold; }
+        .btn-centralita { margin-top: auto; background: var(--accent-blue); color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 40px; }
+    </style>
+</head>
+<body>
+    <div class="loading-bar"></div>
+    <div class="sidebar">
+        <div class="logo" style="font-size:1.5rem; font-weight:bold; margin-bottom:40px;">EL PEDRER</div>
+        <a href="horarios.html" style="color:white; text-decoration:none;"><p><i class="fas fa-arrow-left"></i> Volver a Horarios</p></a>
+        <a href="centralita.html" class="btn-centralita"><i class="fas fa-headset"></i> CENTRALITA IP</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Análisis de Carga Lectiva</h1>
+        <p>Distribución de horas semanales por docente:</p>
+
+        <div class="teacher-load-card">
+            <div class="load-header">
+                <span><b>García, Alberto</b> (Matemáticas)</span>
+                <span class="ok">18 / 20 Horas</span>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 90%"></div></div>
+        </div>
+
+        <div class="teacher-load-card">
+            <div class="load-header">
+                <span><b>Martínez, Elena</b> (Lengua)</span>
+                <span class="warning">22 / 20 Horas (Sobreasignada)</span>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 100%; background: var(--accent-red);"></div></div>
+        </div>
+
+        <div class="teacher-load-card">
+            <div class="load-header">
+                <span><b>Rodríguez, Marc</b> (E. Física)</span>
+                <span class="ok">12 / 20 Horas</span>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 60%; background: #34a853;"></div></div>
+        </div>
+    </div>
+</body>
+</html>
