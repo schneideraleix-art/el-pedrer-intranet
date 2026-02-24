@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajería - El Pedrer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-bg: #1a1d2b;
+            --accent-red: #ff4d4d;
+            --bg-light: #f4f7f9;
+            --accent-green: #34a853;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; }
+        .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+        .nav-link { text-decoration: none; color: inherit; display: block; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .nav-item.active { background-color: var(--accent-red); }
+        .nav-item:hover:not(.active) { background-color: rgba(255,255,255,0.1); }
+
+        /* Contenedor de Chat */
+        .chat-container { display: flex; flex-grow: 1; background: white; margin: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
+
+        /* Lista de Contactos */
+        .contacts-list { width: 300px; border-right: 1px solid #eee; display: flex; flex-direction: column; }
+        .contacts-header { padding: 20px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 1.1rem; }
+        .contact-item { padding: 15px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; border-bottom: 1px solid #fafafa; }
+        .contact-item:hover { background-color: #f8f9fa; }
+        .contact-item.active { background-color: #eef2f7; border-left: 4px solid var(--accent-red); }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; }
+        .online { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-green); border: 2px solid white; margin-left: -20px; margin-top: 25px; }
+
+        /* Ventana de Chat */
+        .chat-window { flex-grow: 1; display: flex; flex-direction: column; background: #fdfdfd; }
+        .chat-header { padding: 15px 25px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; background: white; }
+        .messages-area { flex-grow: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-opacity: 0.05; }
+        
+        .message { max-width: 60%; padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; position: relative; }
+        .received { align-self: flex-start; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .sent { align-self: flex-end; background: #dcf8c6; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .time { font-size: 0.7rem; color: #999; margin-top: 5px; text-align: right; display: block; }
+
+        /* Input de Texto */
+        .chat-input { padding: 20px; background: white; border-top: 1px solid #eee; display: flex; gap: 15px; align-items: center; }
+        .chat-input input { flex-grow: 1; padding: 12px; border: 1px solid #eee; border-radius: 25px; outline: none; background: #f8f9fa; }
+        .chat-input button { background: var(--accent-red); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+        .chat-input button:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo"><i class="fas fa-university"></i> EL PEDRER</div>
+        <a href="direccion.html" class="nav-link"><div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div></a>
+        <a href="claustro.html" class="nav-link"><div class="nav-item"><i class="fas fa-users"></i> Claustro</div></a>
+        <a href="horarios.html" class="nav-link"><div class="nav-item"><i class="fas fa-clock"></i> Horarios</div></a>
+        <a href="reportes.html" class="nav-link"><div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div></a>
+        <a href="mensajeria.html" class="nav-link"><div class="nav-item active"><i class="fas fa-comment-dots"></i> Mensajería</div></a>
+    </div>
+
+    <div class="chat-container">
+        <div class="contacts-list">
+            <div class="contacts-header">Mensajería Interna</div>
+            <div class="contact-item active">
+                <div class="avatar">GA</div><div class="online"></div>
+                <div><b>García, Alberto</b><br><small>Matemáticas</small></div>
+            </div>
+            <div class="contact-item">
+                <div class="avatar">ME</div><div class="online"></div>
+                <div><b>Martínez, Elena</b><br><small>Dirección</small></div>
+            </div>
+            <div class="contact-item">
+                <div class="avatar">DIR</div>
+                <div><b>Grupo: Claustro</b><br><small>137 participantes</small></div>
+            </div>
+        </div>
+
+        <div class="chat-window">
+            <div class="chat-header">
+                <div><b>García, Alberto</b><br><small style="color: var(--accent-green)">En línea ahora</small></div>
+                <div style="display:flex; gap:15px; color: #777; cursor:pointer">
+                    <i class="fas fa-phone"></i>
+                    <i class="fas fa-video"></i>
+                    <i class="fas fa-info-circle"></i>
+                </div>
+            </div>
+            
+            <div class="messages-area">
+                <div class="message received">
+                    Hola, ¿puedes confirmar si la reunión de las 10:00 se mantiene en la Sala 204?
+                    <span class="time">09:45 AM</span>
+                </div>
+                <div class="message sent">
+                    Hola Alberto. Sí, se mantiene allí. He avisado por el Aviso Global también.
+                    <span class="time">09:48 AM</span>
+                </div>
+                <div class="message received">
+                    Perfecto, gracias. Llevo el portatil para las actas.
+                    <span class="time">09:50 AM</span>
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <i class="fas fa-paperclip" style="color:#777; cursor:pointer"></i>
+                <input type="text" placeholder="Escribe un mensaje aquí...">
+                <button><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
