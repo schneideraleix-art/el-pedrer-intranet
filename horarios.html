@@ -15,24 +15,10 @@
             --accent-green: #34a853;
         }
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            display: flex;
-            background-color: var(--bg-light);
-            color: var(--text-main);
-        }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); color: var(--text-main); }
 
-        /* Sidebar Unificada */
-        .sidebar {
-            width: 240px;
-            background-color: var(--sidebar-bg);
-            height: 100vh;
-            color: white;
-            padding: 20px;
-            position: fixed;
-        }
-
+        /* Sidebar */
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); height: 100vh; color: white; padding: 20px; position: fixed; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
         .nav-link { text-decoration: none; color: inherit; display: block; }
         .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
@@ -41,70 +27,63 @@
 
         /* Main Content */
         .main-content { margin-left: 280px; padding: 30px; width: calc(100% - 320px); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-
-        /* NUEVAS 6 FUNCIONES (Acciones Rápidas) */
+        /* PANEL DE 10 FUNCIONES (6 previas + 4 nuevas) */
         .actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
             margin-bottom: 30px;
         }
 
         .action-card {
             background: white;
-            padding: 15px;
+            padding: 12px;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             cursor: pointer;
             transition: 0.2s;
+            border: 1px solid transparent;
         }
 
-        .action-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .action-card i { font-size: 1.3rem; color: var(--accent-blue); margin-bottom: 8px; display: block; }
-        .action-card span { font-size: 0.8rem; font-weight: 600; }
+        .action-card:hover { transform: translateY(-3px); border-color: var(--accent-blue); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .action-card i { font-size: 1.2rem; color: var(--accent-blue); margin-bottom: 6px; display: block; }
+        .action-card span { font-size: 0.75rem; font-weight: 600; }
+        
+        /* Estilo para destacar las nuevas funciones */
+        .new-feat { border-bottom: 2px solid var(--accent-green); }
 
-        /* Horario Ampliado */
+        /* HORARIO MÁS AMPLIO */
         .timetable-container {
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow-x: auto;
         }
 
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 10px;
-        }
-
-        th { color: #888; font-size: 0.8rem; text-transform: uppercase; padding: 10px; border-bottom: 1px solid #eee; }
+        table { width: 100%; border-collapse: separate; border-spacing: 8px; }
+        th { color: #888; font-size: 0.75rem; text-transform: uppercase; padding: 10px; }
         
-        .hour-cell {
-            width: 80px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #555;
-            vertical-align: middle;
-            text-align: center;
-        }
+        .hour-cell { width: 70px; font-size: 0.8rem; font-weight: bold; color: #777; text-align: center; }
 
         .subject-card {
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 0.85rem;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
             border-left: 4px solid #4285f4;
             background: #f8fbff;
-            min-height: 50px;
+            min-height: 45px;
         }
 
         .guardia { border-left-color: #ea4335; background: #fff5f5; }
-        .recreo { background: #fffde7; border-left: none; text-align: center; color: #fbc02d; font-style: italic; }
+        .recreo { background: #fffbe6; border-left: none; text-align: center; color: #d4a017; font-weight: bold; font-size: 0.7rem; letter-spacing: 2px; }
+        .comida { background: #f1f3f5; border-left: none; text-align: center; color: #999; font-size: 0.7rem; }
 
-        .subject-card b { display: block; margin-bottom: 2px; }
-        .subject-card span { font-size: 0.75rem; color: #777; }
+        .subject-card b { display: block; margin-bottom: 2px; color: #333; }
+        .subject-card span { font-size: 0.7rem; color: #888; }
 
     </style>
 </head>
@@ -115,22 +94,27 @@
         <a href="direccion.html" class="nav-link"><div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div></a>
         <a href="claustro.html" class="nav-link"><div class="nav-item"><i class="fas fa-users"></i> Claustro</div></a>
         <a href="horarios.html" class="nav-link"><div class="nav-item active"><i class="fas fa-clock"></i> Horarios</div></a>
-        <a href="#" class="nav-link"><div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div></a>
-        <a href="#" class="nav-link"><div class="nav-item"><i class="fas fa-comment-dots"></i> Mensajería</div></a>
+        <a href="reportes.html" class="nav-link"><div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div></a>
+        <a href="mensajeria.html" class="nav-link"><div class="nav-item"><i class="fas fa-comment-dots"></i> Mensajería</div></a>
     </div>
 
     <div class="main-content">
         <div class="header-flex">
-            <h1>Gestión de Horarios</h1>
+            <h1>Gestión de Horarios Ampliada</h1>
         </div>
 
         <div class="actions-grid">
-            <div class="action-card"><i class="fas fa-calendar-plus"></i><span>Nuevo Horario</span></div>
-            <div class="action-card"><i class="fas fa-exchange-alt"></i><span>Cambiar Guardia</span></div>
-            <div class="action-card"><i class="fas fa-print"></i><span>Imprimir Grupo</span></div>
-            <div class="action-card"><i class="fas fa-user-clock"></i><span>Permisos/Ausencias</span></div>
-            <div class="action-card"><i class="fas fa-history"></i><span>Histórico</span></div>
-            <div class="action-card"><i class="fas fa-cog"></i><span>Config. Tramos</span></div>
+            <div class="action-card"><span>Nuevo Horario</span></div>
+            <div class="action-card"><span>Cambiar Guardia</span></div>
+            <div class="action-card"><span>Imprimir Grupo</span></div>
+            <div class="action-card"><span>Permisos/Ausencias</span></div>
+            <div class="action-card"><span>Histórico</span></div>
+            <div class="action-card"><span>Config. Tramos</span></div>
+            
+            <div class="action-card new-feat"><i class="fas fa-users-viewfinder"></i><span>Carga Lectiva</span></div>
+            <div class="action-card new-feat"><i class="fas fa-door-closed"></i><span>Disponibilidad Aulas</span></div>
+            <div class="action-card new-feat"><i class="fas fa-sync-alt"></i><span>Optimizar Huecos</span></div>
+            <div class="action-card new-feat"><i class="fas fa-file-export"></i><span>Exportar XML/CSV</span></div>
         </div>
 
         <div class="timetable-container">
@@ -162,15 +146,12 @@
                         <td><div class="subject-card"><b>Francés</b><span>Aula 105</span></div></td>
                         <td><div class="subject-card"><b>Lengua</b><span>Aula 204</span></div></td>
                     </tr>
-                    <tr>
-                        <td class="hour-cell">-</td>
-                        <td colspan="5"><div class="subject-card recreo">RECREO</div></td>
-                    </tr>
+                    <tr><td class="hour-cell">10:00</td><td colspan="5" class="recreo">RECREO</td></tr>
                     <tr>
                         <td class="hour-cell">10:30</td>
                         <td><div class="subject-card"><b>Física</b><span>Lab 1</span></div></td>
                         <td><div class="subject-card"><b>Matemáticas</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card"><b>Educación Física</b><span>Pabellón</span></div></td>
+                        <td><div class="subject-card"><b>Ed. Física</b><span>Pabellón</span></div></td>
                         <td><div class="subject-card guardia"><b>GUARDIA</b><span>Biblioteca</span></div></td>
                         <td><div class="subject-card"><b>Física</b><span>Lab 1</span></div></td>
                     </tr>
@@ -181,6 +162,23 @@
                         <td><div class="subject-card"><b>Lengua</b><span>Aula 204</span></div></td>
                         <td><div class="subject-card"><b>Biología</b><span>Lab 2</span></div></td>
                         <td><div class="subject-card"><b>Tutoría</b><span>Aula 204</span></div></td>
+                    </tr>
+                    <tr><td class="hour-cell">12:30</td><td colspan="5" class="comida">COMEDOR / ALMUERZO</td></tr>
+                    <tr>
+                        <td class="hour-cell">14:00</td>
+                        <td><div class="subject-card"><b>Informática</b><span>Aula TIC</span></div></td>
+                        <td><div class="subject-card"><b>Refuerzo</b><span>Aula 101</span></div></td>
+                        <td><div class="subject-card"><b>Música</b><span>Aula Música</span></div></td>
+                        <td><div class="subject-card"><b>Informática</b><span>Aula TIC</span></div></td>
+                        <td><div class="subject-card"><b>PROYECTO</b><span>Salón Actos</span></div></td>
+                    </tr>
+                    <tr>
+                        <td class="hour-cell">15:00</td>
+                        <td><div class="subject-card"><b>Extraescolar</b><span>Varios</span></div></td>
+                        <td><div class="subject-card"><b>Reunión Dept.</b><span>Sala Prof.</span></div></td>
+                        <td><div class="subject-card"><b>Extraescolar</b><span>Varios</span></div></td>
+                        <td><div class="subject-card"><b>Formación</b><span>Online</span></div></td>
+                        <td><div class="subject-card"><b>CIERRE</b><span>-</span></div></td>
                     </tr>
                 </tbody>
             </table>
