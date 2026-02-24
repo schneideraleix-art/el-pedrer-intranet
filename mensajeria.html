@@ -5,120 +5,101 @@
     <title>Mensajería - El Pedrer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --accent-green: #34a853; }
+        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --accent-blue: #4285f4; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: #e5ddd5; height: 100vh; overflow: hidden; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; }
+        .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #aeb2b9; text-decoration: none; }
+        .nav-item.active { background: var(--accent-red); color: white; }
+
+        /* Contenedor Mensajería */
+        .messenger-container { flex-grow: 1; display: grid; grid-template-columns: 350px 1fr; background: white; margin: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
         
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; overflow: hidden; animation: fadeIn 0.5s ease-out; }
+        /* Lista de Chats */
+        .chat-list { border-right: 1px solid #eee; background: #f9f9f9; overflow-y: auto; }
+        .contact { padding: 15px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: 0.3s; }
+        .contact:hover { background: #fff; }
+        .avatar { width: 45px; height: 45px; background: #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
 
-        /* Barra de carga */
-        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-red); width: 100%; animation: load 0.8s forwards; z-index: 1000; }
-        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
-
-        /* Sidebar */
-        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; }
-        .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
-        .nav-link { text-decoration: none; color: inherit; }
-        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; transition: 0.3s; cursor: pointer; }
-        .nav-item.active { background-color: var(--accent-red); }
-        .nav-item:hover:not(.active) { background-color: rgba(255,255,255,0.1); }
-
-        /* Botón Especial Centralita */
-        .btn-centralita { margin-top: auto; background: #4285f4; color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-centralita:hover { background: #3367d6; transform: scale(1.05); }
-
-        /* Chat Layout */
-        .chat-container { display: flex; flex-grow: 1; background: white; margin: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; }
+        /* Ventana de Chat */
+        .chat-window { display: flex; flex-direction: column; background: #efeae2; }
+        .chat-header { padding: 15px 25px; background: #f0f2f5; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #ddd; }
+        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         
-        .contacts { width: 300px; border-right: 1px solid #eee; background: #fff; }
-        .contact-item { padding: 20px; border-bottom: 1px solid #f5f5f5; display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .contact-item.active { background: #fff5f5; border-left: 4px solid var(--accent-red); }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
-        
-        .chat-main { flex-grow: 1; display: flex; flex-direction: column; background: #f0f2f5; position: relative; }
-        /* Fondo similar a tu captura */
-        .chat-main::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.05; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); pointer-events: none; }
+        /* Burbujas de Mensaje */
+        .msg { max-width: 70%; padding: 10px 15px; border-radius: 10px; font-size: 0.9rem; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .msg.system { align-self: center; background: #e3f2fd; border: 1px solid #bbdefb; color: #1976d2; text-align: center; width: 90%; margin: 10px 0; }
+        .msg.received { align-self: flex-start; background: white; border-bottom-left-radius: 2px; }
+        .msg.sent { align-self: flex-end; background: #d9fdd3; border-bottom-right-radius: 2px; }
+        .time { font-size: 0.7rem; color: #999; margin-top: 5px; text-align: right; display: block; }
 
-        .chat-header { background: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #eee; }
-        .messages { flex-grow: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; z-index: 5; }
-        
-        .msg { max-width: 60%; padding: 12px 18px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .received { align-self: flex-start; background: white; border-bottom-left-radius: 2px; }
-        .sent { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 2px; }
-        .time { font-size: 0.7rem; color: #888; display: block; margin-top: 5px; text-align: right; }
-
-        .input-area { background: white; padding: 20px; display: flex; gap: 15px; align-items: center; z-index: 10; }
-        .input-area input { flex-grow: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; outline: none; background: #f8f9fa; }
-        .btn-send { background: var(--accent-red); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+        .chat-input { padding: 15px; background: #f0f2f5; display: flex; gap: 10px; }
+        .chat-input input { flex-grow: 1; padding: 10px; border: none; border-radius: 20px; outline: none; }
     </style>
 </head>
 <body>
-    <div class="loading-bar"></div>
     <div class="sidebar">
-        <div class="logo"><i class="fas fa-university"></i> EL PEDRER</div>
-        <a href="direccion.html" class="nav-link"><div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div></a>
-        <a href="claustro.html" class="nav-link"><div class="nav-item"><i class="fas fa-users"></i> Claustro</div></a>
-        <a href="horarios.html" class="nav-link"><div class="nav-item"><i class="fas fa-clock"></i> Horarios</div></a>
-        <a href="reportes.html" class="nav-link"><div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div></a>
-        <a href="mensajeria.html" class="nav-link"><div class="nav-item active"><i class="fas fa-comment-dots"></i> Mensajería</div></a>
-        
-        <a href="centralita.html" class="btn-centralita">
-            <i class="fas fa-headset"></i> CENTRALITA IP
-        </a>
+        <div class="logo">🏛️ EL PEDRER</div>
+        <a href="direccion.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a href="horarios.html" class="nav-item"><i class="fas fa-clock"></i> Horarios</a>
+        <a href="mensajeria.html" class="nav-item active"><i class="fas fa-comment-dots"></i> Mensajería</a>
     </div>
 
-    <div class="chat-container">
-        <div class="contacts">
-            <div style="padding: 20px; font-weight: bold; border-bottom: 1px solid #eee;">Chats Recientes</div>
-            <div class="contact-item active">
-                <div class="avatar">GA</div>
-                <div><b>García, Alberto</b><br><small style="color:var(--accent-green)">En línea</small></div>
+    <div class="messenger-container">
+        <div class="chat-list">
+            <div style="padding: 20px; font-weight: bold; font-size: 1.2rem;">Chats</div>
+            <div class="contact" style="background: #e3f2fd;">
+                <div class="avatar" style="background: #4285f4;">S</div>
+                <div><strong>Avisos del Sistema</strong><br><small style="color: #4285f4;">En línea</small></div>
             </div>
-            <div class="contact-item">
-                <div class="avatar">ME</div>
-                <div><b>Martínez, Elena</b><br><small>Dirección</small></div>
-            </div>
-            <div class="contact-item">
-                <div class="avatar" style="background: #4285f4; color: white;"><i class="fas fa-users"></i></div>
-                <div><b>Claustro General</b><br><small>137 miembros</small></div>
+            <div class="contact">
+                <div class="avatar" style="background: #ff4d4d;">GA</div>
+                <div><strong>García, Alberto</strong><br><small>Hola, ¿puedes confirmar...</small></div>
             </div>
         </div>
 
-        <div class="chat-main">
+        <div class="chat-window">
             <div class="chat-header">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <div class="avatar">GA</div>
-                    <div><b>García, Alberto</b><br><small>Matemáticas</small></div>
-                </div>
-                <div style="display:flex; gap:20px; color:#666;">
-                    <i class="fas fa-phone"></i>
-                    <i class="fas fa-video"></i>
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
+                <div class="avatar" style="background: #4285f4;">S</div>
+                <div><strong>Notificaciones Automáticas</strong></div>
             </div>
 
-            <div class="messages">
-                <div class="msg received">
-                    Hola, ¿puedes confirmar si la reunión de las 10:00 se mantiene en la Sala 204?
-                    <span class="time">09:45 AM</span>
-                </div>
-                <div class="msg sent">
-                    Hola Alberto. Sí, se mantiene allí. He avisado por el Aviso Global también.
-                    <span class="time">09:48 AM</span>
-                </div>
-                <div class="msg received">
-                    Perfecto, gracias. Llevo el portátil para las actas.
-                    <span class="time">09:50 AM</span>
-                </div>
+            <div class="chat-messages" id="chatBox">
+                <div class="msg system">Bienvenido al centro de notificaciones de El Pedrer. Aquí recibirás avisos de cambios de horario.</div>
             </div>
 
-            <div class="input-area">
-                <i class="far fa-smile" style="font-size: 1.4rem; color: #666;"></i>
-                <i class="fas fa-paperclip" style="font-size: 1.2rem; color: #666;"></i>
-                <input type="text" placeholder="Escribe un mensaje aquí...">
-                <button class="btn-send"><i class="fas fa-paper-plane"></i></button>
+            <div class="chat-input">
+                <input type="text" placeholder="Escribe un mensaje...">
+                <button style="border:none; background:none; color:var(--accent-blue); cursor:pointer;"><i class="fas fa-paper-plane fa-lg"></i></button>
             </div>
         </div>
     </div>
+
+    <script>
+        function checkNotifications() {
+            const mensajes = JSON.parse(localStorage.getItem('mensajesNuevos')) || [];
+            const chatBox = document.getElementById('chatBox');
+
+            if(mensajes.length > 0) {
+                mensajes.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = "msg system";
+                    div.innerHTML = `
+                        <strong>NUEVA ASIGNACIÓN</strong><br>
+                        ${m.contenido}
+                        <span class="time">${m.tiempo}</span>
+                    `;
+                    chatBox.appendChild(div);
+                });
+                // Limpiar después de leer para no duplicar en el scroll
+                localStorage.removeItem('mensajesNuevos');
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+        // Comprobar cada 1.5 segundos
+        setInterval(checkNotifications, 1500);
+        window.onload = checkNotifications;
+    </script>
 </body>
 </html>
