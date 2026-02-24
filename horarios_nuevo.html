@@ -7,30 +7,21 @@
     <style>
         :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --accent-blue: #4285f4; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; overflow: hidden; }
-        
-        /* Sidebar y Botón Centralita (Mantenido de tus capturas) */
-        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; }
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; display: flex; flex-direction: column; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; }
         .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #aeb2b9; text-decoration: none; }
         .nav-item.active { background: var(--accent-red); color: white; }
-        .btn-centralita { position: fixed; bottom: 20px; left: 20px; width: 200px; background: var(--accent-blue); color: white; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 5px 15px rgba(66,133,244,0.3); }
-
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; }
-        .form-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 950px; margin: 0 auto; }
-        
+        .form-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 900px; margin: 0 auto; }
         .grid-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .full-width { grid-column: span 3; }
-
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #555; }
-        .form-group select, .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.9rem; }
-
-        /* Estilos de información y alertas */
-        .preview-box { border: 2px dashed #e2e8f0; padding: 15px; border-radius: 12px; margin-top: 25px; background: #f8fbff; }
-        .btn-save { background: var(--accent-red); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1rem; }
+        .form-group select, .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; }
+        .btn-save { background: var(--accent-red); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .btn-centralita { position: fixed; bottom: 20px; left: 20px; width: 200px; background: var(--accent-blue); color: white; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
-
     <div class="sidebar">
         <div class="logo">🏛️ EL PEDRER</div>
         <a href="horarios.html" class="nav-item"><i class="fas fa-arrow-left"></i> Volver a Gestión</a>
@@ -40,85 +31,74 @@
 
     <div class="main-content">
         <h1>Añadir Nueva Sesión</h1>
-
         <div class="form-card">
             <div class="grid-form">
                 <div class="form-group full-width">
-                    <label>Asignatura / Materia (30 lecciones disponibles)</label>
+                    <label>Asignatura / Materia</label>
                     <select id="selectMateria"></select>
                 </div>
-
                 <div class="form-group">
-                    <label>Docente Responsable (150 profes)</label>
+                    <label>Docente</label>
                     <select id="selectDocente"></select>
                 </div>
-
                 <div class="form-group">
                     <label>Tipo de Sesión</label>
-                    <select><option>Lectiva Estándar</option><option>Guardia</option><option>Taller</option></select>
+                    <select id="tipo"><option>Lectiva Estándar</option><option>Guardia</option></select>
                 </div>
-
                 <div class="form-group">
-                    <label>Aula Asignada (58 espacios)</label>
+                    <label>Aula</label>
                     <select id="selectAula"></select>
                 </div>
-
                 <div class="form-group">
                     <label>Día</label>
-                    <select><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option></select>
+                    <select id="dia"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option></select>
                 </div>
-
                 <div class="form-group">
                     <label>Hora Inicio</label>
-                    <input type="time" value="08:00">
-                </div>
-
-                <div class="form-group">
-                    <label>Periodicidad</label>
-                    <select><option>Semanal</option><option>Semana A</option><option>Semana B</option></select>
+                    <select id="hora"><option>08:00</option><option>09:00</option><option>10:30</option><option>11:30</option></select>
                 </div>
             </div>
-
-            <div class="preview-box">
-                <p id="preview" style="margin: 0; color: #4a5568;"><i class="fas fa-info-circle"></i> Complete los campos para previsualizar la sesión.</p>
-            </div>
-
-            <button class="btn-save"><i class="fas fa-save"></i> GUARDAR EN HORARIO</button>
+            <button class="btn-save" onclick="saveSession()"><i class="fas fa-save"></i> GUARDAR EN HORARIO</button>
         </div>
     </div>
 
     <script>
-        // Función para cargar datos masivos
-        function cargarDatos() {
-            const materias = ["Matemáticas", "Lengua", "Inglés", "Física", "Química", "Biología", "Historia", "Geografía", "Arte", "Filosofía", "E. Física", "Música", "Tecnología", "Informática", "Latín", "Griego", "Cultura Clásica", "Valores", "Religión", "Economía", "Dibujo Técnico", "Plástica", "Francés", "Alemán", "Robótica", "Oratoria", "Laboratorio", "Teatro", "Tutoría", "Guardia"];
-            
-            const docenteSelect = document.getElementById('selectDocente');
-            const aulaSelect = document.getElementById('selectAula');
-            const materiaSelect = document.getElementById('selectMateria');
+        // Carga masiva de datos
+        const materias = ["Matemáticas", "Lengua", "Inglés", "Física", "Química", "Biología", "Historia", "Geografía", "Filosofía", "E. Física", "Música", "Tecnología", "Informática", "Latín", "Dibujo", "Francés", "Robótica", "Tutoría", "Economía", "Plástica"];
+        const mSelect = document.getElementById('selectMateria');
+        const dSelect = document.getElementById('selectDocente');
+        const aSelect = document.getElementById('selectAula');
 
-            // Cargar 30 Materias
-            materias.forEach(m => {
-                let opt = document.createElement('option');
-                opt.value = m; opt.innerHTML = m;
-                materiaSelect.appendChild(opt);
+        materias.forEach(m => mSelect.innerHTML += `<option>${m}</option>`);
+        for(let i=1; i<=150; i++) dSelect.innerHTML += `<option>Profesor/a ${i}</option>`;
+        for(let j=1; j<=58; j++) aSelect.innerHTML += `<option>Aula ${j}</option>`;
+
+        function saveSession() {
+            const nuevaSesion = {
+                materia: mSelect.value,
+                docente: dSelect.value,
+                aula: aSelect.value,
+                dia: document.getElementById('dia').value,
+                hora: document.getElementById('hora').value
+            };
+
+            // Guardar para horarios.html
+            let sesiones = JSON.parse(localStorage.getItem('sesionesHorario')) || [];
+            sesiones.push(nuevaSesion);
+            localStorage.setItem('sesionesHorario', JSON.stringify(sesiones));
+
+            // Notificación para mensajeria.html
+            let mensajes = JSON.parse(localStorage.getItem('mensajesNuevos')) || [];
+            mensajes.push({
+                emisor: "Sistema",
+                contenido: `Nueva sesión: ${nuevaSesion.materia} en ${nuevaSesion.aula} (${nuevaSesion.dia} ${nuevaSesion.hora})`,
+                tiempo: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             });
+            localStorage.setItem('mensajesNuevos', JSON.stringify(mensajes));
 
-            // Cargar 150 Docentes (Simulados por ID)
-            for(let i=1; i<=150; i++) {
-                let opt = document.createElement('option');
-                opt.value = i; opt.innerHTML = `Profesor/a ${i} (ID: 0${i})`;
-                docenteSelect.appendChild(opt);
-            }
-
-            // Cargar 58 Aulas
-            for(let j=1; j<=58; j++) {
-                let opt = document.createElement('option');
-                opt.value = j; opt.innerHTML = `Aula ${j < 10 ? '0'+j : j} (Edificio ${j < 30 ? 'A' : 'B'})`;
-                aulaSelect.appendChild(opt);
-            }
+            alert("Sesión guardada y docente notificado.");
+            window.location.href = "horarios.html";
         }
-
-        window.onload = cargarDatos;
     </script>
 </body>
 </html>
