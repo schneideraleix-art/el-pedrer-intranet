@@ -12,6 +12,8 @@
             --bg-light: #f4f7f9;
             --text-main: #333;
             --accent-blue: #4285f4;
+            --accent-green: #34a853;
+            --accent-orange: #ea4335;
         }
 
         body {
@@ -43,74 +45,103 @@
 
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 
-        /* Controles de Horario */
+        /* Controles Superiores */
         .controls {
             display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        select, button {
+        select, .btn-action {
             padding: 10px 15px;
             border-radius: 8px;
             border: 1px solid #ddd;
-            background: white;
             font-family: inherit;
-            cursor: pointer;
+            font-size: 0.9rem;
+            outline: none;
         }
 
-        .btn-print { background: var(--sidebar-bg); color: white; border: none; }
+        .btn-primary { background: var(--sidebar-bg); color: white; border: none; cursor: pointer; }
+        .btn-primary:hover { background: #2a2e3f; }
 
         /* Tabla de Horarios */
         .timetable-container {
             background: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 5px;
+            border-spacing: 8px;
         }
 
         th {
-            background: #f8f9fa;
             padding: 15px;
-            border-radius: 8px;
-            color: #666;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
-
-        .hour-cell {
-            background: #f1f3f5;
-            font-weight: bold;
-            text-align: center;
-            width: 100px;
-            border-radius: 8px;
-        }
-
-        .subject-card {
-            padding: 12px;
-            border-radius: 8px;
+            color: #888;
             font-size: 0.85rem;
-            min-height: 60px;
-            border-left: 4px solid #ccc;
-            background: #fdfdfd;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #f4f7f9;
         }
 
-        /* Colores por Etapa */
-        .eso { border-left-color: #4285f4; background: #e8f0fe; }
-        .bach { border-left-color: #34a853; background: #e6f4ea; }
-        .guardia { border-left-color: #ea4335; background: #fce8e6; }
-        .recreo { background: #fffde7; text-align: center; font-style: italic; color: #fbc02d; }
+        .hour-col {
+            background: #f8f9fa;
+            width: 120px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 8px;
+            color: #555;
+            font-size: 0.85rem;
+        }
 
-        .subject-card b { display: block; margin-bottom: 3px; }
-        .subject-card span { font-size: 0.75rem; color: #777; }
+        /* Tarjetas de Asignatura */
+        .cell-content {
+            padding: 12px;
+            border-radius: 10px;
+            min-height: 70px;
+            border-left: 5px solid #dfe4ea;
+            background: #fcfcfc;
+            transition: 0.2s;
+        }
+
+        .cell-content:hover { transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+
+        .cell-content b { display: block; font-size: 0.9rem; color: #333; margin-bottom: 4px; }
+        .cell-content span { display: block; font-size: 0.75rem; color: #777; }
+
+        /* Colores Dinámicos */
+        .cat-eso { border-left-color: var(--accent-blue); background: #ebf3ff; }
+        .cat-bach { border-left-color: var(--accent-green); background: #eef9f1; }
+        .cat-guardia { border-left-color: var(--accent-orange); background: #fff1f0; }
+        
+        .recreo-row {
+            text-align: center;
+            background: #fffbe6;
+            color: #d4a017;
+            font-weight: bold;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        /* Leyenda */
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
 
     </style>
 </head>
@@ -118,9 +149,19 @@
 
     <div class="sidebar">
         <div class="logo"><i class="fas fa-university"></i> EL PEDRER</div>
-        <a href="direccion.html" class="nav-link"><div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div></a>
-        <a href="claustro.html" class="nav-link"><div class="nav-item"><i class="fas fa-users"></i> Claustro</div></a>
-        <a href="horarios.html" class="nav-link"><div class="nav-item active"><i class="fas fa-clock"></i> Horarios</div></a>
+        
+        <a href="direccion.html" class="nav-link">
+            <div class="nav-item"><i class="fas fa-th-large"></i> Dashboard</div>
+        </a>
+
+        <a href="claustro.html" class="nav-link">
+            <div class="nav-item"><i class="fas fa-users"></i> Claustro</div>
+        </a>
+
+        <a href="horarios.html" class="nav-link">
+            <div class="nav-item active"><i class="fas fa-clock"></i> Horarios</div>
+        </a>
+
         <div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div>
         <div class="nav-item"><i class="fas fa-comment-dots"></i> Mensajería</div>
     </div>
@@ -130,17 +171,12 @@
             <h1>Gestión de Horarios</h1>
             <div class="controls">
                 <select>
-                    <option>Seleccionar Grupo...</option>
+                    <option>Filtrar por Grupo...</option>
                     <option>1º ESO A</option>
                     <option>2º ESO B</option>
-                    <option>1º Bachillerato</option>
+                    <option selected>Vista General Centro</option>
                 </select>
-                <select>
-                    <option>Profesorado...</option>
-                    <option>García, Alberto</option>
-                    <option>Martínez, Elena</option>
-                </select>
-                <button class="btn-print"><i class="fas fa-print"></i> Imprimir PDF</button>
+                <button class="btn-primary"><i class="fas fa-download"></i> Exportar</button>
             </div>
         </div>
 
@@ -158,34 +194,40 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="hour-cell">08:00 - 09:00</td>
-                        <td><div class="subject-card eso"><b>Matemáticas</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card bach"><b>Física</b><span>Lab. 1</span></div></td>
-                        <td><div class="subject-card guardia"><b>GUARDIA</b><span>Pasillo 1º</span></div></td>
-                        <td><div class="subject-card eso"><b>Inglés</b><span>Aula 102</span></div></td>
-                        <td><div class="subject-card eso"><b>Matemáticas</b><span>Aula 204</span></div></td>
+                        <td class="hour-col">08:00 - 09:00</td>
+                        <td><div class="cell-content cat-eso"><b>Matemáticas</b><span>Aula 204</span></div></td>
+                        <td><div class="cell-content cat-bach"><b>Física I</b><span>Lab. Ciencias</span></div></td>
+                        <td><div class="cell-content cat-eso"><b>Geografía</b><span>Aula 105</span></div></td>
+                        <td><div class="cell-content cat-guardia"><b>GUARDIA</b><span>Pasillo Planta 1</span></div></td>
+                        <td><div class="cell-content cat-eso"><b>Matemáticas</b><span>Aula 204</span></div></td>
                     </tr>
                     <tr>
-                        <td class="hour-cell">09:00 - 10:00</td>
-                        <td><div class="subject-card bach"><b>Historia</b><span>Aula 301</span></div></td>
-                        <td><div class="subject-card eso"><b>Lengua</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card eso"><b>Matemáticas</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card guardia"><b>GUARDIA</b><span>Biblioteca</span></div></td>
-                        <td><div class="subject-card bach"><b>Filosofía</b><span>Aula 301</span></div></td>
+                        <td class="hour-col">09:00 - 10:00</td>
+                        <td><div class="cell-content cat-eso"><b>Lengua</b><span>Aula 204</span></div></td>
+                        <td><div class="cell-content cat-eso"><b>Inglés</b><span>Aula Idiomas</span></div></td>
+                        <td><div class="cell-content cat-bach"><b>Historia</b><span>Aula 302</span></div></td>
+                        <td><div class="cell-content cat-eso"><b>Lengua</b><span>Aula 204</span></div></td>
+                        <td><div class="cell-content cat-guardia"><b>GUARDIA</b><span>Biblioteca</span></div></td>
                     </tr>
                     <tr>
-                        <td colspan="6" class="recreo">RECREO (30 min)</td>
+                        <td colspan="6" class="recreo-row">DESCANSO / RECREO</td>
                     </tr>
                     <tr>
-                        <td class="hour-cell">10:30 - 11:30</td>
-                        <td><div class="subject-card eso"><b>Ed. Física</b><span>Pabellón</span></div></td>
-                        <td><div class="subject-card guardia"><b>GUARDIA</b><span>Patio</span></div></td>
-                        <td><div class="subject-card eso"><b>Lengua</b><span>Aula 204</span></div></td>
-                        <td><div class="subject-card bach"><b>Física</b><span>Lab. 1</span></div></td>
-                        <td><div class="subject-card eso"><b>Inglés</b><span>Aula 102</span></div></td>
+                        <td class="hour-col">10:30 - 11:30</td>
+                        <td><div class="cell-content cat-guardia"><b>GUARDIA</b><span>Patio Central</span></div></td>
+                        <td><div class="cell-content cat-eso"><b>Ed. Física</b><span>Pabellón</span></div></td>
+                        <td><div class="cell-content cat-eso"><b>Inglés</b><span>Aula Idiomas</span></div></td>
+                        <td><div class="cell-content cat-bach"><b>Física I</b><span>Lab. Ciencias</span></div></td>
+                        <td><div class="cell-content cat-eso"><b>Plástica</b><span>Taller Arte</span></div></td>
                     </tr>
                 </tbody>
             </table>
+
+            <div class="legend">
+                <div class="legend-item"><div class="dot" style="background:var(--accent-blue)"></div> ESO</div>
+                <div class="legend-item"><div class="dot" style="background:var(--accent-green)"></div> Bachillerato</div>
+                <div class="legend-item"><div class="dot" style="background:var(--accent-orange)"></div> Guardias</div>
+            </div>
         </div>
     </div>
 
