@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Horario - El Pedrer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --accent-blue: #4285f4; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; animation: fadeIn 0.5s ease-out; }
+        
+        /* Barra de carga */
+        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-red); width: 100%; animation: load 0.8s forwards; z-index: 1000; }
+        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
+
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; position: fixed; height: 100vh; }
+        .btn-centralita { margin-top: auto; background: var(--accent-blue); color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 40px; }
+        
+        .main-content { margin-left: 280px; padding: 40px; flex-grow: 1; }
+        .form-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 600px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; }
+        .form-group select, .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; }
+        .form-group select:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1); }
+        .btn-save { background: var(--accent-red); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="loading-bar"></div>
+    <div class="sidebar">
+        <div class="logo" style="font-size:1.5rem; font-weight:bold; margin-bottom:40px;"><i class="fas fa-university"></i> EL PEDRER</div>
+        <a href="horarios.html" style="color:white; text-decoration:none;"><p><i class="fas fa-arrow-left"></i> Volver a Gestión</p></a>
+        <a href="centralita.html" class="btn-centralita"><i class="fas fa-headset"></i> CENTRALITA IP</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Añadir Nueva Sesión</h1>
+        <div class="form-container">
+            <div class="form-group">
+                <label>Asignatura / Materia</label>
+                <select>
+                    <option>Matemáticas</option>
+                    <option>Lengua Castellana</option>
+                    <option>Inglés</option>
+                    <option>Educación Física</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Docente Responsable</label>
+                <select>
+                    <option>García, Alberto</option>
+                    <option>Martínez, Elena</option>
+                    <option>Rodríguez, Marc</option>
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Día</label>
+                    <select><option>Lunes</option><option>Martes</option><option>Miércoles</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Hora de Inicio</label>
+                    <input type="time" value="08:00">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Aula Asignada</label>
+                <select><option>Aula 204</option><option>Laboratorio 1</option><option>Gimnasio</option></select>
+            </div>
+            <button class="btn-save"><i class="fas fa-save"></i> GUARDAR EN HORARIO</button>
+        </div>
+    </div>
+</body>
+</html>
