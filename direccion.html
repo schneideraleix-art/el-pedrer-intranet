@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -42,6 +43,13 @@
             gap: 10px;
         }
 
+        /* Enlaces del menú */
+        .nav-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
         .nav-item {
             padding: 12px;
             margin-bottom: 5px;
@@ -81,20 +89,26 @@
         }
 
         .badge {
-            background: #e0f2f1;
-            color: #00796b;
+            background: #e8f5e9;
+            color: #2e7d32;
             padding: 5px 15px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 500;
-            border: 1px solid #b2dfdb;
+            border: 1px solid #c8e6c9;
+        }
+
+        .badge-peer {
+            background: #f0f4f8;
+            color: #546e7a;
+            border: 1px solid #cfd8dc;
         }
 
         /* Grid de Funciones */
         .grid-functions {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
             margin-bottom: 30px;
         }
 
@@ -103,93 +117,98 @@
             padding: 20px;
             border-radius: 15px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
         }
 
         .card i {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 10px;
             display: block;
         }
 
-        .card h3 { margin: 5px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; }
-        .card .value { font-size: 1.8rem; font-weight: bold; }
+        .card h3 { margin: 5px 0; font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card .value { font-size: 1.6rem; font-weight: bold; margin-bottom: 5px; }
+        .card small { color: #999; font-size: 0.75rem; }
 
-        /* Colores Iconos */
+        /* Colores */
         .icon-blue { color: #4285f4; }
         .icon-red { color: #ea4335; }
         .icon-green { color: #34a853; }
         .icon-yellow { color: #fbbc05; }
         .icon-purple { color: #a142f4; }
+        .icon-cyan { color: #00bcd4; }
 
-        /* Layout Inferior */
-        .bottom-sections {
+        /* Secciones Inferiores */
+        .bottom-layout {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1.8fr 1fr;
             gap: 20px;
         }
 
-        .section-box {
+        .box {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
+        .box h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        th { text-align: left; color: var(--text-muted); border-bottom: 1px solid #eee; padding: 10px; }
-        td { padding: 12px 10px; border-bottom: 1px solid #f9f9f9; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px; color: #888; font-size: 0.85rem; border-bottom: 1px solid #eee; }
+        td { padding: 12px 10px; border-bottom: 1px solid #fcfcfc; font-size: 0.9rem; }
 
-        .status-pill {
-            padding: 4px 10px;
-            border-radius: 5px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
+        .status { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .btn-table { background: #f0f0f0; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
-        .btn-action {
-            background: #eee;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+        /* Agenda Estilo */
+        .event { border-left: 4px solid #ddd; padding: 5px 15px; margin-bottom: 15px; }
+        .event b { display: block; font-size: 0.8rem; color: #555; }
+        .event p { margin: 2px 0; font-size: 0.95rem; }
 
-        /* Reloj Flotante */
-        .footer-tools {
+        /* Footer / Reloj */
+        .footer-voip {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            z-index: 100;
+            width: 200px;
+            background: #1a1d2b;
+            padding: 15px;
+            border-radius: 12px;
+            color: white;
         }
 
-        .time-box {
-            background: #000;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
+        .clock { font-family: monospace; font-size: 1.4rem; text-align: center; margin-bottom: 10px; }
+        .btn-audio { width: 100%; background: none; border: 1px solid #444; color: white; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .btn-audio:hover { background: #2a2e3f; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="logo"><i class="fas fa-school"></i> EL PEDRER</div>
-        <div class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</div>
-        <div class="nav-item"><i class="fas fa-users"></i> Claustro</div>
+        <div class="logo"><i class="fas fa-university"></i> EL PEDRER</div>
+        
+        <a href="direccion.html" class="nav-link">
+            <div class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</div>
+        </a>
+
+        <a href="claustro.html" class="nav-link">
+            <div class="nav-item"><i class="fas fa-users"></i> Claustro</div>
+        </a>
+
         <div class="nav-item"><i class="fas fa-clock"></i> Horarios</div>
         <div class="nav-item"><i class="fas fa-file-alt"></i> Reportes</div>
         <div class="nav-item"><i class="fas fa-comment-dots"></i> Mensajería</div>
@@ -199,8 +218,8 @@
         <div class="header-pro">
             <h1>Gestión Directiva Pro</h1>
             <div class="status-badges">
-                <div class="badge" style="background: #e8f5e9; color: #2e7d32;"><i class="fas fa-wifi"></i> Red Centro: 940 Mbps</div>
-                <div class="badge">PeerID: elpedrer-direccion</div>
+                <div class="badge"><i class="fas fa-wifi"></i> Red Centro: 940 Mbps</div>
+                <div class="badge badge-peer">PeerID: elpedrer-direccion</div>
             </div>
         </div>
 
@@ -210,106 +229,55 @@
             <div class="card"><h3>Incidencias</h3><div class="value icon-yellow">4</div></div>
             <div class="card"><h3>Comedor</h3><div class="value icon-green">315</div></div>
             
-            <div class="card">
-                <i class="fas fa-bell icon-yellow"></i>
-                <h3>Timbre Manual</h3>
-                <small>Sirena General</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-phone-alt icon-green"></i>
-                <h3>Marcador</h3>
-                <small>VoIP Externa</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-video icon-muted"></i>
-                <h3>Cámaras</h3>
-                <small>Tiempo Real</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-box icon-blue"></i>
-                <h3>Inventario</h3>
-                <small>Pedidos material</small>
-            </div>
+            <div class="card"><i class="fas fa-bell icon-yellow"></i><h3>Timbre Manual</h3><small>Sirena General</small></div>
+            <div class="card"><i class="fas fa-phone-alt icon-green"></i><h3>Marcador</h3><small>VoIP Externa</small></div>
+            <div class="card"><i class="fas fa-video icon-muted"></i><h3>Cámaras</h3><small>Tiempo Real</small></div>
+            <div class="card"><i class="fas fa-box icon-blue"></i><h3>Inventario</h3><small>Pedidos material</small></div>
 
-            <div class="card">
-                <i class="fas fa-door-open icon-red"></i>
-                <h3>Accesos</h3>
-                <small>Control de Puertas</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-bolt icon-yellow"></i>
-                <h3>Energía</h3>
-                <small>Consumo: 4.2 kW</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-calendar-check icon-purple"></i>
-                <h3>Reservas</h3>
-                <small>Aulas y Espacios</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-broadcast-tower icon-blue"></i>
-                <h3>Nodos WiFi</h3>
-                <small>24 activos / 0 caídos</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-bullhorn icon-red"></i>
-                <h3>Aviso Global</h3>
-                <small>Push a Claustro</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-thermometer-half icon-blue"></i>
-                <h3>Climatización</h3>
-                <small>Media: 21°C</small>
-            </div>
-            <div class="card">
-                <i class="fas fa-tasks icon-green"></i>
-                <h3>Mantenimiento</h3>
-                <small>Tareas asignadas</small>
-            </div>
-            <div class="card" style="border: 2px solid #ff4d4d;">
-                <i class="fas fa-exclamation-triangle icon-red"></i>
-                <h3>EMERGENCIA</h3>
-                <small>Activar Protocolo</small>
+            <div class="card"><i class="fas fa-door-open icon-red"></i><h3>Accesos</h3><small>Control Puertas</small></div>
+            <div class="card"><i class="fas fa-bolt icon-yellow"></i><h3>Energía</h3><small>4.2 kW</small></div>
+            <div class="card"><i class="fas fa-calendar-check icon-purple"></i><h3>Reservas</h3><small>Aulas/Espacios</small></div>
+            <div class="card"><i class="fas fa-broadcast-tower icon-blue"></i><h3>Nodos WiFi</h3><small>24 activos</small></div>
+            <div class="card"><i class="fas fa-bullhorn icon-red"></i><h3>Aviso Global</h3><small>Push Claustro</small></div>
+            <div class="card"><i class="fas fa-thermometer-half icon-cyan"></i><h3>Clima</h3><small>Media: 21°C</small></div>
+            <div class="card"><i class="fas fa-tasks icon-green"></i><h3>Tareas</h3><small>Mantenimiento</small></div>
+            <div class="card" style="background: #fff5f5; border: 1px solid #ffcccc;">
+                <i class="fas fa-exclamation-triangle icon-red"></i><h3>EMERGENCIA</h3><small>Activar Protocolo</small>
             </div>
         </div>
 
-        <div class="bottom-sections">
-            <div class="section-box">
-                <h3><i class="fas fa-tools"></i> Incidencias Activas</h3>
+        <div class="bottom-layout">
+            <div class="box">
+                <h2><i class="fas fa-tools"></i> Incidencias Activas</h2>
                 <table>
                     <tr><th>Ubicación</th><th>Problema</th><th>Estado</th><th>Acción</th></tr>
-                    <tr><td>Aula 204</td><td>Proyector no enciende</td><td><span class="status-pill" style="background:#fff3e0;color:#ff9800;">Pendiente</span></td><td><button class="btn-action">Avisar</button></td></tr>
-                    <tr><td>Gimnasio</td><td>Gotera techo</td><td><span class="status-pill" style="background:#e1f5fe;color:#03a9f4;">En camino</span></td><td><button class="btn-action">Detalles</button></td></tr>
-                    <tr><td>Biblioteca</td><td>WiFi Lento</td><td><span class="status-pill" style="background:#ffebee;color:#f44336;">Urgente</span></td><td><button class="btn-action">Arreglar</button></td></tr>
+                    <tr><td>Aula 204</td><td>Proyector no enciende</td><td><span class="status" style="background:#fff3e0;color:#ff9800;">PENDIENTE</span></td><td><button class="btn-table">Avisar</button></td></tr>
+                    <tr><td>Gimnasio</td><td>Gotera techo</td><td><span class="status" style="background:#e1f5fe;color:#03a9f4;">EN CAMINO</span></td><td><button class="btn-table">Detalles</button></td></tr>
+                    <tr><td>Biblioteca</td><td>WiFi Lento</td><td><span class="status" style="background:#ffebee;color:#f44336;">URGENTE</span></td><td><button class="btn-table">Arreglar</button></td></tr>
                 </table>
             </div>
 
-            <div class="section-box">
-                <h3><i class="fas fa-calendar-day"></i> Agenda Hoy</h3>
-                <div style="margin-top:15px;">
-                    <p style="border-left: 4px solid red; padding-left: 10px;"><strong>10:00 AM</strong><br>Reunión de Departamento</p>
-                    <p style="border-left: 4px solid blue; padding-left: 10px;"><strong>12:30 PM</strong><br>Entrevista Familias</p>
-                    <p style="border-left: 4px solid green; padding-left: 10px;"><strong>16:00 PM</strong><br>Claustro Extraordinario</p>
-                </div>
+            <div class="box">
+                <h2><i class="fas fa-calendar-day"></i> Agenda Hoy</h2>
+                <div class="event" style="border-color: #f44336;"><b>10:00 AM</b><p>Reunión Departamento</p></div>
+                <div class="event" style="border-color: #2196f3;"><b>12:30 PM</b><p>Entrevista Familias</p></div>
+                <div class="event" style="border-color: #4caf50;"><b>16:00 PM</b><p>Claustro General</p></div>
             </div>
         </div>
     </div>
 
-    <div class="footer-tools">
-        <div class="time-box" id="reloj">09:14:54</div>
-        <button class="btn-action" style="width:100%; padding:10px; background:#1a1d2b; color:white; border:1px solid #444;">Desbloquear Audio</button>
+    <div class="footer-voip">
+        <div class="clock" id="timer">09:25:20</div>
+        <button class="btn-audio">Desbloquear Audio</button>
     </div>
 
     <script>
-        function actualizarReloj() {
-            const ahora = new Date();
-            const h = String(ahora.getHours()).padStart(2, '0');
-            const m = String(ahora.getMinutes()).padStart(2, '0');
-            const s = String(ahora.getSeconds()).padStart(2, '0');
-            document.getElementById('reloj').textContent = `${h}:${m}:${s}`;
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('timer').innerText = now.toLocaleTimeString('es-ES', { hour12: false });
         }
-        setInterval(actualizarReloj, 1000);
-        actualizarReloj();
+        setInterval(updateClock, 1000);
+        updateClock();
     </script>
 </body>
 </html>
