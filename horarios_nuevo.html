@@ -2,73 +2,179 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nuevo Horario - El Pedrer</title>
+    <title>Añadir Nueva Sesión - El Pedrer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --accent-blue: #4285f4; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; animation: fadeIn 0.5s ease-out; }
         
-        /* Barra de carga */
-        .loading-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-red); width: 100%; animation: load 0.8s forwards; z-index: 1000; }
-        @keyframes load { 0% { width: 0; } 100% { width: 100%; opacity: 0; } }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; overflow: hidden; }
 
-        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; position: fixed; height: 100vh; }
-        .btn-centralita { margin-top: auto; background: var(--accent-blue); color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 40px; }
+        /* Sidebar similar a las capturas */
+        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; }
+        .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #aeb2b9; text-decoration: none; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { background: var(--accent-red); color: white; }
+
+        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; position: relative; }
         
-        .main-content { margin-left: 280px; padding: 40px; flex-grow: 1; }
-        .form-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 600px; }
+        .form-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 800px; margin: 0 auto; }
+        
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; }
-        .form-group select, .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; }
-        .form-group select:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1); }
-        .btn-save { background: var(--accent-red); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 0.9rem; }
+        .form-group select, .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: inherit; }
+
+        /* Nuevas Funciones Visuales */
+        .conflict-alert { background: #fff5f5; border: 1px solid #feb2b2; color: #c53030; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: none; align-items: center; gap: 10px; font-size: 0.85rem; }
+        
+        .preview-box { background: #f8fbff; border: 2px dashed #cbd5e0; padding: 20px; border-radius: 15px; margin-top: 20px; }
+        .preview-tag { background: var(--accent-blue); color: white; padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+
+        .btn-save { background: var(--accent-red); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-save:hover { background: #e63939; transform: translateY(-2px); }
+
+        /* Botón Centralita Flotante (Capture exact look) */
+        .btn-centralita { position: fixed; bottom: 30px; left: 20px; width: 200px; background: var(--accent-blue); color: white; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3); }
     </style>
 </head>
 <body>
-    <div class="loading-bar"></div>
+
     <div class="sidebar">
-        <div class="logo" style="font-size:1.5rem; font-weight:bold; margin-bottom:40px;"><i class="fas fa-university"></i> EL PEDRER</div>
-        <a href="horarios.html" style="color:white; text-decoration:none;"><p><i class="fas fa-arrow-left"></i> Volver a Gestión</p></a>
-        <a href="centralita.html" class="btn-centralita"><i class="fas fa-headset"></i> CENTRALITA IP</a>
+        <div class="logo">🏛️ EL PEDRER</div>
+        <a href="horarios.html" class="nav-item"><i class="fas fa-arrow-left"></i> Volver a Gestión</a>
+        <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            <div class="nav-item active"><i class="fas fa-plus-circle"></i> Nueva Sesión</div>
+            <div class="nav-item"><i class="fas fa-magic"></i> Asistente IA</div>
+        </div>
+        
+        <a href="centralita.html" class="btn-centralita">
+            <i class="fas fa-headset"></i> CENTRALITA IP
+        </a>
     </div>
 
     <div class="main-content">
-        <h1>Añadir Nueva Sesión</h1>
-        <div class="form-container">
-            <div class="form-group">
-                <label>Asignatura / Materia</label>
-                <select>
-                    <option>Matemáticas</option>
-                    <option>Lengua Castellana</option>
-                    <option>Inglés</option>
-                    <option>Educación Física</option>
-                </select>
+        <h1 style="margin-bottom: 30px;">Añadir Nueva Sesión</h1>
+
+        <div class="form-card">
+            <div id="conflictArea" class="conflict-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span><strong>Conflicto detectado:</strong> El Aula 204 ya está ocupada los Lunes a las 08:00 por 2º ESO B.</span>
             </div>
-            <div class="form-group">
-                <label>Docente Responsable</label>
-                <select>
-                    <option>García, Alberto</option>
-                    <option>Martínez, Elena</option>
-                    <option>Rodríguez, Marc</option>
-                </select>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div class="form-group">
-                    <label>Día</label>
-                    <select><option>Lunes</option><option>Martes</option><option>Miércoles</option></select>
+
+            <div class="grid-form">
+                <div class="form-group full-width">
+                    <label>Asignatura / Materia</label>
+                    <select id="materia">
+                        <option>Matemáticas</option>
+                        <option>Lengua y Lit.</option>
+                        <option>Inglés</option>
+                        <option>Educación Física</option>
+                        <option>Física y Química</option>
+                    </select>
                 </div>
+
+                <div class="form-group">
+                    <label>Docente Responsable</label>
+                    <select id="docente">
+                        <option>García, Alberto</option>
+                        <option>Martínez, Elena</option>
+                        <option>Rodríguez, Marc</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de Sesión</label>
+                    <select>
+                        <option>Lectiva Estándar</option>
+                        <option>Guardia</option>
+                        <option>Tutoría</option>
+                        <option>Laboratorio / Taller</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Día de la Semana</label>
+                    <select id="dia" onchange="checkConflict()">
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label>Hora de Inicio</label>
-                    <input type="time" value="08:00">
+                    <input type="time" value="08:00" id="hora" onchange="checkConflict()">
+                </div>
+
+                <div class="form-group">
+                    <label>Aula Asignada</label>
+                    <select id="aula" onchange="checkConflict()">
+                        <option value="204">Aula 204</option>
+                        <option value="102">Aula 102</option>
+                        <option value="Lab1">Laboratorio 1</option>
+                        <option value="Gym">Gimnasio</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Periodicidad</label>
+                    <select>
+                        <option>Semanal (Siempre)</option>
+                        <option>Semana A (Quincenal)</option>
+                        <option>Semana B (Quincenal)</option>
+                        <option>Solo esta fecha</option>
+                    </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Aula Asignada</label>
-                <select><option>Aula 204</option><option>Laboratorio 1</option><option>Gimnasio</option></select>
+
+            <div class="preview-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span class="preview-tag">Vista Previa</span>
+                    <small style="color: #718096;"><i class="fas fa-info-circle"></i> Se notificará al docente por Mensajería</small>
+                </div>
+                <div id="previewText" style="color: #2d3748;">
+                    <strong>Matemáticas</strong> con Alberto García en el <strong>Aula 204</strong>.
+                </div>
             </div>
-            <button class="btn-save"><i class="fas fa-save"></i> GUARDAR EN HORARIO</button>
+
+            <button class="btn-save" onclick="saveSession()">
+                <i class="fas fa-save"></i> GUARDAR EN HORARIO
+            </button>
         </div>
     </div>
+
+    <script>
+        function checkConflict() {
+            const dia = document.getElementById('dia').value;
+            const hora = document.getElementById('hora').value;
+            const aula = document.getElementById('aula').value;
+            const alert = document.getElementById('conflictArea');
+
+            // Simulación de detección de conflicto
+            if(dia === "Lunes" && hora === "08:00" && aula === "204") {
+                alert.style.display = "flex";
+            } else {
+                alert.style.display = "none";
+            }
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const mat = document.getElementById('materia').value;
+            const doc = document.getElementById('docente').value;
+            const aul = document.getElementById('aula').value;
+            document.getElementById('previewText').innerHTML = `<strong>${mat}</strong> con ${doc} en el <strong>Aula ${aul}</strong>.`;
+        }
+
+        function saveSession() {
+            alert("Sesión guardada correctamente. El cuadrante se ha actualizado.");
+            window.location.href = "horarios.html";
+        }
+    </script>
 </body>
 </html>
