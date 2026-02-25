@@ -2,43 +2,70 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Control de Accesos - El Pedrer</title>
+    <title>Control de Accesos Avanzado - El Pedrer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --sidebar-bg: #1a1d2b; --accent-red: #ff4d4d; --bg-light: #f4f7f9; --safe-green: #2ecc71; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; }
+        :root { 
+            --sidebar-bg: #1a1d2b; 
+            --accent-red: #ff4d4d; 
+            --bg-light: #f4f7f9; 
+            --safe-green: #2ecc71; 
+            --warning-amber: #fbbc05;
+        }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: var(--bg-light); height: 100vh; overflow: hidden; }
         
+        /* Sidebar */
         .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; padding: 20px; flex-shrink: 0; }
         .logo { font-size: 1.5rem; font-weight: bold; margin-bottom: 40px; }
         .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #aeb2b9; text-decoration: none; }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
         .nav-item.active { background: var(--accent-red); color: white; }
 
-        .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; }
+        .main-content { flex-grow: 1; padding: 25px; overflow-y: auto; }
         
-        .access-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .door-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; }
-        
-        .door-info { display: flex; align-items: center; gap: 15px; }
-        .door-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        
-        .status-locked { background: #fee2e2; color: #ef4444; }
-        .status-unlocked { background: #dcfce7; color: #22c55e; }
+        /* Cabecera de Seguridad */
+        .security-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .lockdown-btn { background: #000; color: var(--accent-red); border: 2px solid var(--accent-red); padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .lockdown-btn:hover { background: var(--accent-red); color: white; }
 
-        .switch { position: relative; display: inline-block; width: 60px; height: 30px; }
+        /* Grid Principal */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+        
+        /* Cámaras CCTV */
+        .cctv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; }
+        .camera-box { background: #000; border-radius: 10px; position: relative; aspect-ratio: 16/9; overflow: hidden; border: 2px solid #333; }
+        .camera-box img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+        .cam-label { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
+        .cam-live { position: absolute; top: 10px; right: 10px; color: #ff0000; font-size: 0.7rem; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Control de Puertas */
+        .door-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .door-info { display: flex; align-items: center; gap: 12px; }
+        .door-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .locked { background: #fee2e2; color: #ef4444; }
+        .unlocked { background: #dcfce7; color: #22c55e; }
+
+        /* Panel Lateral: Invitados */
+        .guest-panel { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .qr-placeholder { width: 150px; height: 150px; background: #f0f2f5; margin: 15px auto; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px dashed #ccc; }
+
+        /* Log de Entradas */
+        .log-container { background: white; padding: 20px; border-radius: 15px; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { text-align: left; padding-bottom: 10px; color: #888; border-bottom: 1px solid #eee; }
+        td { padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
+
+        /* Switch */
+        .switch { position: relative; width: 50px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--safe-green); }
-        input:checked + .slider:before { transform: translateX(30px); }
-
-        .log-section { margin-top: 30px; background: white; padding: 20px; border-radius: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { text-align: left; color: #888; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        td { padding: 12px 0; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; }
+        input:checked + .slider:before { transform: translateX(24px); }
     </style>
 </head>
 <body>
+
     <div class="sidebar">
         <div class="logo">🏛️ EL PEDRER</div>
         <a href="direccion.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
@@ -48,64 +75,68 @@
     </div>
 
     <div class="main-content">
-        <h1>Sistema de Control de Accesos</h1>
-        
-        <div class="access-grid">
-            <div class="door-card">
-                <div class="door-info">
-                    <div class="door-icon status-locked" id="icon-p1"><i class="fas fa-door-closed"></i></div>
-                    <div>
-                        <strong>Puerta Principal</strong><br>
-                        <small id="txt-p1">Bloqueada</small>
-                    </div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleDoor('p1')">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="door-card">
-                <div class="door-info">
-                    <div class="door-icon status-locked" id="icon-p2"><i class="fas fa-door-closed"></i></div>
-                    <div>
-                        <strong>Gimnasio</strong><br>
-                        <small id="txt-p2">Bloqueada</small>
-                    </div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleDoor('p2')">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="door-card">
-                <div class="door-info">
-                    <div class="door-icon status-unlocked" id="icon-p3"><i class="fas fa-door-open"></i></div>
-                    <div>
-                        <strong>Laboratorio B1</strong><br>
-                        <small id="txt-p3">Abierta</small>
-                    </div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" checked onchange="toggleDoor('p3')">
-                    <span class="slider"></span>
-                </label>
-            </div>
+        <div class="security-header">
+            <h1>Sistema de Control de Accesos</h1>
+            <button class="lockdown-btn" onclick="emergencyLock()">
+                <i class="fas fa-lock"></i> LOCKDOWN (CIERRE TOTAL)
+            </button>
         </div>
 
-        <div class="log-section">
-            <h3>Registro de Entradas Recientes</h3>
-            <table>
-                <thead>
-                    <tr><th>Usuario</th><th>Punto de Acceso</th><th>Hora</th><th>Estado</th></tr>
-                </thead>
-                <tbody id="logTable">
-                    <tr><td>García, Alberto</td><td>Puerta Principal</td><td>08:02:15</td><td><span style="color:green">✔ Éxito</span></td></tr>
-                    <tr><td>Limpieza (Turno Mañana)</td><td>Conserjería</td><td>07:45:00</td><td><span style="color:green">✔ Éxito</span></td></tr>
-                    <tr><td>Desconocido</td><td>Laboratorio B1</td><td>21:10:05</td><td><span style="color:red">✘ Denegado</span></td></tr>
-                </tbody>
-            </table>
+        <div class="dashboard-grid">
+            <div class="left-col">
+                <div class="cctv-grid">
+                    <div class="camera-box">
+                        <div class="cam-label">CAM 01 - ENTRADA PRINCIPAL</div>
+                        <div class="cam-live">● LIVE</div>
+                        <img src="https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=500" alt="CCTV 1">
+                    </div>
+                    <div class="camera-box">
+                        <div class="cam-label">CAM 02 - PASILLO CENTRAL</div>
+                        <div class="cam-live">● LIVE</div>
+                        <img src="https://images.unsplash.com/photo-1516216628859-9bccecca8b2e?auto=format&fit=crop&q=80&w=500" alt="CCTV 2">
+                    </div>
+                </div>
+
+                <h3>Estado de Puntos de Acceso</h3>
+                <div id="doorList">
+                    <div class="door-card">
+                        <div class="door-info">
+                            <div class="door-icon locked" id="icon-p1"><i class="fas fa-door-closed"></i></div>
+                            <div><strong>Puerta Principal</strong><br><small id="txt-p1">Bloqueada</small></div>
+                        </div>
+                        <label class="switch"><input type="checkbox" onchange="toggleDoor('p1')"><span class="slider"></span></label>
+                    </div>
+                    <div class="door-card">
+                        <div class="door-info">
+                            <div class="door-icon locked" id="icon-p2"><i class="fas fa-door-closed"></i></div>
+                            <div><strong>Acceso Gimnasio</strong><br><small id="txt-p2">Bloqueada</small></div>
+                        </div>
+                        <label class="switch"><input type="checkbox" onchange="toggleDoor('p2')"><span class="slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-col">
+                <div class="guest-panel">
+                    <h3>Generar Pase QR</h3>
+                    <p style="font-size: 0.8rem; color: #666;">Para proveedores o visitas externas.</p>
+                    <input type="text" id="guestName" placeholder="Nombre del invitado" style="width: 90%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px;">
+                    <button onclick="generateQR()" style="width: 100%; background: var(--sidebar-bg); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;">Generar Acceso</button>
+                    <div class="qr-placeholder" id="qrContainer">
+                        <i class="fas fa-qrcode fa-3x" style="color: #ccc;"></i>
+                    </div>
+                </div>
+
+                <div class="log-container">
+                    <h3>Logs Recientes</h3>
+                    <table>
+                        <tbody id="logBody">
+                            <tr><td><small>21:56:03</small></td><td>Puerta P3</td><td><span style="color:blue">Apertura</span></td></tr>
+                            <tr><td><small>21:55:53</small></td><td>Puerta P1</td><td><span style="color:blue">Apertura</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -113,24 +144,46 @@
         function toggleDoor(id) {
             const icon = document.getElementById('icon-' + id);
             const txt = document.getElementById('txt-' + id);
-            const isLocked = icon.classList.contains('status-locked');
+            const isLocked = icon.classList.contains('locked');
 
             if(isLocked) {
-                icon.classList.replace('status-locked', 'status-unlocked');
+                icon.className = 'door-icon unlocked';
                 icon.innerHTML = '<i class="fas fa-door-open"></i>';
-                txt.innerText = 'Abierta';
-                addLog('Sistema', 'Puerta ' + id, 'Apertura Remota');
+                txt.innerText = 'Abierta (Remoto)';
+                addLog(id, 'Apertura Remota');
             } else {
-                icon.classList.replace('status-unlocked', 'status-locked');
+                icon.className = 'door-icon locked';
                 icon.innerHTML = '<i class="fas fa-door-closed"></i>';
                 txt.innerText = 'Bloqueada';
             }
         }
 
-        function addLog(user, point, status) {
-            const table = document.getElementById('logTable');
-            const row = table.insertRow(0);
-            row.innerHTML = `<td>${user}</td><td>${point}</td><td>${new Date().toLocaleTimeString()}</td><td><span style="color:blue">ℹ ${status}</span></td>`;
+        function emergencyLock() {
+            if(confirm("¿ACTIVAR BLOQUEO TOTAL? Se cerrarán todas las puertas electrónicas inmediatamente.")) {
+                const switches = document.querySelectorAll('.switch input');
+                switches.forEach(s => { s.checked = false; });
+                const icons = document.querySelectorAll('.door-icon');
+                icons.forEach(i => { 
+                    i.className = 'door-icon locked';
+                    i.innerHTML = '<i class="fas fa-door-closed"></i>';
+                });
+                alert("CIERRE DE EMERGENCIA COMPLETADO");
+                addLog('SISTEMA', 'LOCKDOWN ACTIVADO');
+            }
+        }
+
+        function generateQR() {
+            const name = document.getElementById('guestName').value;
+            if(!name) return alert("Escribe un nombre");
+            const container = document.getElementById('qrContainer');
+            container.innerHTML = '<i class="fas fa-qrcode fa-5x" style="color: #333;"></i>';
+            alert("Acceso QR generado para: " + name);
+        }
+
+        function addLog(door, action) {
+            const body = document.getElementById('logBody');
+            const row = `<tr><td><small>${new Date().toLocaleTimeString()}</small></td><td>${door}</td><td><span style="color:blue">${action}</span></td></tr>`;
+            body.innerHTML = row + body.innerHTML;
         }
     </script>
 </body>
